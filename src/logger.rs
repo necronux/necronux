@@ -12,11 +12,8 @@ pub fn init_logger(cli: &Cli) -> Result<()> {
 
     builder.filter_level(LevelFilter::Warn);
     builder.parse_env(log_level_env_var);
-    match cli.verbose.is_present() {
-        true => {
-            builder.filter_level(cli.verbose.log_level_filter());
-        }
-        false => {}
+    if cli.verbose.is_present() {
+        builder.filter_level(cli.verbose.log_level_filter());
     }
 
     builder
