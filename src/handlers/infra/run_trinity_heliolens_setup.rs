@@ -8,7 +8,7 @@ use std::{env, path::PathBuf, process::Command};
 #[cfg(unix)]
 use std::{fs::Permissions, os::unix::fs::PermissionsExt};
 
-pub fn trinity_helios_part_one() -> Result<()> {
+pub fn trinity_heliolens_part_one() -> Result<()> {
     #[cfg(unix)]
     {
         setup_environment("one")?
@@ -20,7 +20,7 @@ pub fn trinity_helios_part_one() -> Result<()> {
     Ok(())
 }
 
-pub fn trinity_helios_part_two() -> Result<()> {
+pub fn trinity_heliolens_part_two() -> Result<()> {
     #[cfg(unix)]
     {
         setup_environment("two")?
@@ -51,7 +51,7 @@ fn setup_environment(part: &str) -> Result<()> {
     clone_repository(&dot_dir)?;
 
     let script_path = dot_dir.join(format!(
-        "homelab/scripts/trinity_helios_setup_part_{}.sh",
+        "homelab/scripts/trinity/heliolens_setup_part_{}.sh",
         part
     ));
     execute_script(&script_path)?;

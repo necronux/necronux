@@ -23,7 +23,7 @@ pub struct InfraRunArgs {
     /// Specify the setup flag
     #[arg(
         long,
-        required_if_eq("host", "trinity-helios"),
+        required_if_eq("host", "trinity-heliolens"),
         hide_possible_values = true
     )]
     pub extra_flag: Option<SetupExtraFlags>,
@@ -31,8 +31,8 @@ pub struct InfraRunArgs {
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Hosts {
-    TrinityHelios,
-    Infinity,
+    TrinityHeliolens,
+    TrinityInfinity,
 }
 
 #[derive(ValueEnum, Copy, Clone, Debug, PartialEq, Eq)]

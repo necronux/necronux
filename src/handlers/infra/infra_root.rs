@@ -33,7 +33,7 @@ pub fn handle_infra_command(infra_command: &InfraCommand) -> Result<bool> {
             InfraSubCommands::ListHosts => {
                 info!("'list-hosts' flag was provided");
                 debug!("Displaying list of hosts");
-                println!("infinity,\ntrinityhelios");
+                println!("trinity-infinity,\ntrinity-heliolens");
                 Ok(true)
             }
         }
