@@ -6,6 +6,21 @@ use clap_verbosity_flag::{Verbosity, WarnLevel};
 use color_eyre::{config::HookBuilder, eyre::Result};
 use log::{debug, info};
 
+pub fn init_cli_controller() -> Result<()> {
+    init_error_reporter()?;
+    let cli = Cli::parse();
+    init_logger(&cli)?;
+    info!("Initialized error reporter, cli arguments parser and logger");
+
+    debug!("Parsed CLI arguments: {:?}", cli);
+
+    info!("Initializing handlers");
+    init_handlers(&cli)?;
+
+    debug!("Cli controller initialization completed");
+    Ok(())
+}
+
 fn init_error_reporter() -> Result<()> {
     #[cfg(debug_assertions)]
     {
@@ -34,21 +49,6 @@ pub struct Cli {
 
     #[command(flatten)]
     pub verbose: Verbosity<WarnLevel>,
-}
-
-pub fn init_cli_controller() -> Result<()> {
-    init_error_reporter()?;
-    let cli = Cli::parse();
-    init_logger(&cli)?;
-    info!("Initialized error reporter, cli arguments parser and logger");
-
-    debug!("Parsed CLI arguments: {:?}", cli);
-
-    info!("Initializing handlers");
-    init_handlers(&cli)?;
-
-    debug!("Cli controller initialization completed");
-    Ok(())
 }
 
 #[cfg(test)]
