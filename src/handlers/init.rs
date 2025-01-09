@@ -4,15 +4,13 @@ use crate::{
 };
 use clap::CommandFactory;
 use color_eyre::eyre::Result;
-use log::{debug, info};
+use log::info;
 
 pub fn init_handlers(cli: &Cli) -> Result<()> {
     match &cli.necronux_command {
         Some(NecronuxCommand::Infra(infra_command)) => {
-            info!("'infra' command was provided");
-            debug!("Handling infra command");
+            info!("Handling infra command");
             handle_infra(infra_command)?;
-            debug!("Finished handling infra command");
         }
         Some(NecronuxCommand::System(_)) => {
             info!("'system' command was provided");
@@ -23,8 +21,7 @@ pub fn init_handlers(cli: &Cli) -> Result<()> {
             info!("'app' command not yet implemented");
         }
         None => {
-            info!("No subcommand was provided");
-            info!("Displaying help message");
+            info!("No subcommand was provided, displaying help message");
             Cli::command().print_help()?;
         }
     }
