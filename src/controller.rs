@@ -1,31 +1,30 @@
 use crate::commands::lvl_0::necronux::NecronuxCommand;
 use clap::Parser;
 use clap_verbosity_flag::{Verbosity, WarnLevel};
-use color_eyre::{config::HookBuilder, eyre::Result};
+use color_eyre::eyre::Result;
 use log::{debug, info};
 
 pub fn init_cli_controller() -> Result<()> {
-    init_error_reporter()?;
-    let cli = Cli::parse();
-    crate::logger::init_logger(&cli.verbose)?;
-    info!("Initialized error reporter, cli arguments parser and logger");
+    // Intializes the logger.
+    crate::logger::init_logger()?;
 
+    // Initializes error reporter.
+    crate::error_reporter::init_error_reporter()?;
+
+    // Initializes cli parser.
+    let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
+
+    // Overrides the logger.
+    crate::logger::override_logger()?;
 
     info!("Initializing handlers");
     crate::handlers::init::init_handlers(&cli)?;
 
     debug!("Cli controller initialization completed");
-    Ok(())
-}
 
-fn init_error_reporter() -> Result<()> {
-    let backtrace = if cfg!(debug_assertions) { "full" } else { "0" };
-
-    std::env::set_var("RUST_BACKTRACE", backtrace);
-    HookBuilder::default()
-        .display_env_section(false)
-        .install()?;
+    // Flush all logs from buffer before quitting.
+    log::logger().flush();
 
     Ok(())
 }
