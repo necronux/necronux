@@ -1,9 +1,9 @@
-use crate::controller::Cli;
+use clap_verbosity_flag::{Verbosity, WarnLevel};
 use color_eyre::eyre::Result;
 use env_logger::{Builder, Env};
 use log::{debug, LevelFilter};
 
-pub fn init_logger(cli: &Cli) -> Result<()> {
+pub fn init_logger(verbose: &Verbosity<WarnLevel>) -> Result<()> {
     let mut builder = Builder::new();
 
     let log_level_env_var = Env::default()
@@ -12,8 +12,8 @@ pub fn init_logger(cli: &Cli) -> Result<()> {
 
     builder.filter_level(LevelFilter::Warn);
     builder.parse_env(log_level_env_var);
-    if cli.verbose.is_present() {
-        builder.filter_level(cli.verbose.log_level_filter());
+    if verbose.is_present() {
+        builder.filter_level(verbose.log_level_filter());
     }
 
     builder
