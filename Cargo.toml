@@ -1,6 +1,6 @@
 [package]
 name = "necronux"
-version = "0.2.0"
+version = "1.0.0-beta"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2021"
 homepage = "https://github.com/NayanTheSpaceGuy/necronux"
