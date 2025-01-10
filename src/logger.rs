@@ -49,7 +49,7 @@ fn custom_colored_log_format(
         // Colored log level based on severity.
         style(level).paint(record.level().to_string()),
         // Plain (non-colored) log message.
-        record.args().to_string(),
+        record.args(),
     )?;
 
     Ok(())
@@ -66,9 +66,9 @@ fn custom_noncolored_log_format(
         // Plain (non-colored) timestamp.
         now.format(TS_DASHES_BLANK_COLONS_DOT_BLANK),
         // Plain (non-colored) log level.
-        record.level().to_string(),
+        record.level(),
         // Plain (non-colored) log message.
-        record.args().to_string(),
+        record.args(),
     )?;
 
     Ok(())
