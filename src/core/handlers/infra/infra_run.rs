@@ -1,6 +1,6 @@
 use crate::{
-    commands::lvl_1::infra::{Hosts, InfraRunArgs, SetupExtraFlags},
-    handlers::infra::run_trinity_heliolens_setup::{
+    core::commands::lvl_1::infra::{Hosts, InfraRunArgs, SetupExtraFlags},
+    core::handlers::infra::run_trinity_heliolens_setup::{
         trinity_heliolens_part_one, trinity_heliolens_part_two,
     },
 };

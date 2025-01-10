@@ -1,6 +1,6 @@
 use crate::{
-    commands::lvl_0::necronux::NecronuxCommand, controller::Cli,
-    handlers::infra::infra_root::handle_infra,
+    controller::Cli, core::commands::lvl_0::necronux::NecronuxCommand,
+    core::handlers::infra::infra_root::handle_infra,
 };
 use clap::CommandFactory;
 use color_eyre::eyre::Result;

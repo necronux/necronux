@@ -3,11 +3,9 @@
 #![deny(clippy::panic)]
 #![deny(unused_must_use)]
 
-mod commands;
+mod bundle;
 mod controller;
-mod error_reporter;
-mod handlers;
-mod logger;
+mod core;
 
 use color_eyre::eyre::Result;
 

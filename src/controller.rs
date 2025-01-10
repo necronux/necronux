@@ -1,25 +1,30 @@
-use crate::commands::lvl_0::necronux::NecronuxCommand;
+use crate::core::{
+    commands::lvl_0::necronux::NecronuxCommand,
+    error_reporter::init_error_reporter,
+    handlers::init::init_handlers,
+    logger::{init_logger, override_logger},
+};
 use clap::Parser;
 use clap_verbosity_flag::{Verbosity, WarnLevel};
-use color_eyre::eyre::Result;
+use color_eyre::eyre::{Context, Result};
 use log::{debug, info};
 
 pub fn init_cli_controller() -> Result<()> {
     // Initializes the logger.
-    crate::logger::init_logger()?;
+    init_logger().context("Failed to initialize the logger.")?;
 
     // Initializes the error reporter.
-    crate::error_reporter::init_error_reporter()?;
+    init_error_reporter().context("Failed to initialize the error reporter.")?;
 
     // Initializes the cli parser.
     let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
 
     // Overrides the logger.
-    crate::logger::override_logger()?;
+    override_logger().context("Failed to override the logger.")?;
 
     info!("Initializing handlers");
-    crate::handlers::init::init_handlers(&cli)?;
+    init_handlers(&cli)?;
 
     debug!("Cli controller initialization completed");
 
