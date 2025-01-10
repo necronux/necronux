@@ -5,13 +5,13 @@ use color_eyre::eyre::Result;
 use log::{debug, info};
 
 pub fn init_cli_controller() -> Result<()> {
-    // Intializes the logger.
+    // Initializes the logger.
     crate::logger::init_logger()?;
 
-    // Initializes error reporter.
+    // Initializes the error reporter.
     crate::error_reporter::init_error_reporter()?;
 
-    // Initializes cli parser.
+    // Initializes the cli parser.
     let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
 
@@ -23,7 +23,7 @@ pub fn init_cli_controller() -> Result<()> {
 
     debug!("Cli controller initialization completed");
 
-    // Flush all logs from buffer before quitting.
+    // Flushes all logs from buffer before quitting.
     log::logger().flush();
 
     Ok(())
