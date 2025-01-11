@@ -1,17 +1,22 @@
-use crate::core::{
-    commands::lvl_0::necronux::NecronuxCommand,
-    error_reporter::init_error_reporter,
-    handlers::init::init_handlers,
-    logger::{init_logger, override_logger},
+use crate::{
+    core::config::load_and_merge_configs,
+    core::{
+        commands::lvl_0::necronux::NecronuxCommand,
+        error_reporter::init_error_reporter,
+        handlers::init::init_handlers,
+        logger::{init_logger, override_logger},
+    },
 };
 use clap::Parser;
 use clap_verbosity_flag::{Verbosity, WarnLevel};
 use color_eyre::eyre::{Context, Result};
+use config::Config;
 use log::{debug, info};
 
 pub fn init_cli_controller() -> Result<()> {
-    // Initializes the logger.
-    init_logger().context("Failed to initialize the logger.")?;
+    // Initializes the logger with default settings.
+    let (mut builder, default_log_level, logger) =
+        init_logger().context("Failed to initialize the logger with default settings.")?;
 
     // Initializes the error reporter.
     init_error_reporter().context("Failed to initialize the error reporter.")?;
@@ -20,13 +25,18 @@ pub fn init_cli_controller() -> Result<()> {
     let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
 
-    // Overrides the logger.
-    override_logger().context("Failed to override the logger.")?;
+    // Loads configs from various sources.
+    let merged_config: Config = load_and_merge_configs(&default_log_level, &cli)
+        .context("Failed to load and merge configs from various sources.")?;
 
-    info!("Initializing handlers");
+    // Overrides the logger with merged settings from various sources.
+    override_logger(&mut builder, &logger, &merged_config)
+        .context("Failed to override the logger with merged settings.")?;
+
+    info!("Initializing handlers...");
     init_handlers(&cli)?;
 
-    debug!("Cli controller initialization completed");
+    debug!("CLI controller initialization completed");
 
     // Flushes all logs from buffer before quitting.
     log::logger().flush();
