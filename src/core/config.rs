@@ -5,7 +5,7 @@ use log::{debug, LevelFilter};
 use std::{env, path::Path};
 
 // The order of precedence is:
-// Default < Necronux Bundle File < Environment Vairable < CLI Verbosity Flag
+// Default < Necronux Bundle File < Environment Variable < CLI Verbosity Flag
 pub fn load_and_merge_configs(default_log_level: &LevelFilter, cli: &Cli) -> Result<Config> {
     debug!("Loading configs from various sources...");
 
