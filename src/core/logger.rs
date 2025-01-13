@@ -6,7 +6,7 @@ use flexi_logger::{
 };
 use log::{debug, LevelFilter, Record};
 
-pub fn init_logger() -> Result<(LogSpecBuilder, LevelFilter, LoggerHandle)> {
+pub fn init_logger() -> Result<(LogSpecBuilder, LevelFilter, LoggerHandle, LevelFilter)> {
     let mut builder = LogSpecification::builder();
 
     let default_log_level = if cfg!(debug_assertions) {
@@ -43,12 +43,13 @@ pub fn init_logger() -> Result<(LogSpecBuilder, LevelFilter, LoggerHandle)> {
         max_log_level
     );
 
-    Ok((builder, default_log_level, logger))
+    Ok((builder, default_log_level, logger, max_log_level))
 }
 
 pub fn override_logger(
     builder: &mut LogSpecBuilder,
     logger: &LoggerHandle,
+    max_log_level: LevelFilter,
     merged_config: &Config,
 ) -> Result<()> {
     // Retrieve the log level from merged config.
@@ -71,16 +72,13 @@ pub fn override_logger(
     logger.set_new_spec(builder.build());
 
     // Set max log level filter again.
-    if cfg!(debug_assertions) {
-        log::set_max_level(LevelFilter::Trace);
-    } else {
-        log::set_max_level(LevelFilter::Info);
-    }
+    log::set_max_level(max_log_level);
+
     debug!("Log level updated to {}.", new_log_level);
-    let max_log_level = log::max_level();
+    let overriden_max_log_level = log::max_level();
     debug!(
         "Max log level set to {} for the overriden log config.",
-        max_log_level
+        overriden_max_log_level
     );
 
     Ok(())

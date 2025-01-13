@@ -15,7 +15,7 @@ use log::{debug, info};
 
 pub fn init_cli_controller() -> Result<()> {
     // Initializes the logger with default settings.
-    let (mut builder, default_log_level, logger) =
+    let (mut builder, default_log_level, logger, max_log_level) =
         init_logger().context("Failed to initialize the logger with default settings.")?;
 
     // Initializes the error reporter.
@@ -30,7 +30,7 @@ pub fn init_cli_controller() -> Result<()> {
         .context("Failed to load and merge configs from various sources.")?;
 
     // Overrides the logger with merged settings from various sources.
-    override_logger(&mut builder, &logger, &merged_config)
+    override_logger(&mut builder, &logger, max_log_level, &merged_config)
         .context("Failed to override the logger with merged settings.")?;
 
     info!("Initializing handlers...");
