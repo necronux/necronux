@@ -1,5 +1,5 @@
 use crate::{
-    core::config::load_and_merge_configs,
+    bundle::loader::load_bundle_file,
     core::{
         commands::lvl_0::necronux::NecronuxCommand,
         error_reporter::init_error_reporter,
@@ -10,12 +10,11 @@ use crate::{
 use clap::Parser;
 use clap_verbosity_flag::{Verbosity, WarnLevel};
 use color_eyre::eyre::{Context, Result};
-use config::Config;
-use log::{debug, info};
+use log::{debug, error, info, trace, warn};
 
 pub fn init_cli_controller() -> Result<()> {
     // Initializes the logger with default settings.
-    let (mut builder, default_log_level, logger, max_log_level) =
+    let (mut logger_builder, logger, max_log_level) =
         init_logger().context("Failed to initialize the logger with default settings.")?;
 
     // Initializes the error reporter.
@@ -25,13 +24,18 @@ pub fn init_cli_controller() -> Result<()> {
     let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
 
-    // Loads configs from various sources.
-    let merged_config: Config = load_and_merge_configs(&default_log_level, &cli)
-        .context("Failed to load and merge configs from various sources.")?;
+    // Loads the necronux bundle file.
+    load_bundle_file().context("Failed to load the necronux bundle file.")?;
 
-    // Overrides the logger with merged settings from various sources.
-    override_logger(&mut builder, &logger, max_log_level, &merged_config)
-        .context("Failed to override the logger with merged settings.")?;
+    // Overrides the logger with merged log level setting from various sources.
+    override_logger(&mut logger_builder, &logger, max_log_level, &cli)
+        .context("Failed to override the logger with merged log level setting.")?;
+
+    trace!("trace");
+    debug!("debug");
+    info!("info");
+    warn!("warn");
+    error!("error");
 
     info!("Initializing handlers...");
     init_handlers(&cli)?;

@@ -3,6 +3,7 @@
 #![deny(clippy::panic)]
 #![deny(unused_must_use)]
 
+mod bundle;
 mod controller;
 mod core;
 
