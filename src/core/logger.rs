@@ -33,6 +33,10 @@ pub fn init_logger() -> Result<(LogSpecBuilder, LoggerHandle, LevelFilter)> {
         "Logger initialized with defaults, log level set to {}.",
         default_log_level
     );
+    debug!(
+        "For cli verbosity flags WARN is the reference log level. \
+        '-v' increases verbosity from this level, and '-q' decreases it."
+    );
 
     // Set max log level.
     if cfg!(debug_assertions) {
