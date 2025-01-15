@@ -31,12 +31,6 @@ pub fn init_cli_controller() -> Result<()> {
     override_logger(&mut logger_builder, &logger, max_log_level, &cli)
         .context("Failed to override the logger with merged log level setting.")?;
 
-    trace!("trace");
-    debug!("debug");
-    info!("info");
-    warn!("warn");
-    error!("error");
-
     info!("Initializing handlers...");
     init_handlers(&cli)?;
 
