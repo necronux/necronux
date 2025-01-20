@@ -39,7 +39,7 @@ pub fn init_flow_controller() -> Result<()> {
 }
 
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
+#[command(name = "Necronux", version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub necronux_command: Option<NecronuxCommand>,
