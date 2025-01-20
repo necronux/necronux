@@ -1,34 +1,30 @@
-use crate::{
-    bundle::loader::load_bundle_file,
-    core::{
-        commands::lvl_0::necronux::NecronuxCommand,
-        error_reporter::init_error_reporter,
-        handlers::init::init_handlers,
-        logger::{init_logger, override_logger},
-    },
-};
+use crate::{commands::lvl_0::necronux::NecronuxCommand, handlers::init::init_handlers};
 use clap::Parser;
 use clap_verbosity_flag::{Verbosity, WarnLevel};
 use color_eyre::eyre::{Context, Result};
-use log::{debug, error, info, trace, warn};
+use log::{debug, info};
 
-pub fn init_cli_controller() -> Result<()> {
+pub fn init_flow_controller() -> Result<()> {
     // Initializes the logger with default settings.
-    let (mut logger_builder, logger, max_log_level) =
-        init_logger().context("Failed to initialize the logger with default settings.")?;
+    let (mut logger_builder, logger, max_log_level) = necronux_core::init_logger(None)
+        .context("Failed to initialize the logger with default settings.")?;
+    debug!(
+        "For cli verbosity flags WARN is the reference log level. \
+        '-v' increases verbosity from this level, and '-q' decreases it."
+    );
 
     // Initializes the error reporter.
-    init_error_reporter().context("Failed to initialize the error reporter.")?;
+    necronux_core::init_error_reporter().context("Failed to initialize the error reporter.")?;
 
     // Initializes the cli parser.
     let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
 
     // Loads the necronux bundle file.
-    load_bundle_file().context("Failed to load the necronux bundle file.")?;
+    // load_bundle_file().context("Failed to load the necronux bundle file.")?;
 
     // Overrides the logger with merged log level setting from various sources.
-    override_logger(&mut logger_builder, &logger, max_log_level, &cli)
+    crate::logger::override_logger(&mut logger_builder, &logger, max_log_level, &cli)
         .context("Failed to override the logger with merged log level setting.")?;
 
     info!("Initializing handlers...");

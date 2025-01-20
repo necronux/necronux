@@ -1,4 +1,4 @@
-use crate::core::commands::lvl_1::{app::AppCommand, infra::InfraCommand, system::SystemCommand};
+use crate::commands::lvl_1::{app::AppCommand, infra::InfraCommand, system::SystemCommand};
 use clap::Subcommand;
 
 #[derive(Subcommand, Debug)]

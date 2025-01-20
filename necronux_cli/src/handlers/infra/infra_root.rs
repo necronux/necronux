@@ -1,7 +1,7 @@
 use crate::{
-    controller::Cli,
-    core::commands::lvl_1::infra::{InfraCommand, InfraSubCommands},
-    core::handlers::infra::infra_run::handle_infra_run,
+    commands::lvl_1::infra::{InfraCommand, InfraSubCommands},
+    flow_controller::Cli,
+    handlers::infra::infra_run::handle_infra_run,
 };
 use clap::CommandFactory;
 use color_eyre::eyre::{Ok, Result};

@@ -1,19 +1,26 @@
-[package]
-name = "necronux"
-version = "1.0.0-beta"
+[workspace]
+members = [
+    "necronux_cli",
+    "necronux_core",
+]
+resolver = "2"
+
+[workspace.package]
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2021"
-homepage = "https://github.com/NayanTheSpaceGuy/necronux"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/NayanTheSpaceGuy/necronux"
+version = "1.0.0-beta"
 
-[dependencies]
+[workspace.dependencies]
 clap = { version = "4.5.23", features = ["derive", "cargo"] }
 clap-verbosity-flag = "3.0.2"
 color-eyre = { version = "0.6.3", default-features = false }
+config = "0.15.4"
 flexi_logger = "0.29.8"
 log = "0.4.22"
-serde = { version = "1.0", features = ["derive"] }
-config = "0.15.4"
 rpkl = "0.3.5"
+serde = { version = "1.0", features = ["derive"] }
 
 [profile.dev.package.backtrace]
 # Optimizations for debug builds using color-eyre

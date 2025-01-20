@@ -1,0 +1,20 @@
+[package]
+name = "necronux_cli"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "necronux"
+path = "src/main.rs"
+
+[dependencies]
+clap.workspace = true
+clap-verbosity-flag.workspace = true
+color-eyre.workspace = true
+flexi_logger.workspace = true
+log.workspace = true
+
+necronux_core = { path = "../necronux_core" }

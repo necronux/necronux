@@ -1,0 +1,12 @@
+[package]
+name = "necronux_core"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+color-eyre.workspace = true
+flexi_logger.workspace = true
+log.workspace = true

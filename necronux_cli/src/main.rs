@@ -3,15 +3,16 @@
 #![deny(clippy::panic)]
 #![deny(unused_must_use)]
 
-mod bundle;
-mod controller;
-mod core;
+mod commands;
+mod flow_controller;
+mod handlers;
+mod logger;
 
 use color_eyre::eyre::Result;
 
 fn main() -> Result<()> {
-    // Initializes the CLI controller.
-    controller::init_cli_controller()?;
+    // Initializes the flow controller.
+    flow_controller::init_flow_controller()?;
 
     Ok(())
 }
