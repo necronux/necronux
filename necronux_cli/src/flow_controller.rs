@@ -21,7 +21,7 @@ pub fn init_flow_controller() -> Result<()> {
     debug!("Parsed CLI arguments: {:?}", cli);
 
     // Loads the necronux bundle file.
-    // load_bundle_file().context("Failed to load the necronux bundle file.")?;
+    necronux_core::load_bundle_file().context("Failed to load the necronux bundle file.")?;
 
     // Overrides the logger with merged log level setting from various sources.
     crate::logger::override_logger(&mut logger_builder, &logger, max_log_level, &cli)

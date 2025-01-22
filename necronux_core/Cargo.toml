@@ -10,3 +10,5 @@ version.workspace = true
 color-eyre.workspace = true
 flexi_logger.workspace = true
 log.workspace = true
+rpkl.workspace = true
+serde.workspace = true

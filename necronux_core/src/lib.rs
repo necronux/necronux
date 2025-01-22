@@ -3,8 +3,10 @@
 #![deny(clippy::panic)]
 #![deny(unused_must_use)]
 
+mod bundle;
 mod error_reporter;
 mod logger;
 
+pub use bundle::loader::load_bundle_file;
 pub use error_reporter::init_error_reporter;
 pub use logger::init_logger;
