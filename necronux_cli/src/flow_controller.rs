@@ -1,3 +1,9 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
 use crate::{commands::lvl_0::necronux::NecronuxCommand, handlers::init::init_handlers};
 use clap::Parser;
 use clap_verbosity_flag::{Verbosity, WarnLevel};

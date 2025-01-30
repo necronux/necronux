@@ -1,8 +1,17 @@
+<!--
+# ==----------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: CC-BY-SA-4.0
+# ==----------------------------------------------------------------== #
+-->
+
 # Security Policy
 
 ## Supported Versions
 
-It is recommended to use the stable version, as it is thoroughly tested and widely used. The `develop` branch contains bleeding-edge commits that are not fully tested and should not be used in production environments.
+It is recommended to use the stable version, as it is thoroughly tested and widely used.
+The `develop` branch contains bleeding-edge commits that are not fully tested and should not be used in production environments.
 
 | Version | Supported          |
 | ------- | ------------------ |

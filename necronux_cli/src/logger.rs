@@ -1,3 +1,9 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
 use crate::flow_controller::Cli;
 use color_eyre::eyre::Result;
 use flexi_logger::{LogSpecBuilder, LoggerHandle};

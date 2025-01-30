@@ -1,3 +1,9 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
 use crate::bundle::schema::Bundle;
 use color_eyre::eyre::{eyre, Context, Result};
 use log::debug;

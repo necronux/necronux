@@ -1,0 +1,50 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+
+# Reuse annotations file.
+#
+# This file controls how reuse-tool finds copyright and license notices within
+# source files.
+# See https://reuse.software and https://github.com/fsfe/reuse-tool for more
+# details.
+# We currently use reuse-tool version 5.0.2.
+
+version = 1
+
+[[annotations]]
+path = [
+    "stdlib/PklProject.deps.json",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+    "COPYRIGHT.txt",
+    "THIRD-PARTY-NOTICES.txt",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = [
+    "Cargo.lock",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "© 2024-2025 Nayan Patil <nayantsg@proton.me>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = [
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/ISSUE_TEMPLATE/bug_report.md",
+    ".github/ISSUE_TEMPLATE/feature_request.md",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "© 2024-2025 Nayan Patil <nayantsg@proton.me>"
+SPDX-License-Identifier = "CC-BY-SA-4.0"

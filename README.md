@@ -1,61 +1,79 @@
+<!--
+# ==----------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: CC-BY-SA-4.0
+# ==----------------------------------------------------------------== #
+-->
+
+<div align="center">
+
 # Necronux
 
-NayanTheSpaceGuy's CLI orchestrator for seamless automation of infrastructure setup, system tweaks, and app installations.
+NayanTheSpaceGuy's cross-platform orchestrator for seamless automation of infrastructure setup, system tweaks, package manager setups and app installations.
 
-[![Version](https://img.shields.io/github/v/release/NayanTheSpaceGuy/necronux?color=blue&label=Latest%20Release&style=for-the-badge)](https://github.com/NayanTheSpaceGuy/necronux/releases/latest)
-[![License](https://img.shields.io/badge/license-GPLv3.0%2B-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0.html)
+[Website][Necronux] | [Getting Started] | [Learn] | [Documentation] | [Contributing]
+</div>
 
-## Table of Contents
-- [Introduction](#necronux)
-- [Important Documents](#important-documents)
-- [Building the source](#building-the-source)
-- [Running](#running)
-- [Connect & Support](#connect--support)
+[Necronux]: https://www.necronux.nayanpatil.space/
+[Getting Started]: https://www.necronux.nayanpatil.space/learn/get-started
+[Learn]: https://www.necronux.nayanpatil.space/learn
+[Documentation]: https://www.necronux.nayanpatil.space/docs
+[Contributing]: .github/CONTRIBUTING.md
 
-## Important Documents
+## Why Necronux?
 
-Please refer to the following documents for additional information:
+- **Reliability**
+- **Peace of Mind**
+- **Productivity**
+- **Performance**
 
-- [CODE_OF_CONDUCT.md](.github/CODE_OF_CONDUCT.md): Guidelines for contributing to the project, including expected behavior and how to handle conflicts.
-- [AUTHORS.md](AUTHORS.md): Acknowledgment of the core author and contributors to the project.
-- [LEGAL.md](LEGAL.md): Detailed licensing information and copyright notices for the project and its components.
-- [SECURITY.md](.github/SECURITY.md): Information on supported versions and how to report security vulnerabilities.
+## Quick Start
 
-Contributors and users are encouraged to review these documents thoroughly.
+For installation, read ["Installation Guide"] from the docs.
 
-## Building the Source
-### Dependencies
-- Ensure you have [Rust](https://www.rust-lang.org/learn/get-started) installed. You can install Rust using `rustup`:
-```shell
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
+["Installation Guide"]: https://www.necronux.nayanpatil.space/docs/install
 
-### Installation
-- Clone the repository and navigate to the project directory:
-```shell
-git clone https://github.com/NayanTheSpaceGuy/necronux.git
-cd necronux
-```
+## Installing from Source
 
-### Building
-- Compile the project with:
-```shell
-cargo build --release
-```
-- The compiled binary will be located in `target/release/necronux`.
+If you really want to install from source (though this is not recommended), see [INSTALL.md](INSTALL.md).
 
-## Running
-```shell
-./target/release/necronux [OPTIONS] [SUBCOMMAND]
-```
-To view the help message, you can use:
-```shell
-./target/release/necronux --help
-```
-Or simply:
-```shell
-./target/release/necronux
-```
+## Getting Help
+
+See https://www.necronux.nayanpatil.space/community for a list of chat platforms and forums.
+
+## Contributing
+
+We welcome contributions to Necronux!
+Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines on how to contribute to the project.
+
+## Maintainer
+
+</div>
+
+- Nayan Patil ([NayanTheSpaceGuy]) <nayantsg@proton.me> – *Project Creator, Lead Developer, Owner, and Maintainer*
+
+<div>
+
+[NayanTheSpaceGuy]: https://github.com/NayanTheSpaceGuy
+
+## License
+
+Necronux is primarily distributed under the terms of **GPL-3.0-or-later**, with portions of the project covered by **Apache-2.0** and **CC-BY-SA-4.0** licenses.
+Here's a brief overview of the licensing for different portions of the project:
+- The source code is licensed under **GPL-3.0-or-later**, except for the [stdlib](stdlib/), which is licensed under the **Apache-2.0** license.
+- Documentation and some markdown files are licensed under the **CC-BY-SA-4.0** license.
+- Some configuration and data files are licensed under **GPL-3.0-or-later**.
+
+For more detailed information, please refer to the following files:
+- [GPL-3.0-or-later.txt](LICENSES/GPL-3.0-or-later.txt)
+- [Apache-2.0.txt](LICENSES/Apache-2.0.txt)
+- [CC-BY-SA-4.0.txt](LICENSES/CC-BY-SA-4.0.txt)
+- [COPYRIGHT.md](COPYRIGHT.md)
+- [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)
+- [REUSE.toml](REUSE.toml)
+- [SPDX Bill of Materials](docs/reuse.spdx)
+- The individual files in the repository.
 
 ## Connect & Support
 
@@ -63,6 +81,8 @@ Or simply:
 
 ### Star this repo if you find it useful! 🌟
 
+## Statuses
+[![Version](https://img.shields.io/github/v/release/NayanTheSpaceGuy/necronux?color=blue&label=Latest%20Release&style=for-the-badge)](https://github.com/NayanTheSpaceGuy/necronux/releases/latest)
 [![License](https://img.shields.io/badge/license-GPLv3.0%2B-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0.html)
 ![Last Commit](https://img.shields.io/github/last-commit/NayanTheSpaceGuy/necronux?style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/NayanTheSpaceGuy/necronux?style=for-the-badge)

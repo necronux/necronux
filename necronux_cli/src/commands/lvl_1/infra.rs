@@ -1,3 +1,9 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
 use clap::{Args, Subcommand, ValueEnum};
 
 #[derive(Args, Debug)]

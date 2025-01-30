@@ -1,0 +1,411 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: necronux
+DocumentNamespace: http://spdx.org/spdxdocs/spdx-v2.1-ba5c1a7c-f96d-4878-ad2b-e44c51dd91c9
+Creator: Person: Anonymous ()
+Creator: Organization: Anonymous ()
+Creator: Tool: reuse-5.0.2
+Created: 2025-01-30T20:57:40Z
+CreatorComment: <text>This document was created automatically using available reuse information consistent with REUSE.</text>
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-77eaa159b96497294d06470ec8107d58
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-4f6a7687c2f1471a8a43de9af7de6e4a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-74f475bf42f59d823a41e1dd2a68aa57
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-85c9aec6c829f78d38bb773328da4ff1
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d3a940c431a0209b43501effb4ae3a43
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-38fc3b358fe19cc7cdefb96adb693eba
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-edec778cb95fb548ff54c78fa18bc5ea
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-06be7aae8ced2245a4249ad060f0a555
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-8e0e79eb63b33e10734d57514cd7af04
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-29fe8522a5cf8934bfb708c7f2db8167
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f787fedb13075a5c3d6c7fff31913a1e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c26878c203adabcd9ae50cee847194a9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-652af09c50e3153cf903c5122d6665af
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5a552fdb4d34af7e05a3062360b23db0
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-010c173c01ef0f6f9295f6148670e0ec
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-236ae75c276654114ea46e60f9e7052f
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1f9ed2abf555de3d02aa2b62968b423c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-5f2eab406032f50e767690da4cf11d3e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d336a980a86b46e8fcafa1cbf00e63c3
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1233dbe912667c0425703a2f39550ca5
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fc7b50c344e63b08addd09417300fe2b
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-d13375b78bd0c148f01274106d2d0965
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-03400b5389516e1ceb13069cf6223062
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-0c96a3024359610a3f9fa76f795e2a19
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-83b94546af8de5174c8d987ded8315d9
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-59b944b851d92441db58939fd489d5e4
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-bf31e4049537d21f62e309dbce713ece
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-42f86f19a68d74d77eafd5e34da89c8d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a801dd7c4dcdc0c5d10b39d0bb8fb4af
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-dd8bb070f88cc02761b1c13ca43b67db
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f2462ae6af6a6e80bfc522116ff66c54
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a6eb9b407bdeb699daea2d5fe6d9c6e8
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-600717fa94ffaab93fdf509f9d3a3210
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-ca29e6bc4da0f7152c61d411e1b24012
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7950b514615f20eb815dc14d6d76464c
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-04298ba47b7f0886095d4f7f4e7c8294
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-f4a39cb4b26c4cf7ef20e4d11da3e0ac
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-946e58801e3304e4d4a8f57e961c4844
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-dedc027639440da718c9087e082957ce
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-38ee9ca1115cbe1f3fa6ed0dabdbbd2e
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-b8789873596661a4a0830494553aed8d
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c3231bda434c976ae907bddbc0a0adf0
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-c5f21136de4d6bdb2b1d6aa2677e8a74
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-9357708c7ca2de5fe13409df074cf6d3
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-fa9d6ae7582e9bdfe9476612c32a7782
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-8703e09f2fb07cfe3161730ae07b85bb
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-1d430544a84bee2fa6d32d3bad3ba6a6
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-a9c737940e613c4e5fb53205cb25d722
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-88695f686129860aa3c51fe3419bd09a
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-7bd69d5078eace098949fcafd19590ab
+
+FileName: ./.github/CODEOWNERS
+SPDXID: SPDXRef-77eaa159b96497294d06470ec8107d58
+FileChecksum: SHA1: 59ba3e26ebee64f0808dcd7f573ba5784235e70a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/CODE_OF_CONDUCT.md
+SPDXID: SPDXRef-4f6a7687c2f1471a8a43de9af7de6e4a
+FileChecksum: SHA1: 902912cb9d03de9300c5edb2a02a33392c06b0c7
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/CONTRIBUTING.md
+SPDXID: SPDXRef-74f475bf42f59d823a41e1dd2a68aa57
+FileChecksum: SHA1: 3adc95079744dabc18bedccbdf5ff82e07245afd
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/ISSUE_TEMPLATE/bug_report.md
+SPDXID: SPDXRef-85c9aec6c829f78d38bb773328da4ff1
+FileChecksum: SHA1: cb7992528c16dcd40fa2edd0ec10e5489e36bc27
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>© 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/ISSUE_TEMPLATE/config.yml
+SPDXID: SPDXRef-d3a940c431a0209b43501effb4ae3a43
+FileChecksum: SHA1: 70ca6e91d2e70c0a8542f1f625cef8ffff03aee1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/ISSUE_TEMPLATE/feature_request.md
+SPDXID: SPDXRef-38fc3b358fe19cc7cdefb96adb693eba
+FileChecksum: SHA1: 474b154d53bbb8f8bad1ed9e64ffd97a9f8ec52b
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>© 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/PULL_REQUEST_TEMPLATE.md
+SPDXID: SPDXRef-edec778cb95fb548ff54c78fa18bc5ea
+FileChecksum: SHA1: e8e5107cde7706375a0a53079ea22d8249cde779
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>© 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/SECURITY.md
+SPDXID: SPDXRef-06be7aae8ced2245a4249ad060f0a555
+FileChecksum: SHA1: 465845554e743fa9f9c518e5866ca1013149855e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/actions/setup-rust-env/action.yml
+SPDXID: SPDXRef-8e0e79eb63b33e10734d57514cd7af04
+FileChecksum: SHA1: fa485646c93744a03d77b9e8a02270a9ec6ca23e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/dependabot.yml
+SPDXID: SPDXRef-29fe8522a5cf8934bfb708c7f2db8167
+FileChecksum: SHA1: 057731b6401c2c937e1d7a9d84eaa6877f80032f
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/workflows/branch-protection.yml
+SPDXID: SPDXRef-f787fedb13075a5c3d6c7fff31913a1e
+FileChecksum: SHA1: 7bb9eab5676d153e13edae31d0a4d16953c4adf0
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/workflows/build-and-release.yml
+SPDXID: SPDXRef-c26878c203adabcd9ae50cee847194a9
+FileChecksum: SHA1: 0588221f939792a30d0ddd422a817f4cdea19476
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/workflows/lint-and-format.yml
+SPDXID: SPDXRef-652af09c50e3153cf903c5122d6665af
+FileChecksum: SHA1: 84edc025d3cf3fdf9cce55e49b4930f0c629fa7e
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/workflows/self-approve.yml
+SPDXID: SPDXRef-5a552fdb4d34af7e05a3062360b23db0
+FileChecksum: SHA1: 5ab4378598ffe026e2573debbb676b70d9f45fd3
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.github/workflows/test.yml
+SPDXID: SPDXRef-010c173c01ef0f6f9295f6148670e0ec
+FileChecksum: SHA1: 8e4a1bc4a7d122d57223c1023b90b92f6ab37f11
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./.gitignore
+SPDXID: SPDXRef-236ae75c276654114ea46e60f9e7052f
+FileChecksum: SHA1: ba712183d0f4e252707d793d80538bbb1fe84951
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./COPYRIGHT.txt
+SPDXID: SPDXRef-1f9ed2abf555de3d02aa2b62968b423c
+FileChecksum: SHA1: 5e3ce859e8e5b77f20192be36b7e1a07da83d013
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>© 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./Cargo.lock
+SPDXID: SPDXRef-5f2eab406032f50e767690da4cf11d3e
+FileChecksum: SHA1: 7714ba2265d9adda737279a7728ccbb354573354
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>© 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./Cargo.toml
+SPDXID: SPDXRef-d336a980a86b46e8fcafa1cbf00e63c3
+FileChecksum: SHA1: b0c9fb81ec7acc31a8cff926590a06bf1c0e7aeb
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./README.md
+SPDXID: SPDXRef-1233dbe912667c0425703a2f39550ca5
+FileChecksum: SHA1: 89f9ae4f0f284c4feb97aedc9b5c2399cdd13bbc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./THIRD-PARTY-NOTICES.txt
+SPDXID: SPDXRef-fc7b50c344e63b08addd09417300fe2b
+FileChecksum: SHA1: 2a464ea1bfe2a7ca5ed6815959d1aba79cec53e1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>© 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./docs/INSTALL.md
+SPDXID: SPDXRef-d13375b78bd0c148f01274106d2d0965
+FileChecksum: SHA1: dd8ac03019e9f0f5c72138b57c98ab28bd23eb25
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: CC-BY-SA-4.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./justfile
+SPDXID: SPDXRef-03400b5389516e1ceb13069cf6223062
+FileChecksum: SHA1: 0f18828e8fc145d468912a8d74ff1259eba728ad
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/Cargo.toml
+SPDXID: SPDXRef-0c96a3024359610a3f9fa76f795e2a19
+FileChecksum: SHA1: f6b94884798793452452dcd4ab6a15981cc57a0a
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/lvl_0/mod.rs
+SPDXID: SPDXRef-83b94546af8de5174c8d987ded8315d9
+FileChecksum: SHA1: 50838737ec0b46c91331442c0859796942407ef5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/lvl_0/necronux.rs
+SPDXID: SPDXRef-59b944b851d92441db58939fd489d5e4
+FileChecksum: SHA1: 7bba3a7e53ff5e8ec33d129d96552ecee056c2f8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/lvl_1/app.rs
+SPDXID: SPDXRef-bf31e4049537d21f62e309dbce713ece
+FileChecksum: SHA1: d4b7af32e13afc140d371150bc9d63065e1f3bc9
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/lvl_1/infra.rs
+SPDXID: SPDXRef-42f86f19a68d74d77eafd5e34da89c8d
+FileChecksum: SHA1: ce1d941ff40154ce4097c7113d878530d49ad6fa
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/lvl_1/mod.rs
+SPDXID: SPDXRef-a801dd7c4dcdc0c5d10b39d0bb8fb4af
+FileChecksum: SHA1: eca06e42f9fee6fe7f9c517c10943800db72ffc2
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/lvl_1/system.rs
+SPDXID: SPDXRef-dd8bb070f88cc02761b1c13ca43b67db
+FileChecksum: SHA1: e670e05cf6375b71672b5e3e88c665d1f4433233
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/commands/mod.rs
+SPDXID: SPDXRef-f2462ae6af6a6e80bfc522116ff66c54
+FileChecksum: SHA1: 36280391d22e657578d7d1a4c44bdf6d3ea58ce8
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/flow_controller.rs
+SPDXID: SPDXRef-a6eb9b407bdeb699daea2d5fe6d9c6e8
+FileChecksum: SHA1: 1c811df45d176b83915df25f7831d4629f09a3a5
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/handlers/infra/infra_root.rs
+SPDXID: SPDXRef-600717fa94ffaab93fdf509f9d3a3210
+FileChecksum: SHA1: 57a6d2f9ff235375940e11e32877e29634f62179
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/handlers/infra/infra_run.rs
+SPDXID: SPDXRef-ca29e6bc4da0f7152c61d411e1b24012
+FileChecksum: SHA1: d23877a1800c30fcec26df9cf98b0a1728a0cb91
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/handlers/infra/mod.rs
+SPDXID: SPDXRef-7950b514615f20eb815dc14d6d76464c
+FileChecksum: SHA1: 9a3da1e0ea2ffdd1ab5e7beeb913926c81eccbe1
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/handlers/infra/run_trinity_heliolens_setup.rs
+SPDXID: SPDXRef-04298ba47b7f0886095d4f7f4e7c8294
+FileChecksum: SHA1: 409bad7a0ffc6bc913647b47042b2c58bb340698
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/handlers/init.rs
+SPDXID: SPDXRef-f4a39cb4b26c4cf7ef20e4d11da3e0ac
+FileChecksum: SHA1: 29ea249e6ff9998d045fccd2a6d5d1eb6c88a921
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/handlers/mod.rs
+SPDXID: SPDXRef-946e58801e3304e4d4a8f57e961c4844
+FileChecksum: SHA1: bbcd6d2c51fbc956de8929d4c34bbaf49f62a6d6
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/logger.rs
+SPDXID: SPDXRef-dedc027639440da718c9087e082957ce
+FileChecksum: SHA1: 423486f0b15c0dc2c0fc4bee87ec7eb22e700c56
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_cli/src/main.rs
+SPDXID: SPDXRef-38ee9ca1115cbe1f3fa6ed0dabdbbd2e
+FileChecksum: SHA1: 4af5625f66c8cb5e952f2edbe4bc8ba29b082f89
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/Cargo.toml
+SPDXID: SPDXRef-b8789873596661a4a0830494553aed8d
+FileChecksum: SHA1: 3ab0e75d6c376b90c9b97bed94d9f90d9d7acd55
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/src/bundle/loader.rs
+SPDXID: SPDXRef-c3231bda434c976ae907bddbc0a0adf0
+FileChecksum: SHA1: 6c0e20c0be39cf7a87fc3ed5fa02bdb99c3dafe4
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/src/bundle/mod.rs
+SPDXID: SPDXRef-c5f21136de4d6bdb2b1d6aa2677e8a74
+FileChecksum: SHA1: 1c4d4e3374340f6437627d58c7d297ddbabc7144
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/src/bundle/schema.rs
+SPDXID: SPDXRef-9357708c7ca2de5fe13409df074cf6d3
+FileChecksum: SHA1: 06960ad1ee4778aa2dc790f0a4c50ceb4c5062ca
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/src/error_reporter.rs
+SPDXID: SPDXRef-fa9d6ae7582e9bdfe9476612c32a7782
+FileChecksum: SHA1: 8bbce67d62f540471ad8160f338f92354d6dd85d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/src/lib.rs
+SPDXID: SPDXRef-8703e09f2fb07cfe3161730ae07b85bb
+FileChecksum: SHA1: ea819800ac94c93e507842caf701612c6582b09c
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./necronux_core/src/logger.rs
+SPDXID: SPDXRef-1d430544a84bee2fa6d32d3bad3ba6a6
+FileChecksum: SHA1: b96566133d11e9151722570e62622405488f159d
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: GPL-3.0-or-later
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./stdlib/PklProject
+SPDXID: SPDXRef-a9c737940e613c4e5fb53205cb25d722
+FileChecksum: SHA1: fec8d2527422417df76237236afcb7250743c2bc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: Apache-2.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./stdlib/PklProject.deps.json
+SPDXID: SPDXRef-88695f686129860aa3c51fe3419bd09a
+FileChecksum: SHA1: fa3b580e81ebb0705d95fd88a8b251ee65828b00
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: Apache-2.0
+FileCopyrightText: <text>© 2025 Nayan Patil <nayantsg@proton.me></text>
+
+FileName: ./stdlib/base.pkl
+SPDXID: SPDXRef-7bd69d5078eace098949fcafd19590ab
+FileChecksum: SHA1: 10f589e25a2bc4d460c277316061a94351ae1bdc
+LicenseConcluded: NOASSERTION
+LicenseInfoInFile: Apache-2.0
+FileCopyrightText: <text>SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me></text>
+
