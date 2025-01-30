@@ -36,7 +36,7 @@ For installation, read ["Installation Guide"] from the docs.
 
 ## Installing from Source
 
-If you really want to install from source (though this is not recommended), see [INSTALL.md](INSTALL.md).
+If you really want to install from source (though this is not recommended), see [INSTALL.md](docs/INSTALL.md).
 
 ## Getting Help
 
