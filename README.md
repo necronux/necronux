@@ -69,7 +69,7 @@ For more detailed information, please refer to the following files:
 - [GPL-3.0-or-later.txt](LICENSES/GPL-3.0-or-later.txt)
 - [Apache-2.0.txt](LICENSES/Apache-2.0.txt)
 - [CC-BY-SA-4.0.txt](LICENSES/CC-BY-SA-4.0.txt)
-- [COPYRIGHT.md](COPYRIGHT.md)
+- [COPYRIGHT.txt](COPYRIGHT.txt)
 - [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)
 - [REUSE.toml](REUSE.toml)
 - [SPDX Bill of Materials](docs/reuse.spdx)
