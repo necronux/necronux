@@ -1,10 +1,9 @@
 ---
-name: Feature request
+name: Major feature request
 about: Suggest an idea for this project
-title: ''
-labels: E - feature request
+title: "[Major Feat.]: "
+labels: 1.C - major feature related, 2.F - major feature request
 assignees: ''
-
 ---
 
 ### Is your feature request related to a problem? Please describe.

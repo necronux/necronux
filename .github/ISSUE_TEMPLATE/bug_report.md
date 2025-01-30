@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: B - unconfirmed bug
+title: "[Bug]: "
+labels: 1.C - bug related, 2.B - unconfirmed bug
 assignees: ''
-
 ---
 
 **Describe the bug**
