@@ -9,7 +9,6 @@ run_all:
     cargo run
     cargo test
     reuse lint
-    reuse spdx -o docs/reuse.spdx
 
 run:
     cargo clippy
@@ -24,5 +23,8 @@ test:
 
 lint:
     cargo clippy
+    reuse lint
+
+sbom:
     reuse lint
     reuse spdx -o docs/reuse.spdx
