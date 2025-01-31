@@ -5,9 +5,10 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module necronux.base
+module NecronuxStd
 
 bundle: Bundle?
+
 component: Listing<Component>
 
 class Bundle {
