@@ -13,21 +13,21 @@ on:
       - '**'
 
 jobs:
-  protect-main-branch:
+  protect-stable-branch:
     runs-on: ubuntu-latest
     steps:
       - name: Ensure PRs are only from allowed branches
         run: |
-          # Check if the target branch is 'main'
-          if [[ "${GITHUB_BASE_REF}" == "main" ]]; then
-            # If targeting 'main', ensure source branch is either 'release/*' or 'hotfix/*'
-            if ! [[ ${GITHUB_HEAD_REF} =~ ^(release/|hotfix/).+ ]]; then
-              echo "Error: Pull requests to main can only be from 'release/*' or 'hotfix/*' branches."
+          # Check if the target branch is 'stable'
+          if [[ "${GITHUB_BASE_REF}" == "stable" ]]; then
+            # If targeting 'stable', ensure source branch is 'release/*' only
+            if ! [[ ${GITHUB_HEAD_REF} =~ ^release/.+ ]]; then
+              echo "Error: Pull requests to stable can only be from 'release/*' branches."
               exit 1
             else
-              echo "Pull request to main from allowed branch '${GITHUB_HEAD_REF}'."
+              echo "Pull request to stable from allowed branch '${GITHUB_HEAD_REF}'."
             fi
           else
-            # If not targeting 'main', skip the check and pass
-            echo "Pull request is not targeting 'main'; no protection checks required."
+            # If not targeting 'stable', skip the check and pass
+            echo "Pull request is not targeting 'stable'; no protection checks required."
           fi
