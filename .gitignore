@@ -4,4 +4,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ==----------------------------------------------------------------== #
 
-/target
+# Rust build artifacts
+/target/
+
+# Gradle
+/.gradle/
+/build/
+
+# Pkl
+/stdlib/build/
+/stdlib/NecronuxStd.pcf

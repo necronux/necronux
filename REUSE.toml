@@ -48,3 +48,12 @@ path = [
 precedence = "override"
 SPDX-FileCopyrightText = "© 2024-2025 Nayan Patil <nayantsg@proton.me>"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = [
+    "gradle/wrapper/gradle-wrapper.jar",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "Copyright © 2015-2021 the original authors"
+SPDX-License-Identifier = "Apache-2.0"
+
