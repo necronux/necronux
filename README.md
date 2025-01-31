@@ -59,21 +59,15 @@ Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines on how to c
 
 ## License
 
-Necronux is primarily distributed under the terms of **GPL-3.0-or-later**, with portions of the project covered by **Apache-2.0** and **CC-BY-SA-4.0** licenses.
-Here's a brief overview of the licensing for different portions of the project:
-- The source code is licensed under **GPL-3.0-or-later**, except for the [stdlib](stdlib/), which is licensed under the **Apache-2.0** license.
-- Documentation and some markdown files are licensed under the **CC-BY-SA-4.0** license.
-- Some configuration and data files are licensed under **GPL-3.0-or-later**.
+Necronux is primarily distributed under the terms of `GPL-3.0-or-later` license.
+However, certain portions of the project are covered by `Apache-2.0` and `CC-BY-SA-4.0` licenses.
 
-For more detailed information, please refer to the following files:
-- [GPL-3.0-or-later.txt](LICENSES/GPL-3.0-or-later.txt)
-- [Apache-2.0.txt](LICENSES/Apache-2.0.txt)
-- [CC-BY-SA-4.0.txt](LICENSES/CC-BY-SA-4.0.txt)
-- [COPYRIGHT.txt](COPYRIGHT.txt)
-- [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt)
-- [REUSE.toml](REUSE.toml)
-- [SPDX Bill of Materials](docs/reuse.spdx)
-- The individual files in the repository.
+See [GPL-3.0-or-later.txt], [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT.txt] for full licensing details.
+
+[GPL-3.0-or-later.txt]: LICENSES/GPL-3.0-or-later.txt
+[Apache-2.0.txt]: LICENSES/Apache-2.0.txt
+[CC-BY-SA-4.0.txt]: LICENSES/CC-BY-SA-4.0.txt
+[COPYRIGHT.txt]: COPYRIGHT.txt
 
 ## Connect & Support
 

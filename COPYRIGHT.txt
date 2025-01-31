@@ -1,13 +1,29 @@
 Short version for non-lawyers:
 
-The Necronux Project is primarily distributed under the terms of GPL-3.0-or-later,
-with portions of the project covered by Apache-2.0 and CC-BY-SA-4.0 licenses.
+The Necronux Project is primarily distributed under the terms of `GPL-3.0-or-later` license.
+However, certain portions of the project are covered by `Apache-2.0` and `CC-BY-SA-4.0` licenses.
+
 It is Copyright © 2024-2025 Nayan Patil <nayantsg@proton.me>
+
+Here's a brief overview of the licensing for different portions of the project:
+- The source code is licensed under `GPL-3.0-or-later`, except for the `stdlib/`,
+which is licensed under the `Apache-2.0` license.
+- Documentation and some markdown files are licensed under the `CC-BY-SA-4.0` license.
+- Some configuration and data files are licensed under `GPL-3.0-or-later`.
+
+For more detailed information, please refer to the following files:
+- `LICENSES/GPL-3.0-or-later.txt`
+- `LICENSES/Apache-2.0.txt`
+- `LICENSES/CC-BY-SA-4.0.txt`
+- `THIRD-PARTY-NOTICES.txt`
+- `REUSE.toml`
+- `docs/reuse.spdx`
+- The individual files in the repository.
 
 Longer version:
 
-Copyrights in the Necronux project are retained by their contributors. No
-copyright assignment is required to contribute to the Necronux project.
+Contributors retain copyright to their respective contributions in the Necronux project.
+No copyright assignment is required to contribute to the Necronux project.
 
 Some files include explicit copyright notices and/or license notices.
 For full authorship information, see the version control history.
@@ -20,11 +36,9 @@ Nayan Patil <nayantsg@proton.me>
 
 We track licenses in two ways:
 
-* We use [REUSE](https://reuse.software) to track license information for
-  in-tree source files. See `REUSE.toml`, and individual file headers.
-  This information is used to generate SPDX bill of materials in the file `docs/reuse.spdx`
-* We use `crates.io` and manually track license information for out-of-tree dependencies.
-  This information is made available in the file `THIRD-PARTY-NOTICES.txt`
+- For in-tree source files, we use [REUSE](https://reuse.software) to track licensing details via `REUSE.toml` and individual file headers.
+  This information is used to generate SPDX bill of materials (SBOM) in the file `docs/reuse.spdx`.
+- For out-of-tree dependencies, we use `crates.io` and manually track licensing details in `THIRD-PARTY-NOTICES.txt`.
 
 Both `reuse.spdx` and `THIRD-PARTY-NOTICES.txt` are shipped with each binary release of Necronux.
 Please refer to these files for detailed information as to the components of any given Necronux release.
