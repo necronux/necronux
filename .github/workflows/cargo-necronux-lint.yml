@@ -11,7 +11,7 @@ on:
   pull_request:
       branches: ["develop", "stable"]
       paths:
-      - 'src/**'
+      - 'necronux_core/**'
 
 env:
   CARGO_TERM_COLOR: always
