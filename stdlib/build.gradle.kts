@@ -11,8 +11,9 @@ plugins {
 pkl {
   evaluators {
     register("evalStdlib") {
-      sourceModules.set(fileTree(projectDir) { include("**/*.pkl") })
       projectDir.set(file("."))
+      sourceModules.set(fileTree(projectDir) { include("**/*.pkl") })
+      outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
     }
   }
 
