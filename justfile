@@ -4,24 +4,17 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ==-----------------------------------------------------------== #
 
-run_all:
-    cargo clippy
-    cargo run
-    cargo test
-    reuse lint
-
-run:
+nrun:
     cargo clippy
     cargo run
     reuse lint
 
-build:
-    cargo build
+nrunr:
+    cargo clippy
+    cargo run --release
+    reuse lint
 
-test:
-    cargo test
-
-lint:
+nlint:
     cargo clippy
     reuse lint
 
