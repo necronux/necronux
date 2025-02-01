@@ -13,4 +13,4 @@
 
 # Pkl
 /stdlib/build/
-/stdlib/NecronuxStd.pcf
+/tools/*/build/
