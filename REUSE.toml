@@ -17,6 +17,7 @@ version = 1
 [[annotations]]
 path = [
     "stdlib/PklProject.deps.json",
+    "tools/necronux.internal.pkl/PklProject.deps.json",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
