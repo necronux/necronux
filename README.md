@@ -60,7 +60,7 @@ Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines on how to c
 ## License
 
 Necronux is primarily distributed under the terms of `GPL-3.0-or-later` license.
-However, certain portions of the project are covered by `Apache-2.0` and `CC-BY-SA-4.0` licenses.
+However, certain portions of the repository are covered by different licenses.
 
 See [GPL-3.0-or-later.txt], [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT.txt] for full licensing details.
 

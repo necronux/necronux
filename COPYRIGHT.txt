@@ -1,23 +1,24 @@
 Short version for non-lawyers:
 
 The Necronux Project is primarily distributed under the terms of `GPL-3.0-or-later` license.
-However, certain portions of the project are covered by `Apache-2.0` and `CC-BY-SA-4.0` licenses.
+However, certain portions of the repository are covered by different licenses.
 
 It is Copyright © 2024-2025 Nayan Patil <nayantsg@proton.me>
 
 Here's a brief overview of the licensing for different portions of the project:
-- The source code is licensed under `GPL-3.0-or-later`, except for the `stdlib/`,
-which is licensed under the `Apache-2.0` license.
-- Documentation and some markdown files are licensed under the `CC-BY-SA-4.0` license.
-- Some configuration and data files are licensed under `GPL-3.0-or-later`.
+- The Necronux core library crate is licensed under `GPL-3.0-or-later`.
+- The Necronux cli binary crate is licensed under `GPL-3.0-or-later`.
+- The Necronux standard library (`stdlib`) package is licensed under the `Apache-2.0` license.
+- Certain internal tools are licensed under the `Apache-2.0` license.
+- Certain configuration and data files are licensed under `GPL-3.0-or-later`.
+- Certain documentation and markdown files are licensed under the `CC-BY-SA-4.0` license.
 
-For more detailed information, please refer to the following files:
+For detailed licensing information, see:
 - `LICENSES/GPL-3.0-or-later.txt`
 - `LICENSES/Apache-2.0.txt`
 - `LICENSES/CC-BY-SA-4.0.txt`
 - `THIRD-PARTY-NOTICES.txt`
 - `REUSE.toml`
-- `docs/reuse.spdx`
 - The individual files in the repository.
 
 Longer version:
@@ -28,8 +29,8 @@ No copyright assignment is required to contribute to the Necronux project.
 Some files include explicit copyright notices and/or license notices.
 For full authorship information, see the version control history.
 
-Except as otherwise noted, Necronux is licensed under GPL-3.0-or-later <LICENSES/GPL-3.0-or-later.txt>
-or <https://www.gnu.org/licenses/gpl-3.0.en.html>
+Except as otherwise noted, Necronux is licensed under GPL-3.0-or-later (<LICENSES/GPL-3.0-or-later.txt>
+or <https://www.gnu.org/licenses/gpl-3.0.en.html>)
 
 For any legal inquiries or concerns, please contact:
 Nayan Patil <nayantsg@proton.me>
