@@ -1,25 +1,39 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+
+amends "../../../templates/GitHubAction.pkl"
+
+headercomment = """
 # ==----------------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ==----------------------------------------------------------------== #
+"""
 
-# Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
-# Any changes should be made to the template, not this file.
+name = "Branch Protection"
 
-name: Branch Protection
-'on':
-  pull_request:
-    branches:
-    - '**'
-  workflow_dispatch: {}
-jobs:
-  protect-stable-branch:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Ensure PRs are only from allowed branches
-      run: |-
+on {
+  workflow_dispatch {}
+  pull_request {
+    branches {
+      "**"
+    }
+  }
+}
+
+jobs {
+  ["protect-stable-branch"] {
+    `runs-on` = "ubuntu-latest"
+    steps {
+      new {
+        name = "Ensure PRs are only from allowed branches"
+        run = """
         # Check if the target branch is 'stable'
         if [[ "${GITHUB_BASE_REF}" == "stable" ]]; then
           # If targeting 'stable', ensure source branch is 'release/*' only
@@ -33,3 +47,8 @@ jobs:
           # If not targeting 'stable', skip the check and pass
           echo "Pull request is not targeting 'stable'; no protection checks required."
         fi
+        """
+      }
+    }
+  }
+}
