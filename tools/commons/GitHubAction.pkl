@@ -704,7 +704,6 @@ output {
     }
   }
 }
-
 const local function stepsHasOnlyRunOrUses(steps: Listing<Step>): Boolean = steps
   .toList()
   .every((step) -> !(containsRunAndUses(step) || containsNeitherRunNorUses(step)))
