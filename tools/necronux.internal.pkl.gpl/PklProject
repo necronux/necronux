@@ -1,0 +1,21 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+amends "pkl:Project"
+
+package {
+  name = "necronux.internal.pkl.gpl"
+  baseUri = "package://pkg.nayanpatil.space/necronux/\(name)"
+  version = "0.1.0"
+  packageZipUrl = "https://github.com/NayanTheSpaceGuy/necronux/releases/download/\(name)@\(version)/\(name)@\(version).zip"
+  description = "Tools for internal use created with pkl"
+  authors {
+    "Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"
+  }
+  sourceCode = "https://github.com/NayanTheSpaceGuy/necronux/tree/\(name)@\(version)/packages/\(name)"
+  sourceCodeUrlScheme = "https://github.com/NayanTheSpaceGuy/necronux/blob/\(name)@\(version)/packages/\(name)%{path}#L%{line}-%{endLine}"
+  issueTracker = "https://github.com/NayanTheSpaceGuy/necronux/issues"
+}

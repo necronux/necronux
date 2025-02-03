@@ -1,12 +1,12 @@
 // ==-----------------------------------------------------------== //
 // SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 //
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
 
-amends "../../../templates/GitHubAction.pkl"
+amends "../../../../commons/GitHubAction.pkl"
 
 headercomment = """
 # ==----------------------------------------------------------------== #
@@ -19,12 +19,7 @@ headercomment = """
 name = "Branch Protection"
 
 on {
-  workflow_dispatch {}
-  pull_request {
-    branches {
-      "**"
-    }
-  }
+  pull_request {}
 }
 
 jobs {

@@ -7,7 +7,8 @@
 rootProject.name = "necronux"
 
 include("stdlib")
-include("tools:necronux.internal.pkl")
+include("tools:necronux.internal.pkl.apache")
+include("tools:necronux.internal.pkl.gpl")
 
 pluginManagement {
     repositories {

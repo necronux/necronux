@@ -7,7 +7,7 @@
 amends "pkl:Project"
 
 package {
-  name = "necronux.internal.pkl"
+  name = "necronux.internal.pkl.apache"
   baseUri = "package://pkg.nayanpatil.space/necronux/\(name)"
   version = "0.1.0"
   packageZipUrl = "https://github.com/NayanTheSpaceGuy/necronux/releases/download/\(name)@\(version)/\(name)@\(version).zip"

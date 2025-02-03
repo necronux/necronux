@@ -10,7 +10,7 @@ plugins {
 
 pkl {
   evaluators {
-    register("evalWorkflows") {
+    register("evalWorkflowsApache") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/*.pkl") })
       outputFile.set(file("${rootProject.projectDir}/.github/workflows/%{moduleName}.%{outputFormat}"))
@@ -20,7 +20,7 @@ pkl {
 
   project {
     resolvers {
-      register("resolveInternalPklDeps") {
+      register("resolveInternalPklApacheDeps") {
         projectDirectories.from(file("."))
       }
     }
