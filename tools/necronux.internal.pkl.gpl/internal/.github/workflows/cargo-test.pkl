@@ -1,0 +1,60 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+
+amends "../../../../commons/GitHubAction.pkl"
+
+headercomment = """
+# ==----------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==----------------------------------------------------------------== #
+"""
+
+name = "Test"
+
+on {
+  workflow_dispatch {}
+  pull_request {
+    branches {
+      "develop"
+      "stable"
+    }
+    paths {
+      "Cargo.toml"
+      "Cargo.lock"
+      "necronux_core/**"
+      "necronux_cli/**"
+    }
+  }
+}
+
+env {
+  ["CARGO_TERM_COLOR"] = "always"
+}
+
+jobs {
+  ["rusttest"] {
+    name = "Test"
+    `runs-on` = "ubuntu-latest"
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Setup Rust env"
+        uses = "./.github/actions/setup-rust-env"
+      }
+      new {
+        name = "Run cargo test"
+        run = "cargo test --workspace"
+      }
+    }
+  }
+}

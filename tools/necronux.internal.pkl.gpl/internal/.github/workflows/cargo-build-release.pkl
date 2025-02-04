@@ -1,0 +1,214 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+
+amends "../../../../commons/GitHubAction.pkl"
+
+headercomment = """
+# ==---------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==---------------------------------------------------------------== #
+"""
+
+name = "Build & Release"
+
+on {
+  workflow_dispatch {}
+  push {
+    tags {
+      "v*.*.*"
+    }
+  }
+}
+
+permissions {
+  contents = "write"
+}
+
+jobs {
+  ["build"] {
+    name = "Build"
+    `runs-on` = "${{ matrix.build.os }}"
+    strategy {
+      `fail-fast` = false
+      matrix {
+        ["build"] = new {
+          new {
+            name = "linux-x64"
+            os = "ubuntu-24.04"
+            target = "x86_64-unknown-linux-gnu"
+          }
+          new {
+            name = "windows-x64"
+            os = "windows-2022"
+            target = "x86_64-pc-windows-msvc"
+          }
+          new {
+            name = "windows-arm64"
+            os = "windows-2022"
+            target = "aarch64-pc-windows-msvc"
+          }
+          new {
+            name = "darwin-x64"
+            os = "macos-14"
+            target = "x86_64-apple-darwin"
+          }
+          new {
+            name = "darwin-arm64"
+            os = "macos-14"
+            target = "aarch64-apple-darwin"
+          }
+        }
+      }
+    }
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Setup Rust env"
+        uses = "./.github/actions/setup-rust-env"
+      }
+      new {
+        name = "Run cargo build"
+        run = "cargo build --release --locked --target ${{ matrix.build.TARGET }}"
+      }
+      new {
+        name = "Rename necronux binary"
+        shell = "bash"
+        run = """
+        binary_name="necronux"
+
+        extension=""
+        # windows binaries have ".exe" extension
+        if [[ "${{ matrix.build.OS }}" == *"windows"* ]]; then
+          extension=".exe"
+        fi
+
+        mkdir bin
+        cp "target/${{ matrix.build.TARGET }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.NAME }}${extension}"
+        """
+      }
+      new {
+        name = "Make binaries executable (Non-Windows)"
+        `if` = "! contains(matrix.build.OS, 'windows')"
+        run = "chmod +x bin/*"
+      }
+      new {
+        name = "Tar the binaries"
+        shell = "bash"
+        run = "tar -czvf built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}.tar.gz -C bin ."
+      }
+      new {
+        name = "Upload binary tar"
+        uses = "actions/upload-artifact@v4"
+        with {
+          ["name"] = "built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}"
+          ["path"] = "built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}.tar.gz"
+        }
+      }
+    }
+  }
+  ["stable-release"] {
+    name = "Release"
+    `runs-on` = "ubuntu-24.04"
+    needs = "build"
+    `if` = "startsWith(github.ref_name, 'v') && !contains(github.ref_name, '-')"
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+        with {
+          ["fetch-depth"] = 2
+        }
+      }
+      new {
+        name = "Download binaries"
+        uses = "actions/download-artifact@v4"
+        with {
+          ["path"] = "."
+          ["merge-multiple"] = true
+        }
+      }
+      new {
+        name = "Extract binaries"
+        shell = "bash"
+        run = """
+        mkdir -p bin
+        for tar_file in built-binaries-*.tar.gz; do
+          echo "Extracting $tar_file"
+          tar -xzvf $tar_file -C bin
+        done
+        """
+      }
+      new {
+        name = "Publish release"
+        uses = "softprops/action-gh-release@v2"
+        with {
+          ["files"] = "bin/*"
+          ["tag_name"] = "${{ env.RELEASE_VERSION }}"
+          ["fail_on_unmatched_files"] = true
+          ["generate_release_notes"] = true
+        }
+        env {
+          ["GITHUB_TOKEN"] = "${{ secrets.GITHUB_TOKEN }}"
+        }
+      }
+    }
+  }
+  ["pre-release"] {
+    name = "Pre-Release"
+    `runs-on` = "ubuntu-24.04"
+    needs = "build"
+    `if` = "startsWith(github.ref_name, 'v') && contains(github.ref_name, '-')"
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+        with {
+          ["fetch-depth"] = 2
+        }
+      }
+      new {
+        name = "Download binaries"
+        uses = "actions/download-artifact@v4"
+        with {
+          ["path"] = "."
+          ["merge-multiple"] = true
+        }
+      }
+      new {
+        name = "Extract binaries"
+        shell = "bash"
+        run = """
+        mkdir -p bin
+        for tar_file in built-binaries-*.tar.gz; do
+          echo "Extracting $tar_file"
+          tar -xzvf $tar_file -C bin
+        done
+        """
+      }
+      new {
+        name = "Publish release"
+        uses = "softprops/action-gh-release@v2"
+        with {
+          ["files"] = "bin/*"
+          ["tag_name"] = "${{ env.PRE_RELEASE_VERSION }}"
+          ["fail_on_unmatched_files"] = true
+          ["generate_release_notes"] = true
+          ["prerelease"] = true
+        }
+        env {
+          ["GITHUB_TOKEN"] = "${{ secrets.GITHUB_TOKEN }}"
+        }
+      }
+    }
+  }
+}

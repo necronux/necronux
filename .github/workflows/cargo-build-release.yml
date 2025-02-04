@@ -1,0 +1,137 @@
+# ==---------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==---------------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using the necronux internal pkl package.
+# Any changes should be made to the template, not this file.
+
+name: Build & Release
+'on':
+  push:
+    tags:
+    - v*.*.*
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        build:
+        - name: linux-x64
+          os: ubuntu-24.04
+          target: x86_64-unknown-linux-gnu
+        - name: windows-x64
+          os: windows-2022
+          target: x86_64-pc-windows-msvc
+        - name: windows-arm64
+          os: windows-2022
+          target: aarch64-pc-windows-msvc
+        - name: darwin-x64
+          os: macos-14
+          target: x86_64-apple-darwin
+        - name: darwin-arm64
+          os: macos-14
+          target: aarch64-apple-darwin
+      fail-fast: false
+    runs-on: ${{ matrix.build.os }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup Rust env
+      uses: ./.github/actions/setup-rust-env
+    - name: Run cargo build
+      run: cargo build --release --locked --target ${{ matrix.build.TARGET }}
+    - name: Rename necronux binary
+      shell: bash
+      run: |-
+        binary_name="necronux"
+
+        extension=""
+        # windows binaries have ".exe" extension
+        if [[ "${{ matrix.build.OS }}" == *"windows"* ]]; then
+          extension=".exe"
+        fi
+
+        mkdir bin
+        cp "target/${{ matrix.build.TARGET }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.NAME }}${extension}"
+    - name: Make binaries executable (Non-Windows)
+      if: '! contains(matrix.build.OS, ''windows'')'
+      run: chmod +x bin/*
+    - name: Tar the binaries
+      shell: bash
+      run: tar -czvf built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}.tar.gz -C bin .
+    - name: Upload binary tar
+      uses: actions/upload-artifact@v4
+      with:
+        name: built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}
+        path: built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}.tar.gz
+  stable-release:
+    name: Release
+    if: startsWith(github.ref_name, 'v') && !contains(github.ref_name, '-')
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    - name: Download binaries
+      uses: actions/download-artifact@v4
+      with:
+        path: '.'
+        merge-multiple: true
+    - name: Extract binaries
+      shell: bash
+      run: |-
+        mkdir -p bin
+        for tar_file in built-binaries-*.tar.gz; do
+          echo "Extracting $tar_file"
+          tar -xzvf $tar_file -C bin
+        done
+    - name: Publish release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: bin/*
+        tag_name: ${{ env.RELEASE_VERSION }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+  pre-release:
+    name: Pre-Release
+    if: startsWith(github.ref_name, 'v') && contains(github.ref_name, '-')
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    - name: Download binaries
+      uses: actions/download-artifact@v4
+      with:
+        path: '.'
+        merge-multiple: true
+    - name: Extract binaries
+      shell: bash
+      run: |-
+        mkdir -p bin
+        for tar_file in built-binaries-*.tar.gz; do
+          echo "Extracting $tar_file"
+          tar -xzvf $tar_file -C bin
+        done
+    - name: Publish release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: bin/*
+        tag_name: ${{ env.PRE_RELEASE_VERSION }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        prerelease: true
