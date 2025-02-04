@@ -16,7 +16,7 @@ headercomment = """
 # ==---------------------------------------------------------------== #
 """
 
-name = "Build & Release"
+name = "Cargo Build & Release"
 
 on {
   workflow_dispatch {}

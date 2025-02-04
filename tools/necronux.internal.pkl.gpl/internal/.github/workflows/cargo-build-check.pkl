@@ -1,25 +1,37 @@
-// ==----------------------------------------------------------------== //
-// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
-// ==----------------------------------------------------------------== //
+// ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
 
 amends "../../../../commons/GitHubAction.pkl"
 
 headercomment = """
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
+# ==-----------------------------------------------------------== #
 """
 
-name = "Cargo Lint"
+name = "Cargo Build Check"
 
 on {
   workflow_dispatch {}
+  push {
+    branches {
+      "develop"
+      "stable"
+    }
+    paths {
+      "Cargo.toml"
+      "Cargo.lock"
+      "necronux_core/**"
+      "necronux_cli/**"
+    }
+  }
   pull_request {
     branches {
       "develop"
@@ -39,8 +51,8 @@ env {
 }
 
 jobs {
-  ["clippy"] {
-    name = "Lint"
+  ["debug-build"] {
+    name = "Debug Build"
     `runs-on` = "ubuntu-latest"
     steps {
       new {
@@ -52,13 +64,13 @@ jobs {
         uses = "./.github/actions/setup-rust-env"
       }
       new {
-        name = "Run cargo clippy"
-        run = "cargo clippy -- -Dclippy::all -D warnings"
+        name = "Run cargo build"
+        run = "cargo build"
       }
     }
   }
-  ["rustfmt"] {
-    name = "Format"
+  ["release-build"] {
+    name = "Release Build"
     `runs-on` = "ubuntu-latest"
     steps {
       new {
@@ -70,8 +82,8 @@ jobs {
         uses = "./.github/actions/setup-rust-env"
       }
       new {
-        name = "Run cargo fmt"
-        run = "cargo fmt --check"
+        name = "Run cargo build --release"
+        run = "cargo build --release"
       }
     }
   }

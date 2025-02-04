@@ -1,16 +1,25 @@
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
+# ==-----------------------------------------------------------== #
 
 # Do not modify!
 # This file was generated from a template using the necronux internal pkl package.
 # Any changes should be made to the template, not this file.
 
-name: Cargo Lint
+name: Cargo Build Check
 'on':
   pull_request:
+    branches:
+    - develop
+    - stable
+    paths:
+    - Cargo.toml
+    - Cargo.lock
+    - necronux_core/**
+    - necronux_cli/**
+  push:
     branches:
     - develop
     - stable
@@ -23,23 +32,23 @@ name: Cargo Lint
 env:
   CARGO_TERM_COLOR: always
 jobs:
-  clippy:
-    name: Lint
+  debug-build:
+    name: Debug Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Setup Rust env
       uses: ./.github/actions/setup-rust-env
-    - name: Run cargo clippy
-      run: cargo clippy -- -Dclippy::all -D warnings
-  rustfmt:
-    name: Format
+    - name: Run cargo build
+      run: cargo build
+  release-build:
+    name: Release Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Setup Rust env
       uses: ./.github/actions/setup-rust-env
-    - name: Run cargo fmt
-      run: cargo fmt --check
+    - name: Run cargo build --release
+      run: cargo build --release

@@ -8,7 +8,7 @@
 # This file was generated from a template using the necronux internal pkl package.
 # Any changes should be made to the template, not this file.
 
-name: Test
+name: Cargo Test
 'on':
   pull_request:
     branches:
