@@ -6,8 +6,8 @@
 
 [workspace]
 members = [
-    "necronux_cli",
-    "necronux_core",
+    "crates/necronux_cli",
+    "crates/necronux_core",
 ]
 resolver = "2"
 

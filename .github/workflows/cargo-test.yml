@@ -17,8 +17,7 @@ name: Cargo Test
     paths:
     - Cargo.toml
     - Cargo.lock
-    - necronux_core/**
-    - necronux_cli/**
+    - crates/**
   workflow_dispatch: {}
 env:
   CARGO_TERM_COLOR: always

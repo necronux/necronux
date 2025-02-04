@@ -28,8 +28,7 @@ on {
     paths {
       "Cargo.toml"
       "Cargo.lock"
-      "necronux_core/**"
-      "necronux_cli/**"
+      "crates/**"
     }
   }
   pull_request {
@@ -40,8 +39,7 @@ on {
     paths {
       "Cargo.toml"
       "Cargo.lock"
-      "necronux_core/**"
-      "necronux_cli/**"
+      "crates/**"
     }
   }
 }
