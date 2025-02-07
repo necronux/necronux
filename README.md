@@ -10,7 +10,7 @@
 
 # Necronux
 
-NayanTheSpaceGuy's cross-platform orchestrator for seamless automation of infrastructure setup, system tweaks, package manager setups and app installations.
+A cross-platform robust meta-orchestrator for automation tools, scripts, and configurations through an extensible architecture.
 
 [Website][Necronux] | [Getting Started] | [Learn] | [Documentation] | [Contributing]
 </div>
