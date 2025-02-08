@@ -4,19 +4,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ==-----------------------------------------------------------== #
 
-nrun:
-    cargo clippy
+rundebug:
+    cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo -D warnings
     cargo run
     reuse lint
 
-nrunr:
-    cargo clippy
+runrelease:
+    cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo -D warnings
     cargo run --release
     reuse lint
 
-nlint:
-    cargo clippy
+lint:
+    cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo -D warnings
     reuse lint
+
+evalinternaltool:
+    ./gradlew evalWorkflowsGPL
+    ./gradlew evalWorkflowsApache
 
 sbom:
     reuse lint
