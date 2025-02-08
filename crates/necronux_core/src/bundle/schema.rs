@@ -6,11 +6,13 @@
 
 use serde::Deserialize;
 
+#[allow(dead_code)]
 #[derive(Deserialize)]
 pub struct Bundle {
     config: BundleConfig,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize)]
 struct BundleConfig {
     loglevel: String,

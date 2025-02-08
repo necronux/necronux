@@ -18,7 +18,7 @@ pub fn init_logger(
     let mut logger_builder = LogSpecification::builder();
 
     // Set default log level.
-    let default_log_level = default_log_level.unwrap_or_else(|| {
+    let default_log_level = default_log_level.unwrap_or({
         if cfg!(debug_assertions) {
             LevelFilter::Debug
         } else {
