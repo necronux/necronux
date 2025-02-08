@@ -8,6 +8,7 @@
 name = "necronux_core"
 authors.workspace = true
 edition.workspace = true
+rust-version = "1.74.1"
 license.workspace = true
 repository.workspace = true
 version.workspace = true
