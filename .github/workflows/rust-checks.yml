@@ -1,0 +1,163 @@
+# ==----------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==----------------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using the necronux internal pkl package.
+# Any changes should be made to the template, not this file.
+
+name: Rust Checks
+'on':
+  pull_request:
+    branches:
+    - develop
+    - stable
+    - release
+    - hotfix
+    paths:
+    - '*.rs'
+    - '**/*.rs'
+    - src/**
+    - crates/**
+    - Cargo.toml
+    - Cargo.lock
+    - deny.toml
+  push:
+    paths:
+    - '*.rs'
+    - '**/*.rs'
+    - src/**
+    - crates/**
+    - Cargo.toml
+    - Cargo.lock
+    - deny.toml
+  workflow_dispatch: {}
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
+  CARGO_HACK_DENY_WARNINGS: 1
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  conclusion-pr:
+    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+    needs:
+    - clippy
+    - lockfile
+    - rustfmt
+    - typos
+    - msrv
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    steps:
+    - name: Conclusion
+      shell: bash
+      run: |-
+        jq -C <<< '${{ toJson(needs) }}'
+        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+  conclusion-push:
+    if: ${{ github.event_name == 'push' && !cancelled() }}
+    needs:
+    - clippy
+    - lockfile
+    - rustfmt
+    - typos
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    steps:
+    - name: Conclusion
+      shell: bash
+      run: |-
+        jq -C <<< '${{ toJson(needs) }}'
+        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+  typos:
+    name: Typos
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Check for typos
+      uses: crate-ci/typos@v1.29.5
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup rust toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+        components: rustfmt
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+    - name: Run cargo fmt
+      shell: bash
+      run: cargo fmt --all --check
+  clippy:
+    name: Clippy
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - ubuntu-24.04-arm
+        - windows-latest
+        - macos-latest
+        - macos-13
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup rust toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+        components: clippy
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+    - name: Run cargo clippy
+      shell: bash
+      run: cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo
+  lockfile:
+    name: Cargo Lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup rust toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+    - name: Ensure Cargo.lock is up-to-date
+      shell: bash
+      run: cargo update -p necronux_cli --locked
+  msrv:
+    name: MSRV
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install cargo hack
+      uses: taiki-e/install-action@cargo-hack
+    - name: Run cargo hack check
+      shell: bash
+      run: cargo hack check --all-targets --rust-version --locked

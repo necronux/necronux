@@ -1,0 +1,223 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+
+amends "../../../../commons/GitHubAction.pkl"
+
+import "commons/commonJobs.pkl" as commonJobs
+
+headercomment = """
+# ==----------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==----------------------------------------------------------------== #
+"""
+
+name = "Rust Checks"
+
+on {
+  pull_request {
+    branches {
+      "develop"
+      "stable"
+      "release"
+      "hotfix"
+    }
+    paths {
+      "*.rs"
+      "**/*.rs"
+      "src/**"
+      "crates/**"
+      "Cargo.toml"
+      "Cargo.lock"
+      "deny.toml"
+    }
+  }
+  push {
+    paths =(on.pull_request.paths) {}
+  }
+  workflow_dispatch {}
+}
+
+env {
+  ["CARGO_INCREMENTAL"] = 0
+  ["CARGO_NET_RETRY"] = 10
+  ["CARGO_TERM_COLOR"] = "always"
+  ["RUST_BACKTRACE"] = 1
+  ["RUSTFLAGS"] = "-D warnings"
+  ["RUSTUP_MAX_RETRIES"] = 10
+  ["CARGO_HACK_DENY_WARNINGS"] = 1
+}
+
+concurrency {
+  group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  `cancel-in-progress` = true
+}
+
+permissions {
+  contents = "read"
+}
+
+jobs {
+  // Conclusion job for workflow triggered by a pull request.
+  ["conclusion-pr"] {
+    // To prevent this job from being skipped if its dependencies fail,
+    // we need to override the if: condition. A skipped job is treated as a success by GitHub,
+    // which we want to avoid. By using !cancelled(), we ensure the job won't run
+    // if the workflow is manually canceled.
+    `if` = "${{ github.event_name == 'pull_request' && !cancelled() }}"
+    needs = (jobs["conclusion-push"].needs) {
+      "msrv"
+    }
+    permissions {
+      contents = "none"
+    }
+    `runs-on` = "ubuntu-latest"
+    steps {
+      new {
+        // Manually check the status of all dependencies. `if: failure()` does not work.
+        name = "Conclusion"
+        run = """
+        jq -C <<< '${{ toJson(needs) }}'
+        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+        """
+        shell = "bash"
+      }
+    }
+  }
+  // Conclusion job for workflow triggered by a push.
+  ["conclusion-push"] {
+    `if` = "${{ github.event_name == 'push' && !cancelled() }}"
+    needs {
+      "clippy"
+      "lockfile"
+      "rustfmt"
+      "typos"
+    }
+    permissions = (jobs["conclusion-pr"].permissions) {}
+    `runs-on` = "ubuntu-latest"
+    steps = (jobs["conclusion-pr"].steps) {}
+  }
+
+  ["typos"] = (commonJobs.jobs["typos"]) {}
+  ["rustfmt"] {
+    name = "Rustfmt"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Setup rust toolchain"
+        uses = "dtolnay/rust-toolchain@master"
+        with {
+          ["toolchain"] = "stable"
+          ["components"] = "rustfmt"
+        }
+      }
+      new {
+        name = "Setup rust cache"
+        uses = "Swatinem/rust-cache@v2"
+      }
+      new {
+        name = "Run cargo fmt"
+        run = "cargo fmt --all --check"
+        shell = "bash"
+      }
+    }
+  }
+  ["clippy"] {
+    name = "Clippy"
+    strategy {
+      `fail-fast` = false
+      matrix {
+        ["os"] {
+          "ubuntu-latest"
+          "ubuntu-24.04-arm"
+          "windows-latest"
+          "macos-latest"
+          "macos-13"
+        }
+      }
+    }
+    `runs-on` = "${{ matrix.os }}"
+    `timeout-minutes` = 30
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Setup rust toolchain"
+        uses = "dtolnay/rust-toolchain@master"
+        with {
+          ["toolchain"] = "stable"
+          ["components"] = "clippy"
+        }
+      }
+      new {
+        name = "Setup rust cache"
+        uses = "Swatinem/rust-cache@v2"
+      }
+      new {
+        name = "Run cargo clippy"
+        run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo"
+        shell = "bash"
+      }
+    }
+  }
+  ["lockfile"] {
+    name = "Cargo Lockfile"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Setup rust toolchain"
+        uses = "dtolnay/rust-toolchain@master"
+        with {
+          ["toolchain"] = "stable"
+        }
+      }
+      new {
+        name = "Setup rust cache"
+        uses = "Swatinem/rust-cache@v2"
+      }
+      new {
+        name = "Ensure Cargo.lock is up-to-date"
+        run = "cargo update -p necronux_cli --locked"
+        shell = "bash"
+      }
+    }
+  }
+  ["msrv"] {
+    name = "MSRV"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Install cargo hack"
+        uses = "taiki-e/install-action@cargo-hack"
+      }
+      new {
+        name = "Run cargo hack check"
+        run = "cargo hack check --all-targets --rust-version --locked"
+        shell = "bash"
+      }
+    }
+  }
+}
