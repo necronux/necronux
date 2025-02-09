@@ -18,7 +18,8 @@ lint:
     cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo -D warnings
     reuse lint
 
-evalinternaltool:
+evalinternaltools:
+    ./gradlew evalWorkflowsCommonsGPL
     ./gradlew evalWorkflowsGPL
     ./gradlew evalWorkflowsApache
 

@@ -17,6 +17,14 @@ pkl {
       outputFormat.set("yml")
     }
   }
+  evaluators {
+    register("evalWorkflowsCommonsGPL") {
+      projectDir.set(file("."))
+      sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/commons/*.pkl") })
+      outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
+      outputFormat.set("pcf")
+    }
+  }
 
   project {
     resolvers {

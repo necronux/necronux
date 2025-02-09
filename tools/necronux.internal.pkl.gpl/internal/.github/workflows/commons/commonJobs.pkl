@@ -1,0 +1,33 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+
+amends "../../../../../commons/GitHubAction.pkl"
+
+name = "Common Jobs"
+
+on {
+  workflow_dispatch {}
+}
+
+jobs {
+  ["typos"] {
+    name = "Typos"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      new {
+        name = "Checkout code"
+        uses = "actions/checkout@v4"
+      }
+      new {
+        name = "Check for typos"
+        uses = "crate-ci/typos@v1.29.5"
+      }
+    }
+  }
+}
