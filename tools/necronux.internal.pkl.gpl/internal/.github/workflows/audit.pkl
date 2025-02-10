@@ -8,6 +8,8 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "commons/commonSteps.pkl" as commonSteps
+
 headercomment = """
 # ==-----------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
@@ -41,10 +43,7 @@ jobs {
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
     steps {
-      new {
-        name = "Checkout code"
-        uses = "actions/checkout@v4"
-      }
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
       new {
         name = "Run cargo deny check without advisories"
         uses = "EmbarkStudios/cargo-deny-action@v2"

@@ -8,10 +8,8 @@
 
 amends "../../../../../commons/GitHubAction.pkl"
 
-import "commonSteps.pkl" as commonSteps
-
 // Placeholder name to satisfy type-checking
-name = "Common Jobs"
+name = "Common Steps Rust"
 
 // Placeholder trigger to satisfy type-checking
 on {
@@ -19,15 +17,26 @@ on {
 }
 
 jobs {
-  ["typos"] {
-    name = "Typos"
+  // Placeholder job to satisfy type-checking
+  ["setupRustToolchainStep"] {
     `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
       new {
-        name = "Check for typos"
-        uses = "crate-ci/typos@v1.29.5"
+        name = "Setup rust toolchain"
+        uses = "dtolnay/rust-toolchain@master"
+        with {
+          ["toolchain"] = "stable"
+        }
+      }
+    }
+  }
+  // Placeholder job to satisfy type-checking
+  ["setupRustCacheStep"] {
+    `runs-on` = "ubuntu-latest"
+    steps {
+      new {
+        name = "Setup rust cache"
+        uses = "Swatinem/rust-cache@v2"
       }
     }
   }
