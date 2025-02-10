@@ -33,8 +33,8 @@ SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
 path = [
-    "COPYRIGHT.txt",
-    "THIRD-PARTY-NOTICES.txt",
+    "COPYRIGHT",
+    "THIRD-PARTY-NOTICES",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
