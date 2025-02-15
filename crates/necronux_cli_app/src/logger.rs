@@ -77,10 +77,10 @@ pub fn override_logger(
 
         // Set max log level again.
         log::set_max_level(max_log_level);
-        let overriden_max_log_level = log::max_level();
+        let overridden_max_log_level = log::max_level();
         debug!(
-            "Max log level set to {} for the overriden log config.",
-            overriden_max_log_level
+            "Max log level set to {} for the overridden log config.",
+            overridden_max_log_level
         );
 
         debug!("Log level setting loaded from various sources and merged.");
