@@ -6,7 +6,7 @@
 
 [package]
 name = "necronux_core"
-description = "Provides core business logic for necronux."
+description = "Provides core business logic for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true

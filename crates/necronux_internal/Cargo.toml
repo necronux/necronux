@@ -6,7 +6,7 @@
 
 [package]
 name = "necronux_internal"
-description = "An internal necronux crate"
+description = "An internal Necronux crate."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true

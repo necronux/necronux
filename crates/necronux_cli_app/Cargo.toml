@@ -6,6 +6,7 @@
 
 [package]
 name = "necronux_cli_app"
+description = "Provides the CLI implementation for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
