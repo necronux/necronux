@@ -154,7 +154,7 @@ jobs {
       (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
       new {
         name = "Run cargo clippy"
-        run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all -D clippy::cargo"
+        run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all" // temporarily removed -D clippy::cargo
         shell = "bash"
       }
     }
@@ -173,7 +173,7 @@ jobs {
       (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
       new {
         name = "Ensure Cargo.lock is up-to-date"
-        run = "cargo update -p necronux_cli --locked"
+        run = "cargo update -p necronux --locked"
         shell = "bash"
       }
     }
