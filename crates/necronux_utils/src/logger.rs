@@ -57,6 +57,13 @@ pub fn init_logger(
     Ok((logger_builder, logger, max_log_level))
 }
 
+pub fn flush_logger() -> Result<()> {
+    // Flushes all logs from buffer before quitting.
+    log::logger().flush();
+
+    Ok(())
+}
+
 fn custom_colored_log_format(
     w: &mut dyn std::io::Write,
     now: &mut DeferredNow,

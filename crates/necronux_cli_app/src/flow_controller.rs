@@ -40,8 +40,7 @@ pub fn init_flow_controller() -> Result<()> {
 
     debug!("CLI controller initialization completed");
 
-    // Flushes all logs from buffer before quitting.
-    log::logger().flush();
+    necronux_utils::logger::flush_logger()?;
 
     Ok(())
 }
