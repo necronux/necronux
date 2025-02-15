@@ -50,21 +50,21 @@ categories = ["command-line-utilities"]
 
 [lints.rust]
 unsafe_code = "deny"
+unused_must_use = "deny"
 
 [workspace.lints.rust]
 unsafe_code = "deny"
+unused_must_use = "deny"
 
 [lints.clippy]
 unwrap_used = "deny"
 expect_used = "deny"
 panic = "deny"
-unused_must_use = "deny"
 
 [workspace.lints.clippy]
 unwrap_used = "deny"
 expect_used = "deny"
 panic = "deny"
-unused_must_use = "deny"
 
 [profile.dev.package.backtrace]
 # Optimizations for debug builds using color-eyre
