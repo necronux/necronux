@@ -73,9 +73,7 @@ jobs {
     // which we want to avoid. By using !cancelled(), we ensure the job won't run
     // if the workflow is manually canceled.
     `if` = "${{ github.event_name == 'pull_request' && !cancelled() }}"
-    needs = (jobs["conclusion-push"].needs) {
-      "msrv"
-    }
+    needs = (jobs["conclusion-push"].needs) {}
     permissions {
       contents = "none"
     }
@@ -100,6 +98,7 @@ jobs {
       "lockfile"
       "rustfmt"
       "typos"
+      "msrv"
     }
     permissions = (jobs["conclusion-pr"].permissions) {}
     `runs-on` = "ubuntu-latest"
