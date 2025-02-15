@@ -5,23 +5,24 @@
 # ==-----------------------------------------------------------== #
 
 [package]
-name = "necronux_cli"
+name = "necronux_utils"
+description = "A collection of utils for necronux"
+version.workspace = true
 authors.workspace = true
 edition.workspace = true
-rust-version = "1.74.1"
-license.workspace = true
+rust-version.workspace = true
+documentation.workspace = true
+readme.workspace = true
+homepage.workspace = true
 repository.workspace = true
-version.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
-[[bin]]
-name = "necronux"
-path = "src/main.rs"
+[lints]
+workspace = true
 
 [dependencies]
-clap.workspace = true
-clap-verbosity-flag.workspace = true
 color-eyre.workspace = true
 flexi_logger.workspace = true
 log.workspace = true
-
-necronux_core = { path = "../necronux_core" }

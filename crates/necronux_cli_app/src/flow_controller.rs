@@ -12,7 +12,7 @@ use log::{debug, info};
 
 pub fn init_flow_controller() -> Result<()> {
     // Initializes the logger with default settings.
-    let (mut logger_builder, logger, max_log_level) = necronux_core::init_logger(None)
+    let (mut logger_builder, logger, max_log_level) = necronux_utils::logger::init_logger(None)
         .context("Failed to initialize the logger with default settings.")?;
     debug!(
         "For cli verbosity flags WARN is the reference log level. \
@@ -20,14 +20,16 @@ pub fn init_flow_controller() -> Result<()> {
     );
 
     // Initializes the error reporter.
-    necronux_core::init_error_reporter().context("Failed to initialize the error reporter.")?;
+    necronux_utils::error_reporter::init_error_reporter()
+        .context("Failed to initialize the error reporter.")?;
 
     // Initializes the cli parser.
     let cli = Cli::parse();
     debug!("Parsed CLI arguments: {:?}", cli);
 
     // Loads the necronux bundle file.
-    necronux_core::load_bundle_file().context("Failed to load the necronux bundle file.")?;
+    necronux_core::bundle::loader::load_bundle_file()
+        .context("Failed to load the necronux bundle file.")?;
 
     // Overrides the logger with merged log level setting from various sources.
     crate::logger::override_logger(&mut logger_builder, &logger, max_log_level, &cli)

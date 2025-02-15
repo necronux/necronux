@@ -4,4 +4,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-pub mod bundle;
+pub mod error_reporter;
+pub mod logger;

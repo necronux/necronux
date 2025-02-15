@@ -4,30 +4,67 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ==----------------------------------------------------------------== #
 
-[workspace]
-members = [
-    "crates/necronux_cli",
-    "crates/necronux_core",
-]
-resolver = "2"
-
-[workspace.package]
+[package]
+name = "necronux"
+version = "1.0.0-beta"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2021"
 rust-version = "1.74.1"
-license = "GPL-3.0-or-later"
+description = "A cross-platform robust meta-orchestrator for automation tools, scripts, and configurations through an extensible architecture."
+documentation = "https://necronux.nayanpatil.space/docs"
+readme = "README.md"
+homepage = "https://necronux.nayanpatil.space"
 repository = "https://github.com/NayanTheSpaceGuy/necronux"
-version = "1.0.0-beta"
+license = "GPL-3.0-or-later"
+keywords = ["necronux", "automation", "configurations", "infra", "homelab"]
+categories = ["command-line-utilities"]
+exclude = [
+  "crates/",
+  "stdlib/",
+  "tools/",
+  "gradlew",
+  "gradlew.bat",
+  "*.gradle.kts",
+]
+publish = false
+default-run = "necronux_cli"
 
-[workspace.dependencies]
-clap = { version = "4.5.23", features = ["derive", "cargo"] }
-clap-verbosity-flag = "3.0.2"
-color-eyre = { version = "0.6.3", default-features = false }
-config = "0.15.4"
-flexi_logger = "0.29.8"
-log = "0.4.22"
-rpkl = "0.3.5"
-serde = { version = "1.0", features = ["derive"] }
+[workspace]
+resolver = "2"
+members = [
+  "crates/*",
+]
+
+[workspace.package]
+version = "1.0.0-beta"
+authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
+edition = "2021"
+rust-version = "1.74.1"
+documentation = "https://necronux.nayanpatil.space/docs"
+readme = "README.md"
+homepage = "https://necronux.nayanpatil.space"
+repository = "https://github.com/NayanTheSpaceGuy/necronux"
+license = "GPL-3.0-or-later"
+keywords = ["necronux", "automation", "configurations", "infra", "homelab"]
+categories = ["command-line-utilities"]
+
+[lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+unused_must_use = "deny"
 
 [profile.dev.package.backtrace]
 # Optimizations for debug builds using color-eyre
@@ -39,3 +76,29 @@ lto = true
 codegen-units = 1
 strip = true
 incremental = false
+
+[dependencies]
+# necronux
+necronux_internal = { path = "crates/necronux_internal", version = "1.0.0-beta", default-features = false }
+# necronux (optional)
+color-eyre = { version = "0.6.3", default-features = false, optional = true }
+
+[workspace.dependencies]
+clap = { version = "4.5.23", features = ["derive", "cargo"] }
+clap-verbosity-flag = "3.0.2"
+color-eyre = { version = "0.6.3", default-features = false }
+config = "0.15.4"
+flexi_logger = "0.29.8"
+log = "0.4.22"
+rpkl = "0.3.5"
+serde = { version = "1.0", features = ["derive"] }
+
+[features]
+default = [
+  "necronux_cli_app",
+  "necronux_core",
+]
+
+necronux_cli_app = ["dep:color-eyre", "necronux_internal/necronux_cli_app"]
+
+necronux_core = ["necronux_internal/necronux_core"]

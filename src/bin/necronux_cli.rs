@@ -4,4 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-pub mod bundle;
+fn main() -> color_eyre::eyre::Result<()> {
+    necronux_internal::cli_app::init()?;
+    Ok(())
+}

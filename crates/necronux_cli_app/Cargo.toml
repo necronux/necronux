@@ -5,8 +5,7 @@
 # ==-----------------------------------------------------------== #
 
 [package]
-name = "necronux_core"
-description = "Provides core business logic for necronux."
+name = "necronux_cli_app"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -23,7 +22,11 @@ categories.workspace = true
 workspace = true
 
 [dependencies]
+clap.workspace = true
+clap-verbosity-flag.workspace = true
 color-eyre.workspace = true
+flexi_logger.workspace = true
 log.workspace = true
-rpkl.workspace = true
-serde.workspace = true
+
+necronux_core = { path = "../necronux_core" }
+necronux_utils = { path = "../necronux_utils" }
