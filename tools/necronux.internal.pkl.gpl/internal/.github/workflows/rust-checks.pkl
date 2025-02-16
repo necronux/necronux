@@ -177,6 +177,48 @@ jobs {
       }
     }
   }
+  ["check-version-bump"] {
+    name = "Check Version Bump"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    env {
+      ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
+      ["HEAD_SHA"] = "${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}"
+    }
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {
+        with {
+         ["fetch-depth"] = 0
+        }
+      }
+      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
+        with {
+          ["toolchain"] = "stable"
+          ["components"] = "cargo-semver-checks"
+        }
+      }
+      new {
+        name = "Run cargo semver-checks"
+        // Inputs:
+        // BASE_SHA    The commit SHA of the branch where the PR wants to merge into.
+        // HEAD_SHA    The commit SHA that triggered the workflow.
+        // When `BASE_SHA` is missing, we assume it is from GitHub merge queue merge commit,
+        // so hope `HEAD~` to find the previous commit on master branch.
+        run = """
+        set -euo pipefail
+
+        base_sha=$(git rev-parse "${BASE_SHA:-HEAD~1}")
+        head_sha=$(git rev-parse "${HEAD_SHA:-HEAD}")
+
+        echo "Base revision is $base_sha"
+        echo "Head revision is $head_sha"
+
+        cargo semver-checks --baseline-rev "$base_sha" --workspace
+        """
+        shell = "bash"
+      }
+    }
+  }
   ["msrv"] {
     name = "MSRV"
     `runs-on` = "ubuntu-latest"
