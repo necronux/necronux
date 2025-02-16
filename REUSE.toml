@@ -15,53 +15,44 @@
 version = 1
 
 [[annotations]]
-path = [
-    "tools/necronux.internal.pkl.gpl/PklProject.deps.json",
-]
+path = ["tools/necronux.internal.pkl.gpl/PklProject.deps.json"]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = [
-    "stdlib/PklProject.deps.json",
-    "tools/necronux.internal.pkl.apache/PklProject.deps.json",
+  "stdlib/PklProject.deps.json",
+  "tools/necronux.internal.pkl.apache/PklProject.deps.json",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
-path = [
-    "COPYRIGHT",
-    "THIRD-PARTY-NOTICES",
-]
+path = ["COPYRIGHT", "THIRD-PARTY-NOTICES"]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2025 Nayan Patil <nayantsg@proton.me>"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 
 [[annotations]]
-path = [
-    "Cargo.lock",
-]
+path = ["Cargo.lock"]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2024-2025 Nayan Patil <nayantsg@proton.me>"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = [
-    ".github/PULL_REQUEST_TEMPLATE.md",
-    ".github/ISSUE_TEMPLATE/bug_report.md",
-    ".github/ISSUE_TEMPLATE/feature_request.md",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+  ".github/ISSUE_TEMPLATE/bug_report.md",
+  ".github/ISSUE_TEMPLATE/feature_request.md",
 ]
 precedence = "override"
 SPDX-FileCopyrightText = "© 2024-2025 Nayan Patil <nayantsg@proton.me>"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 
 [[annotations]]
-path = [
-    "gradle/wrapper/gradle-wrapper.jar",
-]
+path = ["gradle/wrapper/gradle-wrapper.jar"]
 precedence = "override"
 SPDX-FileCopyrightText = "Copyright © 2015-2021 the original authors"
 SPDX-License-Identifier = "Apache-2.0"

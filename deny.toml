@@ -20,17 +20,9 @@ db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "warn"
 
 [licenses]
-allow = [
-    "GPL-3.0",
-    "Apache-2.0",
-    "MIT",
-]
+allow = ["GPL-3.0", "Apache-2.0", "MIT"]
 confidence-threshold = 0.8
-exceptions = [
-  { name = "unicode-ident", allow = [
-    "Unicode-3.0",
-  ] },
-]
+exceptions = [{ name = "unicode-ident", allow = ["Unicode-3.0"] }]
 
 
 [licenses.private]
