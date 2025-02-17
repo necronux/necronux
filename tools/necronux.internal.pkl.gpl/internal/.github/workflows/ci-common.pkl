@@ -69,7 +69,7 @@ jobs {
       (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
         with {
           ["toolchain"] = "stable"
-          ["component"] = "taplo-cli"
+          ["components"] = "taplo-cli"
         }
       }
       new {

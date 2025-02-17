@@ -67,7 +67,7 @@ jobs:
       uses: dtolnay/rust-toolchain@master
       with:
         toolchain: stable
-        component: taplo-cli
+        components: taplo-cli
     - name: Run Taplo
       shell: bash
       run: taplo fmt --check --diff
