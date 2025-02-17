@@ -8,6 +8,7 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "commons/commonJobs.pkl" as commonJobs
 import "commons/commonSteps.pkl" as commonSteps
 import "commons/commonStepsRust.pkl" as commonStepsRust
 
@@ -65,42 +66,17 @@ permissions {
 }
 
 jobs {
-  // Conclusion job for workflow triggered by a pull request.
-  ["conclusion-pr"] {
-    // To prevent this job from being skipped if its dependencies fail,
-    // we need to override the if: condition. A skipped job is treated as a success by GitHub,
-    // which we want to avoid. By using !cancelled(), we ensure the job won't run
-    // if the workflow is manually canceled.
-    `if` = "${{ github.event_name == 'pull_request' && !cancelled() }}"
+  ["conclusion-pr"] = (commonJobs.jobs["conclusion-pr"]) {
     needs = (jobs["conclusion-push"].needs) {}
-    permissions {
-      contents = "none"
-    }
-    `runs-on` = "ubuntu-latest"
-    steps {
-      new {
-        // Manually check the status of all dependencies. `if: failure()` does not work.
-        name = "Conclusion"
-        run = """
-        jq -C <<< '${{ toJson(needs) }}'
-        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
-        """
-        shell = "bash"
-      }
-    }
   }
-  // Conclusion job for workflow triggered by a push.
-  ["conclusion-push"] {
-    `if` = "${{ github.event_name == 'push' && !cancelled() }}"
+  ["conclusion-push"] = (commonJobs.jobs["conclusion-push"]) {
     needs {
+      "check-version-bump"
       "clippy"
       "lockfile"
-      "rustfmt"
       "msrv"
+      "rustfmt"
     }
-    permissions = (jobs["conclusion-pr"].permissions) {}
-    `runs-on` = "ubuntu-latest"
-    steps = (jobs["conclusion-pr"].steps) {}
   }
 
   ["rustfmt"] {
