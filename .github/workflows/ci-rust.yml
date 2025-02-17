@@ -52,6 +52,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' && !cancelled() }}
     needs:
     - check-version-bump
+    - check-compiles
     - clippy
     - lockfile
     - msrv
@@ -69,6 +70,7 @@ jobs:
     if: ${{ github.event_name == 'push' && !cancelled() }}
     needs:
     - check-version-bump
+    - check-compiles
     - clippy
     - lockfile
     - msrv
@@ -164,6 +166,25 @@ jobs:
         echo "Base revision is $base_sha"
         echo "Head revision is $head_sha"
         cargo semver-checks --baseline-rev "$base_sha" --workspace
+  check-compiles:
+    name: Check Compile
+    needs:
+    - rustfmt
+    - clippy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+    - name: Setup rust toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+    - name: Run cargo check
+      shell: bash
+      run: cargo check --workspace
   msrv:
     name: MSRV
     runs-on: ubuntu-latest
