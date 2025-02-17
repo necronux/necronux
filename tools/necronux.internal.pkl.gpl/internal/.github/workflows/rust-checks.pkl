@@ -191,11 +191,9 @@ jobs {
          ["fetch-depth"] = 0
         }
       }
-      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
-        with {
-          ["toolchain"] = "stable"
-          ["components"] = "cargo-semver-checks"
-        }
+      new {
+        name = "Install cargo-semver-checks"
+        uses = "taiki-e/install-action@cargo-semver-checks"
       }
       new {
         name = "Run cargo semver-checks"

@@ -162,22 +162,16 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: stable
-        components: cargo-semver-checks
+    - name: Install cargo-semver-checks
+      uses: taiki-e/install-action@cargo-semver-checks
     - name: Run cargo semver-checks
       shell: bash
       run: |-
         set -euo pipefail
-
         base_sha=$(git rev-parse "${BASE_SHA:-HEAD~1}")
         head_sha=$(git rev-parse "${HEAD_SHA:-HEAD}")
-
         echo "Base revision is $base_sha"
         echo "Head revision is $head_sha"
-
         cargo semver-checks --baseline-rev "$base_sha" --workspace
   msrv:
     name: MSRV
