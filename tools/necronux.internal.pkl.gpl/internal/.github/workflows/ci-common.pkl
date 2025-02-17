@@ -8,7 +8,9 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "commons/commonJobs.pkl" as commonJobs
 import "commons/commonSteps.pkl" as commonSteps
+import "commons/commonStepsRust.pkl" as commonStepsRust
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -26,7 +28,26 @@ on {
   workflow_dispatch {}
 }
 
+concurrency {
+  group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  `cancel-in-progress` = true
+}
+
+permissions {
+  contents = "read"
+}
+
 jobs {
+  ["conclusion-pr"] = (commonJobs.jobs["conclusion-pr"]) {
+    needs = (jobs["conclusion-push"].needs) {}
+  }
+  ["conclusion-push"] = (commonJobs.jobs["conclusion-push"]) {
+    needs {
+      "taplo"
+      "typos"
+    }
+  }
+
   ["typos"] {
     name = "Typos"
     `runs-on` = "ubuntu-latest"
@@ -36,6 +57,25 @@ jobs {
       new {
         name = "Check for typos"
         uses = "crate-ci/typos@v1.29.7"
+      }
+    }
+  }
+  ["taplo"] {
+    name = "Taplofmt"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
+        with {
+          ["toolchain"] = "stable"
+          ["component"] = "taplo-cli"
+        }
+      }
+      new {
+        name = "Run Taplo"
+        run = "taplo fmt --check --diff"
+        shell = "bash"
       }
     }
   }
