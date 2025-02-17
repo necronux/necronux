@@ -118,7 +118,6 @@ jobs {
           ["components"] = "rustfmt"
         }
       }
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
       new {
         name = "Run cargo fmt"
         run = "cargo fmt --all --check"
@@ -195,6 +194,7 @@ jobs {
         name = "Install cargo-semver-checks"
         uses = "taiki-e/install-action@cargo-semver-checks"
       }
+      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
       new {
         name = "Run cargo semver-checks"
         // Inputs:
@@ -224,6 +224,7 @@ jobs {
         name = "Install cargo hack"
         uses = "taiki-e/install-action@cargo-hack"
       }
+      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
       new {
         name = "Run cargo hack check"
         run = "cargo hack check --all-targets --rust-version --locked"
