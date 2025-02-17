@@ -63,7 +63,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: Install cargo hack
+    - name: Install taplo-cli
       uses: taiki-e/install-action@v2
       with:
         tool: taplo-cli
