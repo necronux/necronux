@@ -31,6 +31,7 @@ on {
       "Cargo.lock"
       "**/Cargo.toml"
       "**/Cargo.lock"
+      "deny.toml"
     }
   }
   push {

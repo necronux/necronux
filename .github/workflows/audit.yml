@@ -16,12 +16,14 @@ name: Security audit
     - Cargo.lock
     - '**/Cargo.toml'
     - '**/Cargo.lock'
+    - deny.toml
   push:
     paths:
     - Cargo.toml
     - Cargo.lock
     - '**/Cargo.toml'
     - '**/Cargo.lock'
+    - deny.toml
 permissions:
   contents: read
 jobs:
