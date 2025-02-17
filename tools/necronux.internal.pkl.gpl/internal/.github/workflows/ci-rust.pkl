@@ -8,7 +8,6 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "commons/commonJobs.pkl" as commonJobs
 import "commons/commonSteps.pkl" as commonSteps
 import "commons/commonStepsRust.pkl" as commonStepsRust
 
@@ -20,7 +19,7 @@ headercomment = """
 # ==----------------------------------------------------------------== #
 """
 
-name = "Rust Checks"
+name = "CI-Rust"
 
 on {
   pull_request {
@@ -97,7 +96,6 @@ jobs {
       "clippy"
       "lockfile"
       "rustfmt"
-      "typos"
       "msrv"
     }
     permissions = (jobs["conclusion-pr"].permissions) {}
@@ -105,7 +103,6 @@ jobs {
     steps = (jobs["conclusion-pr"].steps) {}
   }
 
-  ["typos"] = (commonJobs.jobs["typos"]) {}
   ["rustfmt"] {
     name = "Rustfmt"
     `runs-on` = "ubuntu-latest"

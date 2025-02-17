@@ -6,15 +6,23 @@
 
 @ModuleInfo { minPklVersion = "0.27.0" }
 
-amends "../../../../../commons/GitHubAction.pkl"
+amends "../../../../commons/GitHubAction.pkl"
 
-import "commonSteps.pkl" as commonSteps
+import "commons/commonSteps.pkl" as commonSteps
 
-// Placeholder name to satisfy type-checking
-name = "Common Jobs"
+headercomment = """
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+"""
 
-// Placeholder trigger to satisfy type-checking
+name = "CI-Common"
+
 on {
+  pull_request {}
+  push {}
   workflow_dispatch {}
 }
 
