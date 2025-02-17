@@ -67,7 +67,9 @@ jobs:
       uses: dtolnay/rust-toolchain@master
       with:
         toolchain: stable
-        components: taplo-cli
+    - name: Install taplo
+      shell: bash
+      run: cargo install taplo-cli --locked
     - name: Run Taplo
       shell: bash
       run: taplo fmt --check --diff
