@@ -68,7 +68,10 @@ jobs {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
       new {
         name = "Install cargo hack"
-        uses = "taiki-e/install-action@taplo-cli"
+        uses = "taiki-e/install-action@v2"
+        with {
+          ["tool"] = "taplo-cli"
+        }
       }
       new {
         name = "Run Taplo"

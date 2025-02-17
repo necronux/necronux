@@ -64,7 +64,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Install cargo hack
-      uses: taiki-e/install-action@taplo-cli
+      uses: taiki-e/install-action@v2
+      with:
+        tool: taplo-cli
     - name: Run Taplo
       shell: bash
       run: taplo fmt --check --diff
