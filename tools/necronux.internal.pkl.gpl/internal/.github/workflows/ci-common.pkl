@@ -66,15 +66,9 @@ jobs {
     `timeout-minutes` = 30
     steps {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
-        with {
-          ["toolchain"] = "stable"
-        }
-      }
       new {
-        name = "Install taplo"
-        run = "cargo install taplo-cli --locked"
-        shell = "bash"
+        name = "Install cargo hack"
+        uses = "taiki-e/install-action@taplo-cli"
       }
       new {
         name = "Run Taplo"

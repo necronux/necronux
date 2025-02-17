@@ -63,13 +63,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: stable
-    - name: Install taplo
-      shell: bash
-      run: cargo install taplo-cli --locked
+    - name: Install cargo hack
+      uses: taiki-e/install-action@taplo-cli
     - name: Run Taplo
       shell: bash
       run: taplo fmt --check --diff
