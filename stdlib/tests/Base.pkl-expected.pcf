@@ -1,0 +1,17 @@
+examples {
+  ["basic"] {
+    """
+    bundle {
+      name = "Test Bundle"
+      description = "A test bundle."
+      version = "0.1.0"
+      minNecronuxVersion = "0.2.0"
+      necronuxLogLevel = null
+      officialComponentsDisable = false
+      unofficialComponentsEnable = false
+    }
+    component {}
+    
+    """
+  }
+}
