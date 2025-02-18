@@ -320,6 +320,29 @@ jobs:
     - name: Run cargo test with all features in release mode
       shell: bash
       run: cargo test --all-targets --workspace --all-features --release
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTFLAGS: -C debuginfo=0 -D warnings
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+    - name: Setup rust toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+    - name: Run cargo doc
+      env:
+        RUSTDOCFLAGS: -D warnings
+      shell: bash
+      run: cargo doc --workspace --all-features --no-deps --document-private-items --keep-going
+    - name: Run cargo test with all features in debug mode
+      shell: bash
+      run: cargo test --doc --workspace --all-features
   msrv:
     name: MSRV
     runs-on: ubuntu-latest

@@ -356,6 +356,36 @@ jobs {
       }
     }
   }
+ ["docs"] {
+    name = "Docs"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    env {
+      ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
+    }
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
+      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
+        with {
+          ["toolchain"] = "stable"
+        }
+      }
+      new {
+        name = "Run cargo doc"
+        run = "cargo doc --workspace --all-features --no-deps --document-private-items --keep-going"
+        shell = "bash"
+        env {
+          ["RUSTDOCFLAGS"] = "-D warnings"
+        }
+      }
+      new {
+        name = "Run cargo test with all features in debug mode"
+        run = "cargo test --doc --workspace --all-features"
+        shell = "bash"
+      }
+    }
+  }
   ["msrv"] {
     name = "MSRV"
     `runs-on` = "ubuntu-latest"
