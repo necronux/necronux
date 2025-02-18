@@ -51,8 +51,8 @@ jobs:
   conclusion-pr:
     if: ${{ github.event_name == 'pull_request' && !cancelled() }}
     needs:
+    - test-full
     - check-version-bump
-    - check-compiles
     - clippy
     - lockfile
     - msrv
@@ -69,8 +69,8 @@ jobs:
   conclusion-push:
     if: ${{ github.event_name == 'push' && !cancelled() }}
     needs:
+    - test-minimal
     - check-version-bump
-    - check-compiles
     - clippy
     - lockfile
     - msrv
@@ -166,25 +166,160 @@ jobs:
         echo "Base revision is $base_sha"
         echo "Head revision is $head_sha"
         cargo semver-checks --baseline-rev "$base_sha" --workspace
-  check-compiles:
-    name: Check Compile
-    needs:
-    - rustfmt
-    - clippy
-    runs-on: ubuntu-latest
+  test-minimal:
+    name: Minimal Tests (${{ matrix.name }})
+    if: ${{ github.event_name == 'push' && !cancelled() }}
+    strategy:
+      matrix:
+        include:
+        - name: Linux x86_64 stable
+          os: ubuntu-latest
+          rust: stable
+          other: i686-unknown-linux-gnu
+        - name: Linux x86_64 beta
+          os: ubuntu-latest
+          rust: beta
+          other: i686-unknown-linux-gnu
+        - name: Linux x86_64 nightly
+          os: ubuntu-latest
+          rust: nightly
+          other: i686-unknown-linux-gnu
+        - name: Linux aarch64 stable
+          os: ubuntu-24.04-arm
+          rust: stable
+        - name: Linux aarch64 nightly
+          os: ubuntu-24.04-arm
+          rust: nightly
+        - name: Windows x86_64 MSVC stable
+          os: windows-latest
+          rust: stable-msvc
+          other: i686-pc-windows-msvc
+        - name: Windows x86_64 gnu nightly
+          os: windows-latest
+          rust: nightly-gnu
+          other: i686-pc-windows-gnu
+        - name: macOS aarch64 stable
+          os: macos-latest
+          rust: stable
+          other: x86_64-apple-darwin
+        - name: macOS aarch64 nightly
+          os: macos-latest
+          rust: nightly
+          other: x86_64-apple-darwin
+        - name: macOS x86_64 nightly
+          os: macos-13
+          rust: nightly
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 30
+    env:
+      CARGO_PROFILE_DEV_DEBUG: 1
+      CARGO_PROFILE_TEST_DEBUG: 1
+      RUSTUP_WINDOWS_PATH_ADD_BIN: 0
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
-    - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: stable
-    - name: Run cargo check
+    - name: Setup rustup stable
       shell: bash
-      run: cargo check --workspace
+      run: rustup update --no-self-update stable
+    - name: Update rustup and set default version
+      shell: bash
+      run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+    - name: Add rustup targets
+      shell: bash
+      run: rustup target add ${{ matrix.other }}
+    - name: Configure extra test environment
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Run cargo test with default features in debug mode
+      shell: bash
+      run: cargo test --lib --bins --workspace
+    - name: Run cargo test with all features in debug mode
+      shell: bash
+      run: cargo test --lib --bins --workspace --all-features
+  test-full:
+    name: Full Tests (${{ matrix.name }})
+    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+    strategy:
+      matrix:
+        include:
+        - name: Linux x86_64 stable
+          os: ubuntu-latest
+          rust: stable
+          other: i686-unknown-linux-gnu
+        - name: Linux x86_64 beta
+          os: ubuntu-latest
+          rust: beta
+          other: i686-unknown-linux-gnu
+        - name: Linux x86_64 nightly
+          os: ubuntu-latest
+          rust: nightly
+          other: i686-unknown-linux-gnu
+        - name: Linux aarch64 stable
+          os: ubuntu-24.04-arm
+          rust: stable
+        - name: Linux aarch64 nightly
+          os: ubuntu-24.04-arm
+          rust: nightly
+        - name: Windows x86_64 MSVC stable
+          os: windows-latest
+          rust: stable-msvc
+          other: i686-pc-windows-msvc
+        - name: Windows x86_64 gnu nightly
+          os: windows-latest
+          rust: nightly-gnu
+          other: i686-pc-windows-gnu
+        - name: macOS aarch64 stable
+          os: macos-latest
+          rust: stable
+          other: x86_64-apple-darwin
+        - name: macOS aarch64 nightly
+          os: macos-latest
+          rust: nightly
+          other: x86_64-apple-darwin
+        - name: macOS x86_64 nightly
+          os: macos-13
+          rust: nightly
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      CARGO_PROFILE_DEV_DEBUG: 1
+      CARGO_PROFILE_TEST_DEBUG: 1
+      RUSTUP_WINDOWS_PATH_ADD_BIN: 0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+    - name: Setup rustup stable
+      shell: bash
+      run: rustup update --no-self-update stable
+    - name: Update rustup and set default version
+      shell: bash
+      run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+    - name: Add rustup targets
+      shell: bash
+      run: rustup target add ${{ matrix.other }}
+    - name: Configure extra test environment
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Run cargo test with default features in debug mode
+      shell: bash
+      run: cargo test --all-targets --workspace
+    - name: Run cargo test with all features in debug mode
+      shell: bash
+      run: cargo test --all-targets --workspace --all-features
+    - name: Run cargo test with default features in release mode
+      shell: bash
+      run: cargo test --all-targets --workspace --release
+    - name: Run cargo test with all features in release mode
+      shell: bash
+      run: cargo test --all-targets --workspace --all-features --release
   msrv:
     name: MSRV
     runs-on: ubuntu-latest
