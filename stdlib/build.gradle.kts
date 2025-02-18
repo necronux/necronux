@@ -10,22 +10,30 @@ plugins {
 
 pkl {
   evaluators {
-    register("evalStdlib") {
+    register("evalStdlibPkl") {
       projectDir.set(file("."))
-      sourceModules.set(fileTree(projectDir) { include("**/*.pkl") })
+      sourceModules.set(fileTree(projectDir) { include("*.pkl") })
       outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
+    }
+  }
+
+  tests {
+    register("testStdlibPkl") {
+      projectDir.set(file("."))
+      sourceModules.set(fileTree(projectDir) { include("tests/*.pkl") })
+      overwrite.set(false)
     }
   }
 
   project {
     resolvers {
-      register("resolveStdlibDeps") {
+      register("resolveStdlibPklDeps") {
         projectDirectories.from(file("."))
       }
     }
 
     packagers {
-      register("makeStdlibPackage") {
+      register("makeStdlibPklPkg") {
         projectDirectories.from(file("."))
       }
     }

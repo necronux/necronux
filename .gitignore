@@ -13,4 +13,5 @@
 
 # Pkl
 /stdlib/build/
+/stdlib/.out/
 /tools/*/build/
