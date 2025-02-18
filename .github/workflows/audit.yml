@@ -24,6 +24,7 @@ name: Security audit
     - '**/Cargo.toml'
     - '**/Cargo.lock'
     - deny.toml
+  workflow_dispatch: {}
 permissions:
   contents: read
 jobs:
