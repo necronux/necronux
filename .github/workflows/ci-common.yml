@@ -19,22 +19,8 @@ concurrency:
 permissions:
   contents: read
 jobs:
-  conclusion-pr:
-    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
-    needs:
-    - taplo
-    - typos
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    steps:
-    - name: Conclusion
-      shell: bash
-      run: |-
-        jq -C <<< '${{ toJson(needs) }}'
-        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
-  conclusion-push:
-    if: ${{ github.event_name == 'push' && !cancelled() }}
+  conclusion:
+    if: ${{ !cancelled() }}
     needs:
     - taplo
     - typos

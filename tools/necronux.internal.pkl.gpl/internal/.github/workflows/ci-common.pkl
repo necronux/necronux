@@ -38,10 +38,8 @@ permissions {
 }
 
 jobs {
-  ["conclusion-pr"] = (commonJobs.jobs["conclusion-pr"]) {
-    needs = (jobs["conclusion-push"].needs) {}
-  }
-  ["conclusion-push"] = (commonJobs.jobs["conclusion-push"]) {
+  ["conclusion"] = (commonJobs.jobs["conclusion-push"]) {
+    `if` = "${{ !cancelled() }}"
     needs {
       "taplo"
       "typos"
