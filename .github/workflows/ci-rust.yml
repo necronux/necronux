@@ -54,6 +54,7 @@ jobs:
     - test-full
     - check-version-bump
     - clippy
+    - docs
     - lockfile
     - msrv
     - rustfmt
@@ -72,6 +73,7 @@ jobs:
     - test-minimal
     - check-version-bump
     - clippy
+    - docs
     - lockfile
     - msrv
     - rustfmt
@@ -325,7 +327,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
+      CARGO_INCREMENTAL: 0
+      CARGO_NET_RETRY: 10
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: 1
       RUSTFLAGS: -C debuginfo=0 -D warnings
+      RUSTUP_MAX_RETRIES: 10
+      CARGO_HACK_DENY_WARNINGS: 1
     steps:
     - name: Checkout code
       uses: actions/checkout@v4

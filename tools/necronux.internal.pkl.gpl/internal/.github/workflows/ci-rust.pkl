@@ -76,6 +76,7 @@ jobs {
       "test-minimal"
       "check-version-bump"
       "clippy"
+      "docs"
       "lockfile"
       "msrv"
       "rustfmt"
@@ -360,7 +361,7 @@ jobs {
     name = "Docs"
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
-    env {
+    env = (module.env) {
       ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
     }
     steps {
