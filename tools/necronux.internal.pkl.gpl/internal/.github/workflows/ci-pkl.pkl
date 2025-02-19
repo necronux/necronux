@@ -61,14 +61,16 @@ jobs {
   ["conclusion"] = (commonJobs.jobs["conclusion-push"]) {
     `if` = "${{ !cancelled() }}"
     needs {
-      "resolvecheck"
-      "evalcheck"
-      "test"
+      "resolve-stdlib"
+      "resolve-internal"
+      "eval-stdlib"
+      "eval-internal"
+      "test-stdlib"
     }
   }
 
-  ["resolvecheck"] {
-    name = "Resolve Check"
+  ["resolve-stdlib"] {
+    name = "Resolve Stdlib Project"
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
     steps {
@@ -80,6 +82,16 @@ jobs {
         run = "just resolve-stdlibpkl"
         shell = "bash"
       }
+    }
+  }
+  ["resolve-internal"] {
+    name = "Resolve Internal Projects"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
+      (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = "Check if necronux internal pkl projects can be resolved"
         run = "just resolve-internalpkl"
@@ -87,8 +99,8 @@ jobs {
       }
     }
   }
-  ["evalcheck"] {
-    name = "Eval Check"
+  ["eval-stdlib"] {
+    name = "Eval Stdlib"
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
     steps {
@@ -100,6 +112,16 @@ jobs {
         run = "just eval-stdlibpkl"
         shell = "bash"
       }
+    }
+  }
+  ["eval-internal"] {
+    name = "Eval Internal"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
+      (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = "Check if necronux internal pkl modules can be evaluated"
         run = "just eval-internalpkl"
@@ -112,8 +134,8 @@ jobs {
       }
     }
   }
-  ["test"] {
-    name = "Tests"
+  ["test-stdlib"] {
+    name = "Test Stdlib"
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
     steps {
