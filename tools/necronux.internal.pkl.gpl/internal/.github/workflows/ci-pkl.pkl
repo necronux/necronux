@@ -73,10 +73,8 @@ jobs {
     `timeout-minutes` = 30
     steps {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      new {
-        name = "Install just"
-        uses = "taiki-e/install-action@just"
-      }
+      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
+      (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = "Check if necronux stdlib pkl project can be resolved"
         run = "just resolve-stdlibpkl"
@@ -95,10 +93,8 @@ jobs {
     `timeout-minutes` = 30
     steps {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      new {
-        name = "Install just"
-        uses = "taiki-e/install-action@just"
-      }
+      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
+      (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = "Check if necronux stdlib pkl modules can be evaluated"
         run = "just eval-stdlibpkl"
@@ -122,10 +118,8 @@ jobs {
     `timeout-minutes` = 30
     steps {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      new {
-        name = "Install just"
-        uses = "taiki-e/install-action@just"
-      }
+      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
+      (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = "Test necronux stdlib pkl modules"
         run = "just test-stdlibpkl"
