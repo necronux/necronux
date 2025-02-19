@@ -62,8 +62,7 @@ jobs {
     `if` = "${{ !cancelled() }}"
     needs {
       "stdlib"
-      "resolve-internal"
-      "eval-internal"
+      "internal"
     }
   }
 
@@ -92,8 +91,8 @@ jobs {
       }
     }
   }
-  ["resolve-internal"] {
-    name = "Resolve Internal Projects"
+  ["internal"] {
+    name = "Resolve & Eval Internal Projects"
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
     steps {
@@ -105,16 +104,6 @@ jobs {
         run = "just resolve-internalpkl"
         shell = "bash"
       }
-    }
-  }
-  ["eval-internal"] {
-    name = "Eval Internal"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
-    steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
-      (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = "Ensure necronux internal pkl modules can be evaluated"
         run = "just eval-internalpkl"
