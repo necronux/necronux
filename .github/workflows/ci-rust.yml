@@ -33,7 +33,16 @@ name: CI-Rust
     - Cargo.toml
     - Cargo.lock
     - deny.toml
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      trigger_event:
+        description: Specify which event to simulate
+        required: true
+        default: push
+        type: choice
+        options:
+        - pull_request
+        - push
 env:
   CARGO_INCREMENTAL: 0
   CARGO_NET_RETRY: 10
@@ -49,7 +58,7 @@ permissions:
   contents: read
 jobs:
   conclusion-pr:
-    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+    if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
     needs:
     - test-full
     - check-version-bump
@@ -68,7 +77,7 @@ jobs:
         jq -C <<< '${{ toJson(needs) }}'
         jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
   conclusion-push:
-    if: ${{ github.event_name == 'push' && !cancelled() }}
+    if: ${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}
     needs:
     - test-minimal
     - check-version-bump

@@ -8,6 +8,7 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "commons/commonTriggers.pkl" as commonTriggers
 import "commons/commonJobs.pkl" as commonJobs
 import "commons/commonSteps.pkl" as commonSteps
 import "commons/commonStepsRust.pkl" as commonStepsRust
@@ -43,7 +44,7 @@ on {
   push {
     paths = (on.pull_request.paths) {}
   }
-  workflow_dispatch {}
+  workflow_dispatch = (commonTriggers.on.workflow_dispatch) {}
 }
 
 env {

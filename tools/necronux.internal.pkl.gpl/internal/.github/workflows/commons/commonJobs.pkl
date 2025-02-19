@@ -25,7 +25,7 @@ jobs {
     // we need to override the if: condition. A skipped job is treated as a success by GitHub,
     // which we want to avoid. By using !cancelled(), we ensure the job won't run
     // if the workflow is manually canceled.
-    `if` = "${{ github.event_name == 'pull_request' && !cancelled() }}"
+    `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
     needs = (jobs["conclusion-push"].needs) {}
     permissions {
       contents = "none"
@@ -45,7 +45,7 @@ jobs {
   }
   // Conclusion job for workflow triggered by a push.
   ["conclusion-push"] {
-    `if` = "${{ github.event_name == 'push' && !cancelled() }}"
+    `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
     needs {}
     permissions = (jobs["conclusion-pr"].permissions) {}
     `runs-on` = "ubuntu-latest"
