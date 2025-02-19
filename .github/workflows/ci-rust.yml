@@ -37,7 +37,7 @@ name: CI-Rust
     inputs:
       trigger_event:
         description: Specify which event to simulate
-        required: true
+        required: false
         default: push
         type: choice
         options:
@@ -179,7 +179,7 @@ jobs:
         cargo semver-checks --baseline-rev "$base_sha" --workspace
   test-minimal:
     name: Minimal Tests (${{ matrix.name }})
-    if: ${{ github.event_name == 'push' && !cancelled() }}
+    if: ${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}
     strategy:
       matrix:
         include:
@@ -253,7 +253,7 @@ jobs:
       run: cargo test --lib --bins --workspace --all-features
   test-full:
     name: Full Tests (${{ matrix.name }})
-    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+    if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
     strategy:
       matrix:
         include:

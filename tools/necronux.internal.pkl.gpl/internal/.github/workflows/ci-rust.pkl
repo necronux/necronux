@@ -194,7 +194,7 @@ jobs {
   }
   ["test-minimal"] {
     name = "Minimal Tests (${{ matrix.name }})"
-    `if` = "${{ github.event_name == 'push' && !cancelled() }}"
+    `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
     strategy = (jobs["test-full"].strategy) {}
     `runs-on` = "${{ matrix.os }}"
     `timeout-minutes` = 30
@@ -238,7 +238,7 @@ jobs {
   }
   ["test-full"] {
     name = "Full Tests (${{ matrix.name }})"
-    `if` = "${{ github.event_name == 'pull_request' && !cancelled() }}"
+    `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
     strategy {
       `fail-fast` = false
       matrix {
