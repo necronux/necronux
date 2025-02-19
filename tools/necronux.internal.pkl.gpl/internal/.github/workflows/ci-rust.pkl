@@ -203,7 +203,7 @@ jobs {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
       (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {
         with {
-          ["key"] = "${{ matrix.rust }}-${{ matrix.name }}"
+          ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
         }
       }
       new {
@@ -320,7 +320,7 @@ jobs {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
       (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {
         with {
-          ["key"] = "${{ matrix.rust }}-${{ matrix.name }}"
+          ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
         }
       }
       new {

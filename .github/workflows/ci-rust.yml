@@ -233,7 +233,7 @@ jobs:
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
-        key: ${{ matrix.rust }}-${{ matrix.name }}
+        key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
     - name: Setup rustup stable
       shell: bash
       run: rustup update --no-self-update stable
@@ -310,7 +310,7 @@ jobs:
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
-        key: ${{ matrix.rust }}-${{ matrix.name }}
+        key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
     - name: Setup rustup stable
       shell: bash
       run: rustup update --no-self-update stable
