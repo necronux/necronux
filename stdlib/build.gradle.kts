@@ -27,7 +27,7 @@ pkl {
 
   project {
     resolvers {
-      register("resolveStdlibPklDeps") {
+      register("resolveStdlibPkl") {
         projectDirectories.from(file("."))
       }
     }

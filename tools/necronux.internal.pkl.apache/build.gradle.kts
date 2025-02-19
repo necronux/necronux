@@ -20,7 +20,7 @@ pkl {
 
   project {
     resolvers {
-      register("resolveInternalPklApacheDeps") {
+      register("resolveInternalPklApache") {
         projectDirectories.from(file("."))
       }
     }

@@ -28,7 +28,7 @@ pkl {
 
   project {
     resolvers {
-      register("resolveInternalPklGPLDeps") {
+      register("resolveInternalPklGPL") {
         projectDirectories.from(file("."))
       }
     }

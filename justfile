@@ -23,20 +23,19 @@ sbom:
     reuse spdx -o docs/reuse.spdx
 
 runpkl:
-    # internal tools
-    just resolve-internalpkldeps
+    just resolve-internalpkl
+    just resolve-stdlibpkl
     just eval-internalpkl
-    # stdlib
-    just resolve-stdlibpkldeps
     just eval-stdlibpkl
     just test-stdlibpkl
 
 # Following subcommands are used in ci
 
 # internal tools
-resolve-internalpkldeps:
-    ./gradlew resolveInternalPklApacheDeps
-    ./gradlew resolveInternalPklGPLDeps
+
+resolve-internalpkl:
+    ./gradlew resolveInternalPklApache
+    ./gradlew resolveInternalPklGPL
 
 eval-internalpkl:
     ./gradlew evalWorkflowsCommonsGPL
@@ -44,8 +43,9 @@ eval-internalpkl:
     ./gradlew evalWorkflowsApache
 
 # stdlib
-resolve-stdlibpkldeps:
-    ./gradlew resolveStdlibPklDeps
+
+resolve-stdlibpkl:
+    ./gradlew resolveStdlibPkl
 
 eval-stdlibpkl:
     ./gradlew evalStdlibPkl
