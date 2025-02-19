@@ -61,16 +61,14 @@ jobs {
   ["conclusion"] = (commonJobs.jobs["conclusion-push"]) {
     `if` = "${{ !cancelled() }}"
     needs {
-      "resolve-stdlib"
+      "stdlib"
       "resolve-internal"
-      "eval-stdlib"
       "eval-internal"
-      "test-stdlib"
     }
   }
 
-  ["resolve-stdlib"] {
-    name = "Resolve Stdlib Project"
+  ["stdlib"] {
+    name = "Resolve, Eval & Test Stdlib"
     `runs-on` = "ubuntu-latest"
     `timeout-minutes` = 30
     steps {
@@ -78,8 +76,18 @@ jobs {
       (commonSteps.jobs["setupGradleStep"].steps[0]) {}
       (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
-        name = "Check if necronux stdlib pkl project can be resolved"
+        name = "Ensure necronux stdlib pkl project can be resolved"
         run = "just resolve-stdlibpkl"
+        shell = "bash"
+      }
+      new {
+        name = "Ensure necronux stdlib pkl modules can be evaluated"
+        run = "just eval-stdlibpkl"
+        shell = "bash"
+      }
+      new {
+        name = "Test necronux stdlib pkl modules"
+        run = "just test-stdlibpkl"
         shell = "bash"
       }
     }
@@ -93,23 +101,8 @@ jobs {
       (commonSteps.jobs["setupGradleStep"].steps[0]) {}
       (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
-        name = "Check if necronux internal pkl projects can be resolved"
+        name = "Ensure necronux internal pkl projects can be resolved"
         run = "just resolve-internalpkl"
-        shell = "bash"
-      }
-    }
-  }
-  ["eval-stdlib"] {
-    name = "Eval Stdlib"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
-    steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
-      (commonSteps.jobs["installJustStep"].steps[0]) {}
-      new {
-        name = "Check if necronux stdlib pkl modules can be evaluated"
-        run = "just eval-stdlibpkl"
         shell = "bash"
       }
     }
@@ -123,28 +116,13 @@ jobs {
       (commonSteps.jobs["setupGradleStep"].steps[0]) {}
       (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
-        name = "Check if necronux internal pkl modules can be evaluated"
+        name = "Ensure necronux internal pkl modules can be evaluated"
         run = "just eval-internalpkl"
         shell = "bash"
       }
       new {
         name = "Verify necronux internal pkl modules evaluation reflects the latest changes"
         run = "git diff --exit-code"
-        shell = "bash"
-      }
-    }
-  }
-  ["test-stdlib"] {
-    name = "Test Stdlib"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
-    steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonSteps.jobs["setupGradleStep"].steps[0]) {}
-      (commonSteps.jobs["installJustStep"].steps[0]) {}
-      new {
-        name = "Test necronux stdlib pkl modules"
-        run = "just test-stdlibpkl"
         shell = "bash"
       }
     }

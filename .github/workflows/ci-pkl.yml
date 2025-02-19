@@ -49,11 +49,9 @@ jobs:
   conclusion:
     if: ${{ !cancelled() }}
     needs:
-    - resolve-stdlib
+    - stdlib
     - resolve-internal
-    - eval-stdlib
     - eval-internal
-    - test-stdlib
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -63,8 +61,8 @@ jobs:
       run: |-
         jq -C <<< '${{ toJson(needs) }}'
         jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
-  resolve-stdlib:
-    name: Resolve Stdlib Project
+  stdlib:
+    name: Resolve, Eval & Test Stdlib
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -78,9 +76,15 @@ jobs:
         dependency-graph: generate-and-submit
     - name: Install just
       uses: taiki-e/install-action@just
-    - name: Check if necronux stdlib pkl project can be resolved
+    - name: Ensure necronux stdlib pkl project can be resolved
       shell: bash
       run: just resolve-stdlibpkl
+    - name: Ensure necronux stdlib pkl modules can be evaluated
+      shell: bash
+      run: just eval-stdlibpkl
+    - name: Test necronux stdlib pkl modules
+      shell: bash
+      run: just test-stdlibpkl
   resolve-internal:
     name: Resolve Internal Projects
     runs-on: ubuntu-latest
@@ -96,27 +100,9 @@ jobs:
         dependency-graph: generate-and-submit
     - name: Install just
       uses: taiki-e/install-action@just
-    - name: Check if necronux internal pkl projects can be resolved
+    - name: Ensure necronux internal pkl projects can be resolved
       shell: bash
       run: just resolve-internalpkl
-  eval-stdlib:
-    name: Eval Stdlib
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        cache-read-only: false
-        cache-overwrite-existing: true
-        dependency-graph: generate-and-submit
-    - name: Install just
-      uses: taiki-e/install-action@just
-    - name: Check if necronux stdlib pkl modules can be evaluated
-      shell: bash
-      run: just eval-stdlibpkl
   eval-internal:
     name: Eval Internal
     runs-on: ubuntu-latest
@@ -132,27 +118,9 @@ jobs:
         dependency-graph: generate-and-submit
     - name: Install just
       uses: taiki-e/install-action@just
-    - name: Check if necronux internal pkl modules can be evaluated
+    - name: Ensure necronux internal pkl modules can be evaluated
       shell: bash
       run: just eval-internalpkl
     - name: Verify necronux internal pkl modules evaluation reflects the latest changes
       shell: bash
       run: git diff --exit-code
-  test-stdlib:
-    name: Test Stdlib
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        cache-read-only: false
-        cache-overwrite-existing: true
-        dependency-graph: generate-and-submit
-    - name: Install just
-      uses: taiki-e/install-action@just
-    - name: Test necronux stdlib pkl modules
-      shell: bash
-      run: just test-stdlibpkl
