@@ -1,0 +1,136 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+
+amends "../../../../commons/GitHubAction.pkl"
+
+import "commons/commonJobs.pkl" as commonJobs
+import "commons/commonSteps.pkl" as commonSteps
+
+headercomment = """
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+"""
+
+name = "CI-Pkl"
+
+on {
+  pull_request {
+    branches {
+      "develop"
+      "stable"
+      "release"
+      "hotfix"
+    }
+    paths {
+      "*.pkl"
+      "**/*.pkl"
+      "stdlib/**"
+      "tools/**"
+      "*.kts"
+      "**/*.kts"
+      "gradle/**"
+      "gradlew"
+      "gradlew.bat"
+      "justfile"
+    }
+  }
+  push {
+    paths = (on.pull_request.paths) {}
+  }
+  workflow_dispatch {}
+}
+
+concurrency {
+  group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  `cancel-in-progress` = true
+}
+
+permissions {
+  contents = "read"
+}
+
+jobs {
+  ["conclusion"] = (commonJobs.jobs["conclusion-push"]) {
+    `if` = "${{ !cancelled() }}"
+    needs {
+      "resolvecheck"
+      "evalcheck"
+      "test"
+    }
+  }
+
+  ["resolvecheck"] {
+    name = "Resolve Check"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      new {
+        name = "Install just"
+        uses = "taiki-e/install-action@just"
+      }
+      new {
+        name = "Check if necronux stdlib pkl project can be resolved"
+        run = "just resolve-stdlibpkl"
+        shell = "bash"
+      }
+      new {
+        name = "Check if necronux internal pkl projects can be resolved"
+        run = "just resolve-internalpkl"
+        shell = "bash"
+      }
+    }
+  }
+  ["evalcheck"] {
+    name = "Eval Check"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      new {
+        name = "Install just"
+        uses = "taiki-e/install-action@just"
+      }
+      new {
+        name = "Check if necronux stdlib pkl modules can be evaluated"
+        run = "just eval-stdlibpkl"
+        shell = "bash"
+      }
+      new {
+        name = "Check if necronux internal pkl modules can be evaluated"
+        run = "just eval-internalpkl"
+        shell = "bash"
+      }
+      new {
+        name = "Verify necronux internal pkl modules evaluation reflects the latest changes"
+        run = "git diff --exit-code"
+        shell = "bash"
+      }
+    }
+  }
+  ["test"] {
+    name = "Tests"
+    `runs-on` = "ubuntu-latest"
+    `timeout-minutes` = 30
+    steps {
+      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      new {
+        name = "Install just"
+        uses = "taiki-e/install-action@just"
+      }
+      new {
+        name = "Test necronux stdlib pkl modules"
+        run = "just test-stdlibpkl"
+        shell = "bash"
+      }
+    }
+  }
+}

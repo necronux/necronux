@@ -1,0 +1,108 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using the necronux internal pkl package.
+# Any changes should be made to the template, not this file.
+
+name: CI-Pkl
+'on':
+  pull_request:
+    branches:
+    - develop
+    - stable
+    - release
+    - hotfix
+    paths:
+    - '*.pkl'
+    - '**/*.pkl'
+    - stdlib/**
+    - tools/**
+    - '*.kts'
+    - '**/*.kts'
+    - gradle/**
+    - gradlew
+    - gradlew.bat
+    - justfile
+  push:
+    paths:
+    - '*.pkl'
+    - '**/*.pkl'
+    - stdlib/**
+    - tools/**
+    - '*.kts'
+    - '**/*.kts'
+    - gradle/**
+    - gradlew
+    - gradlew.bat
+    - justfile
+  workflow_dispatch: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  conclusion:
+    if: ${{ !cancelled() }}
+    needs:
+    - resolvecheck
+    - evalcheck
+    - test
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    steps:
+    - name: Conclusion
+      shell: bash
+      run: |-
+        jq -C <<< '${{ toJson(needs) }}'
+        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+  resolvecheck:
+    name: Resolve Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install just
+      uses: taiki-e/install-action@just
+    - name: Check if necronux stdlib pkl project can be resolved
+      shell: bash
+      run: just resolve-stdlibpkl
+    - name: Check if necronux internal pkl projects can be resolved
+      shell: bash
+      run: just resolve-internalpkl
+  evalcheck:
+    name: Eval Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install just
+      uses: taiki-e/install-action@just
+    - name: Check if necronux stdlib pkl modules can be evaluated
+      shell: bash
+      run: just eval-stdlibpkl
+    - name: Check if necronux internal pkl modules can be evaluated
+      shell: bash
+      run: just eval-internalpkl
+    - name: Verify necronux internal pkl modules evaluation reflects the latest changes
+      shell: bash
+      run: git diff --exit-code
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Install just
+      uses: taiki-e/install-action@just
+    - name: Test necronux stdlib pkl modules
+      shell: bash
+      run: just test-stdlibpkl
