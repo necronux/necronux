@@ -44,7 +44,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 permissions:
-  contents: read
+  contents: write
 jobs:
   conclusion:
     if: ${{ !cancelled() }}
@@ -73,6 +73,7 @@ jobs:
       with:
         cache-read-only: false
         cache-overwrite-existing: true
+        dependency-graph: generate-and-submit
     - name: Install just
       uses: taiki-e/install-action@just
     - name: Check if necronux stdlib pkl project can be resolved
@@ -93,6 +94,7 @@ jobs:
       with:
         cache-read-only: false
         cache-overwrite-existing: true
+        dependency-graph: generate-and-submit
     - name: Install just
       uses: taiki-e/install-action@just
     - name: Check if necronux stdlib pkl modules can be evaluated
@@ -116,6 +118,7 @@ jobs:
       with:
         cache-read-only: false
         cache-overwrite-existing: true
+        dependency-graph: generate-and-submit
     - name: Install just
       uses: taiki-e/install-action@just
     - name: Test necronux stdlib pkl modules

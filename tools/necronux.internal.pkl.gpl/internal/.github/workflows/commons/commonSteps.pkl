@@ -47,6 +47,7 @@ jobs {
         with {
           ["cache-read-only"] = false
           ["cache-overwrite-existing"] = true
+          ["dependency-graph"] = "generate-and-submit"
         }
       }
     }
