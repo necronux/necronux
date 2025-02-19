@@ -232,6 +232,8 @@ jobs:
       uses: actions/checkout@v4
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
+      with:
+        key: ${{ matrix.rust }}-${{ matrix.name }}
     - name: Setup rustup stable
       shell: bash
       run: rustup update --no-self-update stable
@@ -239,6 +241,7 @@ jobs:
       shell: bash
       run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
     - name: Add rustup targets
+      if: ${{ matrix.other != null }}
       shell: bash
       run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
@@ -306,6 +309,8 @@ jobs:
       uses: actions/checkout@v4
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
+      with:
+        key: ${{ matrix.rust }}-${{ matrix.name }}
     - name: Setup rustup stable
       shell: bash
       run: rustup update --no-self-update stable
@@ -313,6 +318,7 @@ jobs:
       shell: bash
       run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
     - name: Add rustup targets
+      if: ${{ matrix.other != null }}
       shell: bash
       run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
