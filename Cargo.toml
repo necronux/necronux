@@ -26,7 +26,7 @@ exclude = [
   "gradlew.bat",
   "*.gradle.kts",
 ]
-publish = false
+publish = true
 default-run = "necronux_cli"
 
 [workspace]
@@ -45,6 +45,7 @@ repository = "https://github.com/NayanTheSpaceGuy/necronux"
 license = "GPL-3.0-or-later"
 keywords = ["necronux", "automation", "configurations", "infra", "homelab"]
 categories = ["command-line-utilities"]
+publish = true
 
 [lints.rust]
 unsafe_code = "deny"

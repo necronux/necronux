@@ -18,6 +18,7 @@ repository.workspace = true
 license.workspace = true
 keywords.workspace = true
 categories.workspace = true
+publish.workspace = true
 
 [lints]
 workspace = true
@@ -29,5 +30,5 @@ color-eyre.workspace = true
 flexi_logger.workspace = true
 log.workspace = true
 
-necronux_core = { path = "../necronux_core" }
-necronux_utils = { path = "../necronux_utils" }
+necronux_core = { path = "../necronux_core", version = "1.0.0-beta" }
+necronux_utils = { path = "../necronux_utils", version = "1.0.0-beta" }
