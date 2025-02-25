@@ -12,13 +12,9 @@
 - [Overview](#overview)
 - [Key Rules](#key-rules)
 - [Branching Strategy](#branching-strategy)
-- [Release Changes Syncing](#release-changes-syncing)
-- [Semantic Versioning (SemVer)](#semantic-versioning-semver)
-- [Version Handling](#version-handling)
+- [Syncing Release Changes and Version Handling](#syncing-release-changes-and-version-handling)
 - [Tagging Strategy](#tagging-strategy)
 - [Further Reading](#further-reading)
-
----
 
 ## Overview
 
@@ -60,8 +56,6 @@ release/product-A/v1.7.x \           /
             bump/product-A/*   #-> Do Not Merge this to develop
 ```
 
----
-
 ## Key Rules
 
 - **Always rebase & fast-forward merge** before integrating changes.
@@ -73,8 +67,7 @@ release/product-A/v1.7.x \           /
   neither directly nor through release-sync branches.
 - **Ensure all release changes are merged back to `develop`** before the next release of that product.
 - **Avoid cherry-picking** between branches unless absolutely necessary.
-
----
+- **Use [Semantic Versioning 2.0.0](https://semver.org/) for all products in this monorepo.**
 
 ## Branching Strategy
 
@@ -103,25 +96,15 @@ release/product-A/v1.7.x \           /
   - `release-sync/bugfix/product-P/*` → Sync bug fixes from release to `develop`.
   - `release-sync/hotfix/product-P/*` → Sync hotfixes from release to `develop`.
 
----
+## Syncing Release Changes and Version Handling
 
-## Release Changes Syncing
-
+### **Syncing Release Changes**
 - **Release Branches**
   - Created from `develop`, maintained until the support period ends.
+  - Can also be created retroactively using tags.
   - All fixes and features must be merged back into `develop` via `release-sync/{feature/bugfix/hotifx}/*` branches.
   - **Before merging a `release-sync` branch to `develop`, rebase it onto the latest `develop` and
   fix any regression bugs** to ensure stability.
-
----
-
-## Semantic Versioning (SemVer)
-
-We follow [Semantic Versioning 2.0.0](https://semver.org/) for all products in this monorepo.
-
----
-
-## Version Handling
 
 ### **Development Versions**
 - Use the `-dev` suffix for versions in `develop` (SemVer pre-release format).
@@ -136,17 +119,6 @@ We follow [Semantic Versioning 2.0.0](https://semver.org/) for all products in t
     - `2.0.0-dev` (if breaking changes are introduced)
   - **Only bump versions for affected products/components.**
 
-### **Valid SemVer Tag Sequence**
-Example of a correctly structured release cycle:
-| Release Stage | Tag Format | Example |
-|--------------|-----------|---------|
-| Minor Release Candidate | `product-P@X.Y.Z-rc.N` | `product-A@1.7.0-rc.1` |
-| Minor Stable Release | `product-P@X.Y.Z` | `product-A@1.7.0` |
-| Patch Release Candidate | `product-P@X.Y.Z-rc.N` | `product-A@1.7.1-rc.1` |
-| Patch Stable Release | `product-P@X.Y.Z` | `product-A@1.7.1` |
-
----
-
 ## Tagging Strategy
 
 ### **Stable Releases**
@@ -160,8 +132,6 @@ Example of a correctly structured release cycle:
 ### **Hotfixes (if no patch is available)**
 - Format: `product-P@X.Y.Z+hotfix.N`
   - Example: `product-A@1.7.1+hotfix.1`
-
----
 
 ## Further Reading
 - [Semantic Versioning 2.0.0](https://semver.org/)
