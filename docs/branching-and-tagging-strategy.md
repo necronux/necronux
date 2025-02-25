@@ -8,6 +8,16 @@
 
 # Git Branching & Tagging Strategy
 
+## Table of Contents
+- [Overview](#overview)
+- [Key Rules](#key-rules)
+- [Branching Strategy](#branching-strategy)
+- [Release Changes Syncing](#release-changes-syncing)
+- [Semantic Versioning (SemVer)](#semantic-versioning-semver)
+- [Version Handling](#version-handling)
+- [Tagging Strategy](#tagging-strategy)
+- [Further Reading](#further-reading)
+
 ## Overview
 
 This strategy ensures a **clean version history**, **stable releases**, and **proper versioning**
