@@ -18,6 +18,8 @@
 - [Tagging Strategy](#tagging-strategy)
 - [Further Reading](#further-reading)
 
+---
+
 ## Overview
 
 This strategy ensures a **clean version history**, **stable releases**, and **proper versioning**
@@ -57,6 +59,8 @@ release/product-A/v1.7.x \           /
 
             bump/product-A/*   #-> Do Not Merge this to develop
 ```
+
+---
 
 ## Key Rules
 
