@@ -14,6 +14,40 @@ This strategy ensures a **clean version history**, **stable releases**, and **pr
 in a **monorepo**. It follows **Semantic Versioning (SemVer)** and defines clear branching rules
 to manage multiple products effectively.
 
+The following diagram illustrates the key branching flows and how they interact:
+```
+      {bump/bugfix/feature}/*
+         -----------------  #-> Always Rebase & FF Merge
+develop /                 \
+--------------------------[-]--------------------------------[-]---------------------------------->
+         \   \   \   \   \                                   /
+          \   \   \   \   \                                 /
+           |   |   |   |   |              ------------------
+           |   |   |   |   |             |    release-sync/{hotfix/bugfix/feature}/product-A/*
+           |   |   |   |   |             |    #-> Rebase w/ latest develop & fix regression issues
+           |   |   |   |   |             |    #-> Ensure this is merged before next release
+           |   |   |   |   |             |    #-> of that product
+           |   |   |   |   |             |
+           |   |   |   |    -------------------------------> X
+           |   |   |   |                 |   release/product-B/1.22.x
+           |   |   |   |                 |
+           |   |   |   |                 |
+           |   |   |    -------------------------------> X
+           |   |   |                     |   release/product-B/v1.21.x
+           |   |   |                     |
+           |   |   |                     |
+           |    -------------------------------> X
+           |  release/product-A/v1.8.x   |
+           |                            /
+           |                           /
+            -------------------------[-]----> X
+release/product-A/v1.7.x \           /
+                          -----------
+            {hotfix/bugfix/feature}/product-A/*
+
+            bump/product-A/*   #-> Do Not Merge this to develop
+```
+
 ## Key Rules
 
 - **Always rebase & fast-forward merge** before integrating changes.
