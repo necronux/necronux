@@ -19,7 +19,7 @@ name: CI-Pkl
     paths:
     - '*.pkl'
     - '**/*.pkl'
-    - stdlib/**
+    - stdschema/**
     - tools/**
     - '*.kts'
     - '**/*.kts'
@@ -31,7 +31,7 @@ name: CI-Pkl
     paths:
     - '*.pkl'
     - '**/*.pkl'
-    - stdlib/**
+    - stdschema/**
     - tools/**
     - '*.kts'
     - '**/*.kts'

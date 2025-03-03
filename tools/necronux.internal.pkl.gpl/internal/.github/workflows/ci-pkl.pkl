@@ -32,7 +32,7 @@ on {
     paths {
       "*.pkl"
       "**/*.pkl"
-      "stdlib/**"
+      "stdschema/**"
       "tools/**"
       "*.kts"
       "**/*.kts"

@@ -20,7 +20,7 @@ keywords = ["necronux", "automation", "configurations", "infra", "homelab"]
 categories = ["command-line-utilities"]
 exclude = [
   "crates/",
-  "stdlib/",
+  "stdschema/",
   "tools/",
   "gradlew",
   "gradlew.bat",
