@@ -18,7 +18,7 @@ headercomment = """
 # ==---------------------------------------------------------------== #
 """
 
-name = "Release Necronux Standard Library"
+name = "Release Necronux Standard Schema"
 
 on {
   workflow_dispatch {}
@@ -35,9 +35,9 @@ permissions {
 
 jobs {
   ["stable-release"] {
-    name = "Release Necronux Standard Library"
+    name = "Release Necronux Standard Schema"
     `runs-on` = "ubuntu-24.04"
-    `if` = "startsWith(github.ref_name, 'necronux.stdlib') && !contains(github.ref_name, '-')"
+    `if` = "startsWith(github.ref_name, 'necronux.std.schema') && !contains(github.ref_name, '-')"
     `timeout-minutes` = 30
     steps {
       (commonSteps.jobs["checkoutStep"].steps[0]) {
@@ -48,7 +48,7 @@ jobs {
       (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = ""
-        run = "just make-stdlibpklpkg"
+        run = "just make-stdschemapklpkg"
         shell = "bash"
         env {
           ["VERSION"] = "${{ github.ref_name }}"
@@ -67,7 +67,7 @@ jobs {
         name = "Publish release"
         uses = "softprops/action-gh-release@v2"
         with {
-          ["files"] = ".out/necronux.stdlib${{ env.VERSION_NUMBER }}/*"
+          ["files"] = ".out/necronux.stdschema${{ env.VERSION_NUMBER }}/*"
           ["tag_name"] = "${{ env.RELEASE_VERSION }}"
           ["fail_on_unmatched_files"] = true
           ["generate_release_notes"] = true
@@ -81,7 +81,7 @@ jobs {
   ["pre-release"] {
     name = "Pre-Release"
     `runs-on` = "ubuntu-24.04"
-    `if` = "startsWith(github.ref_name, 'necronux.stdlib') && contains(github.ref_name, '-')"
+    `if` = "startsWith(github.ref_name, 'necronux.std.schema') && contains(github.ref_name, '-')"
     `timeout-minutes` = 30
     steps {
       (commonSteps.jobs["checkoutStep"].steps[0]) {
@@ -92,7 +92,7 @@ jobs {
       (commonSteps.jobs["installJustStep"].steps[0]) {}
       new {
         name = ""
-        run = "just make-stdlibpklpkg"
+        run = "just make-stdschemapklpkg"
         shell = "bash"
         env {
           ["VERSION"] = "${{ github.ref_name }}"

@@ -78,8 +78,8 @@ jobs {
         uses = "taiki-e/install-action@just"
       }
       new {
-        name = "Check if necronux stdlib pkl project can be resolved"
-        run = "just resolve-stdlibpkl"
+        name = "Check if necronux.std.schema pkl project can be resolved"
+        run = "just resolve-stdschemapkl"
         shell = "bash"
       }
       new {
@@ -100,8 +100,8 @@ jobs {
         uses = "taiki-e/install-action@just"
       }
       new {
-        name = "Check if necronux stdlib pkl modules can be evaluated"
-        run = "just eval-stdlibpkl"
+        name = "Check if necronux.std.schema pkl modules can be evaluated"
+        run = "just eval-stdschemapkl"
         shell = "bash"
       }
       new {
@@ -127,8 +127,8 @@ jobs {
         uses = "taiki-e/install-action@just"
       }
       new {
-        name = "Test necronux stdlib pkl modules"
-        run = "just test-stdlibpkl"
+        name = "Test necronux.std.schema pkl modules"
+        run = "just test-stdschemapkl"
         shell = "bash"
       }
     }

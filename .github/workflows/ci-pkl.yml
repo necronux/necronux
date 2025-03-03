@@ -70,9 +70,9 @@ jobs:
       uses: actions/checkout@v4
     - name: Install just
       uses: taiki-e/install-action@just
-    - name: Check if necronux stdlib pkl project can be resolved
+    - name: Check if necronux.std.schema pkl project can be resolved
       shell: bash
-      run: just resolve-stdlibpkl
+      run: just resolve-stdschemapkl
     - name: Check if necronux internal pkl projects can be resolved
       shell: bash
       run: just resolve-internalpkl
@@ -85,9 +85,9 @@ jobs:
       uses: actions/checkout@v4
     - name: Install just
       uses: taiki-e/install-action@just
-    - name: Check if necronux stdlib pkl modules can be evaluated
+    - name: Check if necronux.std.schema pkl modules can be evaluated
       shell: bash
-      run: just eval-stdlibpkl
+      run: just eval-stdschemapkl
     - name: Check if necronux internal pkl modules can be evaluated
       shell: bash
       run: just eval-internalpkl
@@ -103,6 +103,6 @@ jobs:
       uses: actions/checkout@v4
     - name: Install just
       uses: taiki-e/install-action@just
-    - name: Test necronux stdlib pkl modules
+    - name: Test necronux.std.schema pkl modules
       shell: bash
-      run: just test-stdlibpkl
+      run: just test-stdschemapkl
