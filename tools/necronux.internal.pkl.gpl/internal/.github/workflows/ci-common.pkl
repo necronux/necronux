@@ -54,7 +54,7 @@ jobs {
       (commonSteps.jobs["checkoutStep"].steps[0]) {}
       new {
         name = "Check for typos"
-        uses = "crate-ci/typos@v1.29.7"
+        uses = "crate-ci/typos@v1.30.0"
       }
     }
   }
