@@ -20,7 +20,7 @@ pkl {
 
   project {
     resolvers {
-      register("resolveInternalPklApache") {
+      register("resolveInternalCIApache") {
         projectDirectories.from(file("."))
       }
     }

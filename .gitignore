@@ -14,4 +14,4 @@
 # Pkl
 /stdschema/build/
 /stdschema/.out/
-/tools/*/build/
+/tools/**/build/

@@ -23,9 +23,9 @@ sbom:
     reuse spdx -o docs/reuse.spdx
 
 runpkl:
-    just resolve-internalpkl
+    just resolve-internalci
     just resolve-stdschemapkl
-    just eval-internalpkl
+    just eval-internalci
     just eval-stdschemapkl
     just test-stdschemapkl
 
@@ -33,16 +33,16 @@ runpkl:
 
 # internal tools
 
-resolve-internalpkl:
-    ./gradlew resolveInternalPklApache
-    ./gradlew resolveInternalPklGPL
+resolve-internalci:
+    ./gradlew resolveInternalCIApache
+    ./gradlew resolveInternalCIGPL
 
-eval-internalpkl:
+eval-internalci:
     ./gradlew evalWorkflowsCommonsGPL
     ./gradlew evalWorkflowsGPL
     ./gradlew evalWorkflowsApache
 
-# stdlib
+# stdschema
 
 resolve-stdschemapkl:
     ./gradlew resolveStdSchemaPkl
