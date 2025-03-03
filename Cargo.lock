@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "necronux"
-version = "1.0.0-beta"
+version = "0.3.0-dev"
 dependencies = [
  "color-eyre",
  "necronux_internal",
@@ -349,7 +349,7 @@ dependencies = [
 
 [[package]]
 name = "necronux_cli_app"
-version = "1.0.0-beta"
+version = "0.3.0-dev"
 dependencies = [
  "clap",
  "clap-verbosity-flag",
@@ -362,7 +362,7 @@ dependencies = [
 
 [[package]]
 name = "necronux_core"
-version = "1.0.0-beta"
+version = "0.3.0-dev"
 dependencies = [
  "color-eyre",
  "log",
@@ -372,7 +372,7 @@ dependencies = [
 
 [[package]]
 name = "necronux_internal"
-version = "1.0.0-beta"
+version = "0.3.0-dev"
 dependencies = [
  "necronux_cli_app",
  "necronux_core",
@@ -381,7 +381,7 @@ dependencies = [
 
 [[package]]
 name = "necronux_utils"
-version = "1.0.0-beta"
+version = "0.3.0-dev"
 dependencies = [
  "color-eyre",
  "flexi_logger",
