@@ -41,7 +41,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Check for typos
-      uses: crate-ci/typos@v1.29.7
+      uses: crate-ci/typos@v1.30.0
   taplo:
     name: Taplofmt
     runs-on: ubuntu-latest
