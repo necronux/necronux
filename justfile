@@ -23,15 +23,21 @@ sbom:
     reuse spdx -o docs/reuse.spdx
 
 runpkl:
-    just resolve-internalci
+    just resolve-internalpkl
     just resolve-stdschemapkl
-    just eval-internalci
+    just eval-internalpkl
     just eval-stdschemapkl
     just test-stdschemapkl
 
 # Following subcommands are used in ci
 
 # internal tools
+
+resolve-internalpkl:
+    just resolve-internalci
+
+eval-internalpkl:
+    just eval-internalci
 
 resolve-internalci:
     ./gradlew resolveInternalCIApache
