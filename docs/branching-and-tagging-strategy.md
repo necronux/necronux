@@ -19,8 +19,16 @@
 ## Overview
 
 This strategy ensures a **clean version history**, **stable releases**, and **proper versioning**
-in a **monorepo**. It follows **Semantic Versioning (SemVer)** and defines clear branching rules
-to manage multiple products effectively.
+in a **monorepo**. It is designed to support **different products with independent versioning**,
+offering flexibility for teams that require separate versioning per product.
+
+However, in this repository, **we use a single version across all products** to maintain simplicity
+and consistency for both developers and users. Additionally, **internal tools may or may not follow
+the same versioning scheme** as the main products. This is the only difference in how we apply this
+strategy compared to its original, more general-purpose design.
+
+While we take inspiration from **Semantic Versioning (SemVer)**, **we do not strictly follow it**.
+Versioning decisions are made based on practical considerations rather than rigid SemVer rules.
 
 The following diagram illustrates the key branching flows and how they interact:
 ```
@@ -60,6 +68,8 @@ release/product-A/v1.7.x \           /
 
 - **Always rebase & fast-forward merge** before integrating changes.
 - **No direct pushes** to `develop` or release branches.
+- **All products in this monorepo share the same version number** to maintain a consistent release process.
+- **Internal tools** may or may not follow the same versioning scheme as the main products.
 - **Release branches** are maintained as per the support policy and can be created retroactively using tags.
 - **Hotfix releases** must be tagged using the next patch version. If unavailable, use `+hotfix.N`.
 - **No automated branch cleanup**; branches are retained based on the support policy to prevent accidental deletions.
@@ -67,7 +77,7 @@ release/product-A/v1.7.x \           /
   neither directly nor through release-sync branches.
 - **Ensure all release changes are merged back to `develop`** before the next release of that product.
 - **Avoid cherry-picking** between branches unless absolutely necessary.
-- **Use [Semantic Versioning 2.0.0](https://semver.org/) for all products in this monorepo.**
+- **We do not strictly follow SemVer**, and versioning decisions are made based on practical requirements.
 
 ## Branching Strategy
 
@@ -134,5 +144,5 @@ release/product-A/v1.7.x \           /
   - Example: `product-A@1.7.1+hotfix.1`
 
 ## Further Reading
-- [Semantic Versioning 2.0.0](https://semver.org/)
 - See [release-process.md](/docs/release-process.md) for a **detailed release process**.
+- [Semantic Versioning 2.0.0](https://semver.org/)
