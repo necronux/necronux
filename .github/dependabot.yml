@@ -12,7 +12,7 @@ updates:
       interval: "weekly"
     target-branch: "develop"
     labels:
-      - "1.C- hygiene related"
+      - "1.C - hygiene related"
       - "2.H.PR - hygiene"
       - "3.A - dependencies"
       - "3.A - rust"
