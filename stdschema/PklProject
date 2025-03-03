@@ -7,11 +7,11 @@
 amends "pkl:Project"
 
 package {
-  name = "necronux.stdlib"
+  name = "necronux.std.schema"
   baseUri = "package://pkg.pkl-lang.org/necronux/\(name)"
   version = "0.1.0"
   packageZipUrl = "https://github.com/NayanTheSpaceGuy/necronux/releases/download/\(name)@\(version)/\(name)@\(version).zip"
-  description = "The Necronux standard library."
+  description = "The Necronux standard schema in pkl."
   authors {
     "Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"
   }

@@ -6,7 +6,7 @@
 
 rootProject.name = "necronux"
 
-include("stdlib")
+include("stdschema")
 include("tools:necronux.internal.pkl.apache")
 include("tools:necronux.internal.pkl.gpl")
 

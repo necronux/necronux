@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module necronux.Base.tests
+module necronux.std.schema.Base.tests
 
 amends "pkl:test"
 

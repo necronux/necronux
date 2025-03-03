@@ -24,10 +24,10 @@ sbom:
 
 runpkl:
     just resolve-internalpkl
-    just resolve-stdlibpkl
+    just resolve-stdschemapkl
     just eval-internalpkl
-    just eval-stdlibpkl
-    just test-stdlibpkl
+    just eval-stdschemapkl
+    just test-stdschemapkl
 
 # Following subcommands are used in ci
 
@@ -44,14 +44,14 @@ eval-internalpkl:
 
 # stdlib
 
-resolve-stdlibpkl:
-    ./gradlew resolveStdlibPkl
+resolve-stdschemapkl:
+    ./gradlew resolveStdSchemaPkl
 
-eval-stdlibpkl:
-    ./gradlew evalStdlibPkl
+eval-stdschemapkl:
+    ./gradlew evalStdSchemaPkl
 
-test-stdlibpkl:
-    ./gradlew testStdlibPkl
+test-stdschemapkl:
+    ./gradlew testStdSchemaPkl
 
-make-stdlibpklpkg:
-    ./gradlew makeStdlibPklPkg
+make-stdschemapklpkg:
+    ./gradlew makeStdSchemaPklPkg

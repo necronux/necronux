@@ -22,8 +22,8 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 
 [[annotations]]
 path = [
-  "stdlib/PklProject.deps.json",
-  "stdlib/tests/*.pcf",
+  "stdschema/PklProject.deps.json",
+  "stdschema/tests/*.pcf",
   "tools/necronux.internal.pkl.apache/PklProject.deps.json",
 ]
 precedence = "override"
