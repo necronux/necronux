@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 use crate::bundle::schema::Bundle;
-use color_eyre::eyre::{eyre, Context, Result};
+use color_eyre::eyre::{Context, Result, eyre};
 use log::debug;
 use std::{env, path::Path};
 

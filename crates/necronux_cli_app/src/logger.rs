@@ -7,7 +7,7 @@
 use crate::flow_controller::Cli;
 use color_eyre::eyre::Result;
 use flexi_logger::{LogSpecBuilder, LoggerHandle};
-use log::{debug, LevelFilter};
+use log::{LevelFilter, debug};
 use std::env;
 
 pub fn override_logger(

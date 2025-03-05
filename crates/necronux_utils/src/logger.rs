@@ -6,10 +6,10 @@
 
 use color_eyre::eyre::Result;
 use flexi_logger::{
-    style, AdaptiveFormat, DeferredNow, LogSpecBuilder, LogSpecification, Logger, LoggerHandle,
-    WriteMode, TS_DASHES_BLANK_COLONS_DOT_BLANK,
+    AdaptiveFormat, DeferredNow, LogSpecBuilder, LogSpecification, Logger, LoggerHandle,
+    TS_DASHES_BLANK_COLONS_DOT_BLANK, WriteMode, style,
 };
-use log::{debug, LevelFilter, Record};
+use log::{LevelFilter, Record, debug};
 
 pub fn init_logger(
     default_log_level: Option<LevelFilter>,
