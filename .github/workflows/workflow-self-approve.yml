@@ -19,6 +19,8 @@ name: LGTM Self Approve
   pull_request_review_comment:
     types:
     - created
+permissions:
+  contents: read
 jobs:
   auto-approve:
     name: Approve PR Review
