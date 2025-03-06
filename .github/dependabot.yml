@@ -12,17 +12,24 @@ updates:
       interval: "weekly"
     target-branch: "develop"
     labels:
-      - "1.C - hygiene related"
-      - "2.H.PR - hygiene"
-      - "3.A - dependencies"
-      - "3.A - rust"
+      - "A-dependencies"
+      - "C-enhancement"
+      - "S-needs-triage"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
     target-branch: "develop"
     labels:
-      - "1.C- hygiene related"
-      - "2.H.PR - hygiene"
-      - "3.A - dependencies"
-      - "3.A - github actions / build"
+      - "A-dependencies"
+      - "C-enhancement"
+      - "S-needs-triage"
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "develop"
+    labels:
+      - "A-dependencies"
+      - "C-enhancement"
+      - "S-needs-triage"
