@@ -1,32 +1,26 @@
-### Type of Change
-- [ ] New feature
-- [ ] Bug fix
-- [ ] Documentation update
-- [ ] Code quality improvement
-- [ ] CI improvement
-- [ ] Build improvement
-- [ ] Maintenance
-- [ ] Other
-**Specify other**:
+<!--
+Thanks for submitting a pull request! Here are some tips for you:
 
-### Add compact, short information about your PR for easier understanding:
+* If you don't have an issue, we'd recommend starting with one first so the PR can focus on the
+implementation
+* Small commits and pull requests are always preferable and easy to review.
+* If your PR is not finished, set it as "draft" PR or add "WIP" in its title.
+* It's ok to use the CI resources to test your PR, but please don't abuse them.
 
-- Goal of the PR
-- How does the PR work?
-- Does it resolve any reported issue?
-- If not a bug fix, why is this PR needed? What usecases does it solve?
+### What does this PR try to resolve?
 
-### How to test
-<!-- Example code or instructions -->
+Explain the motivation behind this change.
+A clear overview along with an in-depth explanation are helpful.
 
-### Issues / other PRs related
-<!--[What issue/discussion is related to this PR (if any)]-->
-- Resolves #
+You can use `Fixes #<issue number>` to associate this PR to an existing issue.
 
-### Additional Information
-<!--[Any additional information that reviewers should be aware of.]-->
+### How should we test and review this PR?
 
-### Checklist
-- [ ] I have performed a self-review of my own code.
-- [ ] I have commented my code wherever necessary, particularly in hard-to-understand areas.
-- [ ] My changes generate no errors/warnings/merge conflicts.
+Demonstrate how you test this change and guide reviewers through your PR.
+With a smooth review process, a pull request usually gets reviewed quicker.
+
+### Additional information
+
+Other information you want to mention in this PR, such as prior arts,
+future extensions, an unresolved problem, or a TODO list.
+-->
