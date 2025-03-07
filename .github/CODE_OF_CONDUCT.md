@@ -8,4 +8,4 @@
 
 # The Necronux Code of Conduct
 
-The Code of Conduct for this repository [can be found online](https://www.necronux.nayanpatil.space/conduct.html).
+The Code of Conduct for this repository [can be found online](https://necronux.nayanpatil.space/conduct.html).
