@@ -15,6 +15,7 @@ permissions:
   contents: read
 jobs:
   reuse-compliance-check:
+    name: REUSE Compliance Check
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
