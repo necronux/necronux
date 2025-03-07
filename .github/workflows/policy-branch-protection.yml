@@ -14,12 +14,23 @@ name: Branch Protection
 permissions:
   contents: read
 jobs:
-  protect-stable-branch:
+  protect-develop-branch:
+    name: Protect Develop Branch
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
-    - name: Ensure PRs are only from allowed branches
+    - name: Ensure PRs to develop branch are only from allowed branches
       run: tools/ci/scripts/protect-develop-branch.sh
+  protect-release-branches:
+    name: Protect Release Branches
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Ensure PRs to release branches are only from allowed branches
+      run: tools/ci/scripts/protect-release-branches.sh
