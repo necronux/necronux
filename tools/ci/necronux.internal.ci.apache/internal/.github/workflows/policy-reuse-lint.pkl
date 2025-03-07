@@ -28,6 +28,7 @@ permissions {
 
 jobs {
   ["reuse-compliance-check"] {
+    name = "REUSE Compliance Check"
     `runs-on` = "ubuntu-latest"
     steps {
       new {

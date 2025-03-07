@@ -58,6 +58,7 @@ permissions:
   contents: read
 jobs:
   conclusion-pr:
+    name: Conclusion PR
     if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
     needs:
     - test-full
@@ -77,6 +78,7 @@ jobs:
         jq -C <<< '${{ toJson(needs) }}'
         jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
   conclusion-push:
+    name: Conclusion Push
     if: ${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}
     needs:
     - test-minimal

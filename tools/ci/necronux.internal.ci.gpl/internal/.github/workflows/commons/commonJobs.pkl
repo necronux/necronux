@@ -21,6 +21,7 @@ on {
 jobs {
   // Conclusion job for workflow triggered by a pull request.
   ["conclusion-pr"] {
+    name = "Conclusion PR"
     // To prevent this job from being skipped if its dependencies fail,
     // we need to override the if: condition. A skipped job is treated as a success by GitHub,
     // which we want to avoid. By using !cancelled(), we ensure the job won't run
@@ -45,6 +46,7 @@ jobs {
   }
   // Conclusion job for workflow triggered by a push.
   ["conclusion-push"] {
+    name = "Conclusion Push"
     `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
     needs {}
     permissions = (jobs["conclusion-pr"].permissions) {}

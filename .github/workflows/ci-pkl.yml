@@ -47,6 +47,7 @@ permissions:
   contents: write
 jobs:
   conclusion:
+    name: Conclusion
     if: ${{ !cancelled() }}
     needs:
     - resolvecheck
