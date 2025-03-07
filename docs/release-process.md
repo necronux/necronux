@@ -49,3 +49,105 @@ Once a release candidate meets expectations and no major issues remain, the fina
 
 When making a release, the Maintainers follow these checklists:
 
+### Minor Release Candidate
+
+#### Minor Pre-release (not to be confused with unstable release)
+
+1. Create appropriate release branch if not already as release/vX.Y.x where X and Y are Major and Minor versions respectively.
+2. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/ci/scripts/bump.sh`.
+3. Check appropriate milestone.
+4. In release branch, bump version number of all components to next minor version with `-rc.N` suffix using `bash tools/ci/scripts/bump.sh`.
+  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
+5. Create a tag on GitHub.
+
+#### Minor Release
+
+1. Create release using release workflow.
+2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+
+#### Minor Post-release
+
+1. Announce on community channels.
+
+### Minor Stable Version
+
+#### Minor Pre-release (not to be confused with unstable release)
+
+1. Check regressions label.
+2. Check appropriate milestone.
+3. Close the milestone, open the next one if anything remains and transfer them.
+4. In release branch, bump version number of all components to next minor version using `bash tools/ci/scripts/bump.sh`.
+  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
+5. Create a tag on GitHub.
+6. Bump `latest` tag to most recent stable release.
+
+#### Minor Release
+
+1. Create release using release workflow.
+2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+
+#### Minor Post-release
+
+1. Announce on community channels.
+
+### Patch Stable Version
+
+#### Patch Pre-release (not to be confused with unstable release)
+
+1. Create appropriate release branch if not already as release/vX.Y.x where X and Y are Major and Minor versions respectively.
+2. Check appropriate milestone.
+3. Close the milestone, open the next one if anything remains and transfer them.
+4. In release branch, bump version number of all components to next version using `bash tools/ci/scripts/bump.sh`.
+  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
+5. Create a tag on GitHub.
+6. Bump `latest` tag to most recent stable release.
+
+#### Patch Release
+
+1. Create release using release workflow.
+2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+
+#### Patch Post-release
+
+1. Announce on community channels.
+
+### Major Release Candidate
+
+#### Major Pre-release (not to be confused with unstable release)
+
+1. Create appropriate release branch if not already as release/vX.Y.x where X and Y are Major and Minor versions respectively.
+2. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/ci/scripts/bump.sh`.
+3. Check appropriate milestone.
+4. In release branch, bump version number of all components to next major version with `-rc.N` suffix using `bash tools/ci/scripts/bump.sh`.
+  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
+5. Create a tag on GitHub.
+
+#### Major Release
+
+1. Create release using release workflow.
+2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+
+#### Major Post-release
+
+1. Announce on community channels.
+
+### Major Stable Version
+
+#### Major Pre-release (not to be confused with unstable release)
+
+1. Check regressions label.
+2. Check appropriate milestone.
+3. Close the milestone, open the next one if anything remains and transfer them.
+4. In release branch, bump version number of all components to next version using `bash tools/ci/scripts/bump.sh`.
+  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
+5. Create a tag on GitHub.
+6. Bump `latest` tag to most recent stable release.
+
+#### Major Release
+
+1. Create release using release workflow.
+2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+
+#### Major Post-release
+
+1. Announce on community channels.
