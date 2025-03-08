@@ -63,7 +63,7 @@ When making a release, the Maintainers follow these checklists:
 #### Minor Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Minor Post-release
 
@@ -84,7 +84,7 @@ When making a release, the Maintainers follow these checklists:
 #### Minor Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Minor Post-release
 
@@ -105,7 +105,7 @@ When making a release, the Maintainers follow these checklists:
 #### Patch Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Patch Post-release
 
@@ -125,7 +125,7 @@ When making a release, the Maintainers follow these checklists:
 #### Major Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Major Post-release
 
@@ -146,7 +146,7 @@ When making a release, the Maintainers follow these checklists:
 #### Major Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/publish-crates-io.sh`
+2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Major Post-release
 
