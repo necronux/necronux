@@ -10,7 +10,15 @@
 TARGET_BRANCH="develop"
 
 # Define allowed branch prefixes as an array
-ALLOWED_PREFIXES=("bump/" "feature/" "bugfix/" "release-sync/" "dependabot/")
+ALLOWED_PREFIXES=(
+    "bump/"
+    "feature/"
+    "bugfix/"
+    "release-sync/feature/"
+    "release-sync/bugfix/"
+    "release-sync/hotfix/"
+    "dependabot/"
+)
 
 # Convert array to regex pattern
 ALLOWED_PATTERN="^($(IFS='|'; echo "${ALLOWED_PREFIXES[*]}"))"
