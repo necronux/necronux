@@ -1,0 +1,54 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ciRust.lint
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+import "../helpers/Common.pkl"
+import "../helpers/Steps.pkl"
+
+const function rustfmt(): gha.Job = new {
+  name = "Rustfmt"
+  ...Common.standardJobConfig()
+  steps {
+    Steps.checkout(null)
+    Steps.setupRustToolchainWithComponent("stable", "rustfmt")
+    new {
+      name = "Run cargo fmt"
+      run = "cargo fmt --all --check"
+      shell = "bash"
+    }
+  }
+}
+
+const function clippy(): gha.Job = new {
+  name = "Clippy"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["os"] {
+        "ubuntu-latest"
+        "ubuntu-24.04-arm"
+        "windows-latest"
+        "macos-latest"
+        "macos-13"
+      }
+    }
+  }
+  `runs-on` = "${{ matrix.os }}"
+  `timeout-minutes` = 30
+  steps {
+    Steps.checkout(null)
+    Steps.setupRustCache()
+    Steps.setupRustToolchainWithComponent("stable", "clippy")
+    new {
+      name = "Run cargo clippy"
+      run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+  }
+}

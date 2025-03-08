@@ -5,6 +5,7 @@
 // ==----------------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
+module ciRust
 
 amends "../../../../commons/GitHubAction.pkl"
 
@@ -12,6 +13,10 @@ import "helpers/Common.pkl"
 import "helpers/Jobs.pkl"
 import "helpers/Steps.pkl"
 import "helpers/Triggers.pkl"
+
+import "modules/ci-rust-lint.pkl" as Lint
+import "modules/ci-rust-test.pkl" as Test
+import "modules/ci-rust-version.pkl" as Version
 
 headercomment = """
 # ==----------------------------------------------------------------== #
@@ -75,259 +80,16 @@ jobs {
     }
   }
 
-  ["rustfmt"] {
-    name = "Rustfmt"
-    ...Common.standardJobConfig()
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustToolchainWithComponent("stable", "rustfmt")
-      new {
-        name = "Run cargo fmt"
-        run = "cargo fmt --all --check"
-        shell = "bash"
-      }
-    }
-  }
-  ["clippy"] {
-    name = "Clippy"
-    strategy {
-      `fail-fast` = false
-      matrix {
-        ["os"] {
-          "ubuntu-latest"
-          "ubuntu-24.04-arm"
-          "windows-latest"
-          "macos-latest"
-          "macos-13"
-        }
-      }
-    }
-    `runs-on` = "${{ matrix.os }}"
-    `timeout-minutes` = 30
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustCache()
-      Steps.setupRustToolchainWithComponent("stable", "clippy")
-      new {
-        name = "Run cargo clippy"
-        run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all" // temporarily removed -D clippy::cargo
-        shell = "bash"
-      }
-    }
-  }
-  ["lockfile"] {
-    name = "Cargo Lockfile"
-    ...Common.standardJobConfig()
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustCache()
-      Steps.setupRustToolchain("stable")
-      new {
-        name = "Ensure Cargo.lock is up-to-date"
-        run = "cargo update -p necronux --locked"
-        shell = "bash"
-      }
-    }
-  }
-  ["check-version-bump"] {
-    name = "Check Version Bump"
-    ...Common.standardJobConfig()
-    env {
-      ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
-      ["HEAD_SHA"] = "${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}"
-    }
-    steps {
-      Steps.checkout(0)
-      Steps.setupRustCache()
-      Steps.installAction("cargo-semver-checks")
-      new {
-        name = "Run cargo semver-checks"
-        // Inputs:
-        // BASE_SHA    The commit SHA of the branch where the PR wants to merge into.
-        // HEAD_SHA    The commit SHA that triggered the workflow.
-        // When `BASE_SHA` is missing, we assume it is from GitHub merge queue merge commit,
-        // so hope `HEAD~` to find the previous commit on master branch.
-        run = """
-        set -euo pipefail
-        base_sha=$(git rev-parse "${BASE_SHA:-HEAD~1}")
-        head_sha=$(git rev-parse "${HEAD_SHA:-HEAD}")
-        echo "Base revision is $base_sha"
-        echo "Head revision is $head_sha"
-        cargo semver-checks --baseline-rev "$base_sha" --workspace
-        """
-        shell = "bash"
-      }
-    }
-  }
-  ["test-minimal"] {
-    name = "Minimal Tests (${{ matrix.name }})"
-    `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
-    strategy = (jobs["test-full"].strategy) {}
-    `runs-on` = "${{ matrix.os }}"
-    `timeout-minutes` = 30
-    env = (jobs["test-full"].env) {}
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustCacheWithMatrixKey()
-      new {
-        name = "Setup rustup stable"
-        run = "rustup update --no-self-update stable"
-        shell = "bash"
-      }
-      new {
-        name = "Update rustup and set default version"
-        run = "rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}"
-        shell = "bash"
-      }
-      new {
-        `if` = "${{ matrix.other != null }}"
-        name = "Add rustup targets"
-        run = "rustup target add ${{ matrix.other }}"
-        shell = "bash"
-      }
-      new {
-        name = "Configure extra test environment"
-        `if`= "matrix.os == 'ubuntu-latest'"
-        run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
-        shell = "bash"
-      }
-      // Tests
-      new {
-        name = "Run cargo test with default features in debug mode"
-        run = "cargo test --lib --bins --workspace"
-        shell = "bash"
-      }
-      new {
-        name = "Run cargo test with all features in debug mode"
-        run = "cargo test --lib --bins --workspace --all-features"
-        shell = "bash"
-      }
-    }
-  }
-  ["test-full"] {
-    name = "Full Tests (${{ matrix.name }})"
-    `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
-    strategy {
-      `fail-fast` = false
-      matrix {
-        ["include"] {
-          new {
-            name = "Linux x86_64 stable"
-            os = "ubuntu-latest"
-            rust = "stable"
-            other = "i686-unknown-linux-gnu"
-          }
-          new {
-            name = "Linux x86_64 beta"
-            os = "ubuntu-latest"
-            rust = "beta"
-            other = "i686-unknown-linux-gnu"
-          }
-          new {
-            name = "Linux x86_64 nightly"
-            os = "ubuntu-latest"
-            rust = "nightly"
-            other = "i686-unknown-linux-gnu"
-          }
-          new {
-            name = "Linux aarch64 stable"
-            os = "ubuntu-24.04-arm"
-            rust = "stable"
-          }
-          new {
-            name = "Linux aarch64 nightly"
-            os = "ubuntu-24.04-arm"
-            rust = "nightly"
-          }
-          new {
-            name = "Windows x86_64 MSVC stable"
-            os = "windows-latest"
-            rust = "stable-msvc"
-            other = "i686-pc-windows-msvc"
-          }
-          new {
-            name = "Windows x86_64 gnu nightly"
-            os = "windows-latest"
-            rust = "nightly-gnu"
-            other = "i686-pc-windows-gnu"
-          }
-          new {
-            name = "macOS aarch64 stable"
-            os = "macos-latest"
-            rust = "stable"
-            other = "x86_64-apple-darwin"
-          }
-          new {
-            name = "macOS aarch64 nightly"
-            os = "macos-latest"
-            rust = "nightly"
-            other = "x86_64-apple-darwin"
-          }
-          new {
-            name = "macOS x86_64 nightly"
-            os = "macos-13"
-            rust = "nightly"
-          }
-        }
-      }
-    }
-    `runs-on` = "${{ matrix.os }}"
-    `timeout-minutes` = 30
-    env {
-      ["CARGO_PROFILE_DEV_DEBUG"] = 1
-      ["CARGO_PROFILE_TEST_DEBUG"] = 1
-      // Workaround for https://github.com/rust-lang/rustup/issues/3036
-      ["RUSTUP_WINDOWS_PATH_ADD_BIN"] = 0
-    }
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustCacheWithMatrixKey()
-      new {
-        name = "Setup rustup stable"
-        run = "rustup update --no-self-update stable"
-        shell = "bash"
-      }
-      new {
-        name = "Update rustup and set default version"
-        run = "rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}"
-        shell = "bash"
-      }
-      new {
-        `if` = "${{ matrix.other != null }}"
-        name = "Add rustup targets"
-        run = "rustup target add ${{ matrix.other }}"
-        shell = "bash"
-      }
-      new {
-        name = "Configure extra test environment"
-        `if`= "matrix.os == 'ubuntu-latest'"
-        run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
-        shell = "bash"
-      }
-      // Tests
-      new {
-        name = "Run cargo test with default features in debug mode"
-        run = "cargo test --all-targets --workspace"
-        shell = "bash"
-      }
-      new {
-        name = "Run cargo test with all features in debug mode"
-        run = "cargo test --all-targets --workspace --all-features"
-        shell = "bash"
-      }
-      new {
-        name = "Run cargo test with default features in release mode"
-        run = "cargo test --all-targets --workspace --release"
-        shell = "bash"
-      }
-      new {
-        name = "Run cargo test with all features in release mode"
-        run = "cargo test --all-targets --workspace --all-features --release"
-        shell = "bash"
-      }
-    }
-  }
- ["docs"] {
+  ["rustfmt"] = (Lint.rustfmt()) {}
+  ["clippy"] = (Lint.clippy()) {}
+
+  ["lockfile"] = (Version.lockfile()) {}
+  ["check-version-bump"] = (Version.checkVersionBump()) {}
+
+  ["test-minimal"] = (Test.testMinimal()) {}
+  ["test-full"] = (Test.testFull()) {}
+
+  ["docs"] {
     name = "Docs"
     ...Common.standardJobConfig()
     env = (module.env) {
@@ -352,18 +114,6 @@ jobs {
       }
     }
   }
-  ["msrv"] {
-    name = "MSRV"
-    ...Common.standardJobConfig()
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustCache()
-      Steps.installAction("cargo-hack")
-      new {
-        name = "Run cargo hack check"
-        run = "cargo hack check --all-targets --rust-version --locked"
-        shell = "bash"
-      }
-    }
-  }
+
+  ["msrv"] = (Version.msrv()) {}
 }

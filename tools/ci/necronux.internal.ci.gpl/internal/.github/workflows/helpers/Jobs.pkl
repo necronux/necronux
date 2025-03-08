@@ -16,7 +16,7 @@ import "Common.pkl"
 // which we want to avoid. By using !cancelled(), we ensure the job won't run
 // if the workflow is manually canceled.
 
-function conclusionPR(): gha.Job = new {
+const function conclusionPR(): gha.Job = new {
   ...Common.standardJobConfig()
   name = "Conclusion PR"
   `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
@@ -28,7 +28,7 @@ function conclusionPR(): gha.Job = new {
   }
 }
 
-function conclusionPush(): gha.Job = new {
+const function conclusionPush(): gha.Job = new {
   ...Common.standardJobConfig()
   name = "Conclusion Push"
   `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
@@ -40,7 +40,7 @@ function conclusionPush(): gha.Job = new {
   }
 }
 
-function conclusionAll(): gha.Job = new {
+const function conclusionAll(): gha.Job = new {
   ...Common.standardJobConfig()
   name = "Conclusion"
   `if` = "${{ !cancelled() }}"

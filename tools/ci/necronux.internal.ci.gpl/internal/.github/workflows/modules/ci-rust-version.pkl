@@ -1,0 +1,73 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ciRust.version
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+import "../helpers/Common.pkl"
+import "../helpers/Steps.pkl"
+
+const function lockfile(): gha.Job = new {
+  name = "Cargo Lockfile"
+  ...Common.standardJobConfig()
+  steps {
+    Steps.checkout(null)
+    Steps.setupRustCache()
+    Steps.setupRustToolchain("stable")
+    new {
+      name = "Ensure Cargo.lock is up-to-date"
+      run = "cargo update -p necronux --locked"
+      shell = "bash"
+    }
+  }
+}
+
+const function checkVersionBump(): gha.Job = new {
+  name = "Check Version Bump"
+  ...Common.standardJobConfig()
+  env {
+    ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
+    ["HEAD_SHA"] = "${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}"
+  }
+  steps {
+    Steps.checkout(0)
+    Steps.setupRustCache()
+    Steps.installAction("cargo-semver-checks")
+    new {
+      name = "Run cargo semver-checks"
+      // Inputs:
+      // BASE_SHA    The commit SHA of the branch where the PR wants to merge into.
+      // HEAD_SHA    The commit SHA that triggered the workflow.
+      // When `BASE_SHA` is missing, we assume it is from GitHub merge queue merge commit,
+      // so hope `HEAD~` to find the previous commit on master branch.
+      run = """
+        set -euo pipefail
+        base_sha=$(git rev-parse "${BASE_SHA:-HEAD~1}")
+        head_sha=$(git rev-parse "${HEAD_SHA:-HEAD}")
+        echo "Base revision is $base_sha"
+        echo "Head revision is $head_sha"
+        cargo semver-checks --baseline-rev "$base_sha" --workspace
+        """
+      shell = "bash"
+    }
+  }
+}
+
+const function msrv(): gha.Job = new {
+  name = "MSRV"
+  ...Common.standardJobConfig()
+  steps {
+    Steps.checkout(null)
+    Steps.setupRustCache()
+    Steps.installAction("cargo-hack")
+    new {
+      name = "Run cargo hack check"
+      run = "cargo hack check --all-targets --rust-version --locked"
+      shell = "bash"
+    }
+  }
+}

@@ -5,6 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
+module ciPkl
 
 amends "../../../../commons/GitHubAction.pkl"
 

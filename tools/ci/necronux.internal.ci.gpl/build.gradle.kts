@@ -18,6 +18,14 @@ pkl {
     }
   }
   evaluators {
+    register("evalWorkflowsModulesGPL") {
+      projectDir.set(file("."))
+      sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/modules/*.pkl") })
+      outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
+      outputFormat.set("pcf")
+    }
+  }
+  evaluators {
     register("evalWorkflowsHelpersGPL") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/helpers/*.pkl") })
