@@ -8,9 +8,10 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "commons/commonJobs.pkl" as commonJobs
-import "commons/commonSteps.pkl" as commonSteps
-import "commons/commonStepsRust.pkl" as commonStepsRust
+import "helpers/Actions.pkl"
+import "helpers/Common.pkl"
+import "helpers/Jobs.pkl"
+import "helpers/Steps.pkl"
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -38,40 +39,30 @@ permissions {
 }
 
 jobs {
-  ["conclusion"] = (commonJobs.jobs["conclusion-push"]) {
-    name = "Conclusion"
-    `if` = "${{ !cancelled() }}"
+  ["conclusion"] = (Jobs.conclusionAll()) {
     needs {
-      "taplo"
       "typos"
+      "taplo"
     }
   }
 
   ["typos"] {
+    ...Common.standardJobConfig()
     name = "Typos"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      Steps.checkout(null)
       new {
         name = "Check for typos"
-        uses = "crate-ci/typos@v1.30.1"
+        uses = Actions.typos
       }
     }
   }
   ["taplo"] {
+    ...Common.standardJobConfig()
     name = "Taplofmt"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      new {
-        name = "Install taplo-cli"
-        uses = "taiki-e/install-action@v2"
-        with {
-          ["tool"] = "taplo-cli"
-        }
-      }
+      Steps.checkout(null)
+      Steps.installAction("taplo-cli")
       new {
         name = "Run Taplo"
         run = "taplo fmt --check --diff"

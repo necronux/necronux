@@ -5,10 +5,13 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
+module audit
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "commons/commonSteps.pkl" as commonSteps
+import "helpers/Actions.pkl"
+import "helpers/Common.pkl"
+import "helpers/Steps.pkl"
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -42,14 +45,13 @@ on {
 
 jobs {
   ["cargo_deny"] {
+    ...Common.standardJobConfig()
     name = "Cargo Deny"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
+      Steps.checkout(null)
       new {
         name = "Run cargo deny check without advisories"
-        uses = "EmbarkStudios/cargo-deny-action@v2"
+        uses = Actions.cargoDenyAction
         with {
           ["command"] = "check bans licenses sources"
           ["rust-version"] = "stable"

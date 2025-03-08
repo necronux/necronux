@@ -1,0 +1,61 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module steps
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+import "Actions.pkl"
+
+const function checkout(depth: Int?): gha.Step = new {
+  name = "Checkout code"
+  uses = Actions.checkout
+  with {
+    ["fetch-depth"] = depth ?? 1
+  }
+}
+
+const function installAction(tool: String): gha.Step = new {
+  name = "Install \(tool)"
+  uses = Actions.installAction
+  with {
+    ["tool"] = tool
+  }
+}
+
+const function setupRustToolchain(toolchain: String): gha.Step = new {
+  name = "Setup rust toolchain"
+  uses = Actions.rustToolchain
+  with {
+    ["toolchain"] = toolchain
+  }
+}
+
+const function setupRustToolchainWithComponent(toolchain: String, component: String): gha.Step = new {
+  name = "Setup rust toolchain"
+  uses = Actions.rustToolchain
+  with {
+    ["toolchain"] = toolchain
+    ["components"] = component
+  }
+}
+
+const function setupRustCache(): gha.Step = new {
+  name = "Setup rust cache"
+  uses = Actions.rustCache
+  with {
+    ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}"
+  }
+}
+
+const function setupRustCacheWithMatrixKey(): gha.Step = new {
+  name = "Setup rust cache"
+  uses = Actions.rustCache
+  with {
+    ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}"
+    ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
+  }
+}

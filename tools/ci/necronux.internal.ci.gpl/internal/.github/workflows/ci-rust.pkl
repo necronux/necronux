@@ -8,10 +8,10 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "commons/commonTriggers.pkl" as commonTriggers
-import "commons/commonJobs.pkl" as commonJobs
-import "commons/commonSteps.pkl" as commonSteps
-import "commons/commonStepsRust.pkl" as commonStepsRust
+import "helpers/Common.pkl"
+import "helpers/Jobs.pkl"
+import "helpers/Steps.pkl"
+import "helpers/Triggers.pkl"
 
 headercomment = """
 # ==----------------------------------------------------------------== #
@@ -25,26 +25,17 @@ name = "CI-Rust"
 
 on {
   pull_request {
-    branches {
-      "develop"
-      "stable"
-      "release"
-      "hotfix"
-    }
-    paths {
-      "*.rs"
-      "**/*.rs"
-      "src/**"
-      "crates/**"
-      "Cargo.toml"
-      "Cargo.lock"
-      "deny.toml"
-    }
+    branches = (Triggers.prBranches()) {}
+    paths = (Triggers.rustPaths()) {}
   }
   push {
-    paths = (on.pull_request.paths) {}
+    paths = (Triggers.rustPaths()) {}
   }
-  workflow_dispatch = (commonTriggers.on.workflow_dispatch) {}
+  workflow_dispatch {
+    inputs {
+      ["trigger_event"] = (Triggers.wDispatchEventSim()) {}
+    }
+  }
 }
 
 env {
@@ -67,12 +58,12 @@ permissions {
 }
 
 jobs {
-  ["conclusion-pr"] = (commonJobs.jobs["conclusion-pr"]) {
+  ["conclusion-pr"] = (Jobs.conclusionPR()) {
     needs = (jobs["conclusion-push"].needs) {
       [0] = "test-full"
     }
   }
-  ["conclusion-push"] = (commonJobs.jobs["conclusion-push"]) {
+  ["conclusion-push"] = (Jobs.conclusionPush()) {
     needs {
       "test-minimal"
       "check-version-bump"
@@ -86,16 +77,10 @@ jobs {
 
   ["rustfmt"] {
     name = "Rustfmt"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
-        with {
-          ["toolchain"] = "stable"
-          ["components"] = "rustfmt"
-        }
-      }
+      Steps.checkout(null)
+      Steps.setupRustToolchainWithComponent("stable", "rustfmt")
       new {
         name = "Run cargo fmt"
         run = "cargo fmt --all --check"
@@ -120,14 +105,9 @@ jobs {
     `runs-on` = "${{ matrix.os }}"
     `timeout-minutes` = 30
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
-        with {
-          ["toolchain"] = "stable"
-          ["components"] = "clippy"
-        }
-      }
+      Steps.checkout(null)
+      Steps.setupRustCache()
+      Steps.setupRustToolchainWithComponent("stable", "clippy")
       new {
         name = "Run cargo clippy"
         run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all" // temporarily removed -D clippy::cargo
@@ -137,16 +117,11 @@ jobs {
   }
   ["lockfile"] {
     name = "Cargo Lockfile"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
-        with {
-          ["toolchain"] = "stable"
-        }
-      }
+      Steps.checkout(null)
+      Steps.setupRustCache()
+      Steps.setupRustToolchain("stable")
       new {
         name = "Ensure Cargo.lock is up-to-date"
         run = "cargo update -p necronux --locked"
@@ -156,23 +131,15 @@ jobs {
   }
   ["check-version-bump"] {
     name = "Check Version Bump"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     env {
       ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
       ["HEAD_SHA"] = "${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}"
     }
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {
-        with {
-         ["fetch-depth"] = 0
-        }
-      }
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
-      new {
-        name = "Install cargo-semver-checks"
-        uses = "taiki-e/install-action@cargo-semver-checks"
-      }
+      Steps.checkout(0)
+      Steps.setupRustCache()
+      Steps.installAction("cargo-semver-checks")
       new {
         name = "Run cargo semver-checks"
         // Inputs:
@@ -200,12 +167,8 @@ jobs {
     `timeout-minutes` = 30
     env = (jobs["test-full"].env) {}
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {
-        with {
-          ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
-        }
-      }
+      Steps.checkout(null)
+      Steps.setupRustCacheWithMatrixKey()
       new {
         name = "Setup rustup stable"
         run = "rustup update --no-self-update stable"
@@ -317,12 +280,8 @@ jobs {
       ["RUSTUP_WINDOWS_PATH_ADD_BIN"] = 0
     }
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {
-        with {
-          ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
-        }
-      }
+      Steps.checkout(null)
+      Steps.setupRustCacheWithMatrixKey()
       new {
         name = "Setup rustup stable"
         run = "rustup update --no-self-update stable"
@@ -370,19 +329,14 @@ jobs {
   }
  ["docs"] {
     name = "Docs"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     env = (module.env) {
       ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
     }
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustToolchainStep"].steps[0]) {
-        with {
-          ["toolchain"] = "stable"
-        }
-      }
+      Steps.checkout(null)
+      Steps.setupRustCache()
+      Steps.setupRustToolchain("stable")
       new {
         name = "Run cargo doc"
         run = "cargo doc --workspace --all-features --no-deps --document-private-items --keep-going"
@@ -400,15 +354,11 @@ jobs {
   }
   ["msrv"] {
     name = "MSRV"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonStepsRust.jobs["setupRustCacheStep"].steps[0]) {}
-      new {
-        name = "Install cargo hack"
-        uses = "taiki-e/install-action@cargo-hack"
-      }
+      Steps.checkout(null)
+      Steps.setupRustCache()
+      Steps.installAction("cargo-hack")
       new {
         name = "Run cargo hack check"
         run = "cargo hack check --all-targets --rust-version --locked"

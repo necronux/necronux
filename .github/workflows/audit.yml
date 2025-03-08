@@ -35,6 +35,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Run cargo deny check without advisories
       uses: EmbarkStudios/cargo-deny-action@v2
       with:

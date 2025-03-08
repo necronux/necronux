@@ -8,8 +8,10 @@
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "commons/commonJobs.pkl" as commonJobs
-import "commons/commonSteps.pkl" as commonSteps
+import "helpers/Common.pkl"
+import "helpers/Jobs.pkl"
+import "helpers/Steps.pkl"
+import "helpers/Triggers.pkl"
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -23,27 +25,11 @@ name = "CI-Pkl"
 
 on {
   pull_request {
-    branches {
-      "develop"
-      "stable"
-      "release"
-      "hotfix"
-    }
-    paths {
-      "*.pkl"
-      "**/*.pkl"
-      "stdschema/**"
-      "tools/**"
-      "*.kts"
-      "**/*.kts"
-      "gradle/**"
-      "gradlew"
-      "gradlew.bat"
-      "justfile"
-    }
+    branches = (Triggers.prBranches()) {}
+    paths = (Triggers.pklPaths()) {}
   }
   push {
-    paths = (on.pull_request.paths) {}
+    paths = (Triggers.pklPaths()) {}
   }
   workflow_dispatch {}
 }
@@ -58,9 +44,7 @@ permissions {
 }
 
 jobs {
-  ["conclusion"] = (commonJobs.jobs["conclusion-push"]) {
-    name = "Conclusion"
-    `if` = "${{ !cancelled() }}"
+  ["conclusion"] = (Jobs.conclusionAll()) {
     needs {
       "resolvecheck"
       "evalcheck"
@@ -69,12 +53,11 @@ jobs {
   }
 
   ["resolvecheck"] {
+    ...Common.standardJobConfig()
     name = "Resolve Check"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonSteps.jobs["installJustStep"].steps[0]) {}
+      Steps.checkout(null)
+      Steps.installAction("just")
       new {
         name = "Check if necronux.std.schema pkl project can be resolved"
         run = "just resolve-stdschemapkl"
@@ -89,11 +72,10 @@ jobs {
   }
   ["evalcheck"] {
     name = "Eval Check"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonSteps.jobs["installJustStep"].steps[0]) {}
+      Steps.checkout(null)
+      Steps.installAction("just")
       new {
         name = "Check if necronux.std.schema pkl modules can be evaluated"
         run = "just eval-stdschemapkl"
@@ -113,11 +95,10 @@ jobs {
   }
   ["test"] {
     name = "Tests"
-    `runs-on` = "ubuntu-latest"
-    `timeout-minutes` = 30
+    ...Common.standardJobConfig()
     steps {
-      (commonSteps.jobs["checkoutStep"].steps[0]) {}
-      (commonSteps.jobs["installJustStep"].steps[0]) {}
+      Steps.checkout(null)
+      Steps.installAction("just")
       new {
         name = "Test necronux.std.schema pkl modules"
         run = "just test-stdschemapkl"

@@ -1,0 +1,15 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module common
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+const function standardJobConfig() = new {
+  `runs-on` = new gha.UbuntuLatest {}
+  `timeout-minutes` = 30
+}

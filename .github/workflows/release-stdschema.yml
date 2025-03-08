@@ -28,7 +28,9 @@ jobs:
       with:
         fetch-depth: 0
     - name: Install just
-      uses: taiki-e/install-action@just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
     - name: ''
       env:
         VERSION: ${{ github.ref_name }}
@@ -60,7 +62,9 @@ jobs:
       with:
         fetch-depth: 0
     - name: Install just
-      uses: taiki-e/install-action@just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
     - name: ''
       env:
         VERSION: ${{ github.ref_name }}

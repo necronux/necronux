@@ -1,0 +1,52 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module triggers
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+const function wDispatchEventSim() = new gha.WorkflowInput {
+  description = "Specify which event to simulate"
+  required = false
+  default = "push"
+  type = "choice"
+  options {
+    "pull_request"
+    "push"
+  }
+}
+
+const function prBranches() = new Listing<String> {
+  "develop"
+  "release/v*"
+  "release-sync/feature/*"
+  "release-sync/bugfix/*"
+  "release-sync/hotfix/*"
+}
+
+const function pklPaths() = new Listing<String> {
+  "*.pkl"
+  "**/*.pkl"
+  "stdschema/**"
+  "tools/**"
+  "*.kts"
+  "**/*.kts"
+  "gradle/**"
+  "gradlew"
+  "gradlew.bat"
+  "justfile"
+}
+
+const function rustPaths() = new Listing<String> {
+  "*.rs"
+  "**/*.rs"
+  "src/**"
+  "crates/**"
+  "Cargo.toml"
+  "Cargo.lock"
+  "deny.toml"
+}

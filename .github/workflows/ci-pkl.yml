@@ -13,9 +13,10 @@ name: CI-Pkl
   pull_request:
     branches:
     - develop
-    - stable
-    - release
-    - hotfix
+    - release/v*
+    - release-sync/feature/*
+    - release-sync/bugfix/*
+    - release-sync/hotfix/*
     paths:
     - '*.pkl'
     - '**/*.pkl'
@@ -56,6 +57,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - name: Conclusion
       shell: bash
@@ -69,8 +71,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Install just
-      uses: taiki-e/install-action@just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
     - name: Check if necronux.std.schema pkl project can be resolved
       shell: bash
       run: just resolve-stdschemapkl
@@ -84,8 +90,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Install just
-      uses: taiki-e/install-action@just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
     - name: Check if necronux.std.schema pkl modules can be evaluated
       shell: bash
       run: just eval-stdschemapkl
@@ -102,8 +112,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Install just
-      uses: taiki-e/install-action@just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
     - name: Test necronux.std.schema pkl modules
       shell: bash
       run: just test-stdschemapkl

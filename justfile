@@ -44,7 +44,7 @@ resolve-internalci:
     ./gradlew resolveInternalCIGPL
 
 eval-internalci:
-    ./gradlew evalWorkflowsCommonsGPL
+    ./gradlew evalWorkflowsHelpersGPL
     ./gradlew evalWorkflowsGPL
     ./gradlew evalWorkflowsApache
 

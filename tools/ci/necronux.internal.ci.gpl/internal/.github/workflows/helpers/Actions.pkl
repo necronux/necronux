@@ -1,0 +1,15 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module actions
+
+const cargoDenyAction = "EmbarkStudios/cargo-deny-action@v2"
+const checkout = "actions/checkout@v4"
+const installAction = "taiki-e/install-action@v2"
+const rustCache = "Swatinem/rust-cache@v2"
+const rustToolchain = "dtolnay/rust-toolchain@master"
+const typos = "crate-ci/typos@v1.30.1"

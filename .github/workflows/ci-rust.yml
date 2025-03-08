@@ -13,9 +13,10 @@ name: CI-Rust
   pull_request:
     branches:
     - develop
-    - stable
-    - release
-    - hotfix
+    - release/v*
+    - release-sync/feature/*
+    - release-sync/bugfix/*
+    - release-sync/hotfix/*
     paths:
     - '*.rs'
     - '**/*.rs'
@@ -71,6 +72,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - name: Conclusion
       shell: bash
@@ -91,6 +93,7 @@ jobs:
     permissions:
       contents: none
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - name: Conclusion
       shell: bash
@@ -104,6 +107,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust toolchain
       uses: dtolnay/rust-toolchain@master
       with:
@@ -128,6 +133,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
@@ -147,6 +154,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
@@ -175,7 +184,9 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
     - name: Install cargo-semver-checks
-      uses: taiki-e/install-action@cargo-semver-checks
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-semver-checks
     - name: Run cargo semver-checks
       shell: bash
       run: |-
@@ -238,6 +249,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
@@ -316,6 +329,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
@@ -362,6 +377,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
@@ -385,12 +402,16 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     - name: Setup rust cache
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Install cargo hack
-      uses: taiki-e/install-action@cargo-hack
+    - name: Install cargo-hack
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-hack
     - name: Run cargo hack check
       shell: bash
       run: cargo hack check --all-targets --rust-version --locked
