@@ -53,12 +53,14 @@ When making a release, the Maintainers follow these checklists:
 
 #### Minor Pre-release (not to be confused with unstable release)
 
-1. Create appropriate release branch if not already as release/vX.Y.x where X and Y are Major and Minor versions respectively.
-2. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/release/scripts/bump.sh`.
-3. Check appropriate milestone.
+1. Check appropriate milestone.
+2. Create appropriate release branch (if not already) from latest `develop` branch as `release/vX.Y.x` where X and Y are Major and Minor versions respectively.
+3. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/release/scripts/bump.sh`.
 4. In release branch, bump version number of all components to next minor version with `-rc.N` suffix using `bash tools/release/scripts/bump.sh`.
   - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
 5. Create a tag on GitHub.
+
+For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Minor Release
 
@@ -94,10 +96,10 @@ When making a release, the Maintainers follow these checklists:
 
 #### Patch Pre-release (not to be confused with unstable release)
 
-1. Create appropriate release branch if not already as release/vX.Y.x where X and Y are Major and Minor versions respectively.
-2. Check appropriate milestone.
+1. Check appropriate milestone.
+2. Create appropriate release branch (if not already) from latest `develop` branch as `release/vX.Y.x` where X and Y are Major and Minor versions respectively.
 3. Close the milestone, open the next one if anything remains and transfer them.
-4. In release branch, bump version number of all components to next version using `bash tools/release/scripts/bump.sh`.
+4. In release branch, bump version number of all components to next patch version using `bash tools/release/scripts/bump.sh`.
   - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
 5. Create a tag on GitHub.
 6. Bump `latest` tag to most recent stable release.
@@ -115,12 +117,14 @@ When making a release, the Maintainers follow these checklists:
 
 #### Major Pre-release (not to be confused with unstable release)
 
-1. Create appropriate release branch if not already as release/vX.Y.x where X and Y are Major and Minor versions respectively.
-2. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/release/scripts/bump.sh`.
-3. Check appropriate milestone.
+1. Check appropriate milestone.
+2. Create appropriate release branch (if not already) from latest `develop` branch as `release/vX.Y.x` where X and Y are Major and Minor versions respectively.
+3. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/release/scripts/bump.sh`.
 4. In release branch, bump version number of all components to next major version with `-rc.N` suffix using `bash tools/release/scripts/bump.sh`.
   - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
 5. Create a tag on GitHub.
+
+For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Major Release
 
@@ -138,7 +142,7 @@ When making a release, the Maintainers follow these checklists:
 1. Check regressions label.
 2. Check appropriate milestone.
 3. Close the milestone, open the next one if anything remains and transfer them.
-4. In release branch, bump version number of all components to next version using `bash tools/release/scripts/bump.sh`.
+4. In release branch, bump version number of all components to next major version using `bash tools/release/scripts/bump.sh`.
   - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
 5. Create a tag on GitHub.
 6. Bump `latest` tag to most recent stable release.
