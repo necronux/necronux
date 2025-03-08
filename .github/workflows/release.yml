@@ -8,11 +8,8 @@
 # This file was generated from a template using the necronux internal pkl package.
 # Any changes should be made to the template, not this file.
 
-name: Cargo Build & Release
+name: Necronux Release
 'on':
-  push:
-    tags:
-    - v*.*.*
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -54,7 +51,7 @@ jobs:
         extension=""
         # windows binaries have ".exe" extension
         if [[ "${{ matrix.build.OS }}" == *"windows"* ]]; then
-          extension=".exe"
+        extension=".exe"
         fi
 
         mkdir bin
@@ -90,8 +87,8 @@ jobs:
       run: |-
         mkdir -p bin
         for tar_file in built-binaries-*.tar.gz; do
-          echo "Extracting $tar_file"
-          tar -xzvf $tar_file -C bin
+        echo "Extracting $tar_file"
+        tar -xzvf $tar_file -C bin
         done
     - name: Publish release
       env:
@@ -122,8 +119,8 @@ jobs:
       run: |-
         mkdir -p bin
         for tar_file in built-binaries-*.tar.gz; do
-          echo "Extracting $tar_file"
-          tar -xzvf $tar_file -C bin
+        echo "Extracting $tar_file"
+        tar -xzvf $tar_file -C bin
         done
     - name: Publish release
       env:
@@ -131,6 +128,74 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: bin/*
+        tag_name: ${{ env.PRE_RELEASE_VERSION }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        prerelease: true
+  pklstable-release:
+    name: Release Necronux Standard Schema
+    if: startsWith(github.ref_name, 'necronux.std.schema') && !contains(github.ref_name, '-')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
+    - name: ''
+      env:
+        VERSION: ${{ github.ref_name }}
+      shell: bash
+      run: just make-stdschemapklpkg
+    - name: Extract version number from tag
+      shell: bash
+      run: |-
+        VERSION_NUMBER=${{ github.ref_name }}
+        VERSION_NUMBER=${VERSION_NUMBER#*@}
+        echo "VERSION_NUMBER=$VERSION_NUMBER" >> $GITHUB_ENV
+    - name: Publish release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: .out/necronux.stdschema${{ env.VERSION_NUMBER }}/*
+        tag_name: ${{ env.RELEASE_VERSION }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+  pklpre-release:
+    name: Pre-Release
+    if: startsWith(github.ref_name, 'necronux.std.schema') && contains(github.ref_name, '-')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
+    - name: ''
+      env:
+        VERSION: ${{ github.ref_name }}
+      shell: bash
+      run: just make-stdschemapklpkg
+    - name: Extract version number from tag
+      shell: bash
+      run: |-
+        VERSION_NUMBER=${{ github.ref_name }}
+        VERSION_NUMBER=${VERSION_NUMBER#*@}
+        echo "VERSION_NUMBER=$VERSION_NUMBER" >> $GITHUB_ENV
+    - env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: .out/necronux.stdlib${{ env.VERSION_NUMBER }}/*
         tag_name: ${{ env.PRE_RELEASE_VERSION }}
         fail_on_unmatched_files: true
         generate_release_notes: true

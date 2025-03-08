@@ -1,0 +1,39 @@
+// ==----------------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==----------------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module release
+
+amends "../../../../commons/GitHubAction.pkl"
+
+import "modules/release-necronux-cli.pkl" as Cli
+import "modules/release-necronux-stdschema.pkl" as Stdschema
+
+headercomment = """
+# ==---------------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==---------------------------------------------------------------== #
+"""
+
+name = "Necronux Release"
+
+on {
+  workflow_dispatch {}
+}
+
+permissions {
+  contents = "write"
+}
+
+jobs {
+  ["build"] = (Cli.build()) {}
+  ["stable-release"] = (Cli.stableRelease()) {}
+  ["pre-release"] = (Cli.preRelease()) {}
+  ["pklstable-release"] = (Stdschema.stableRelease()) {}
+  ["pklpre-release"] = (Stdschema.preRelease()) {}
+}
