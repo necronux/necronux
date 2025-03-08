@@ -21,6 +21,7 @@ package {
   exclude {
     "examples/**"
     "tests/**"
+    "build.gradle.kts"
   }
 }
 
