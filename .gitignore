@@ -15,3 +15,6 @@
 /stdschema/build/
 /stdschema/.out/
 /tools/**/build/
+
+# SBOM
+/docs/reuse.spdx
