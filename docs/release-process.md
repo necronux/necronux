@@ -65,7 +65,8 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Minor Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+2. Edit GitHub Release.
+3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Minor Post-release
 
@@ -86,7 +87,8 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Minor Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+2. Edit GitHub Release.
+3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Minor Post-release
 
@@ -107,7 +109,8 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Patch Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+2. Edit GitHub Release.
+3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Patch Post-release
 
@@ -129,7 +132,8 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Major Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+2. Edit GitHub Release.
+3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Major Post-release
 
@@ -150,7 +154,8 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Major Release
 
 1. Create release using release workflow.
-2. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+2. Edit GitHub Release.
+3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
 
 #### Major Post-release
 
