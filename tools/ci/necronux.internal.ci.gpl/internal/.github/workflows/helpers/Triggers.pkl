@@ -22,10 +22,10 @@ const function wDispatchEventSim() = new gha.WorkflowInput {
 
 const function prBranches() = new Listing<String> {
   "develop"
-  "release/v*"
-  "release-sync/feature/*"
-  "release-sync/bugfix/*"
-  "release-sync/hotfix/*"
+  "release/**"
+  "release-sync/feature/**"
+  "release-sync/bugfix/**"
+  "release-sync/hotfix/**"
 }
 
 const function pklPaths() = new Listing<String> {

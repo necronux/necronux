@@ -13,10 +13,10 @@ name: CI-Rust
   pull_request:
     branches:
     - develop
-    - release/v*
-    - release-sync/feature/*
-    - release-sync/bugfix/*
-    - release-sync/hotfix/*
+    - release/**
+    - release-sync/feature/**
+    - release-sync/bugfix/**
+    - release-sync/hotfix/**
     paths:
     - '*.rs'
     - '**/*.rs'
