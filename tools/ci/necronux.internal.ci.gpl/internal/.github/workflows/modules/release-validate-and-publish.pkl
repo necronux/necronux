@@ -1,0 +1,54 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module release.necronux.validateAndPublish
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+import "../helpers/Common.pkl"
+import "../helpers/Steps.pkl"
+
+const function validate(): gha.Job = new {
+  name = "Validate release"
+  ...Common.standardJobConfig()
+  steps {
+    Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
+    new {
+      name = "Display release version"
+      run = """
+        echo "Release version: ${{ inputs.release_tag }}"
+        """
+      shell = "bash"
+    }
+    new {
+      name = "Check that tag version and Cargo.toml version are the same"
+      run = """
+        TAG_VERSION=${{ inputs.release_tag }}
+        ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
+        echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
+        if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
+        echo "Error: Tag version ($TAG_VERSION) does not match root Cargo.toml version ($ROOT_CARGO_PKG_VERSION)"
+        exit 1
+        fi
+        """
+      shell = "bash"
+    }
+    new {
+      name = "Check that tag version and Stdschema PklProject version are the same"
+      run = """
+        TAG_VERSION=${{ inputs.release_tag }}
+        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
+        echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
+        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+        echo "Error: Tag version ($TAG_VERSION) does not match Stdschema PklProject version ($PKL_PROJECT_VERSION)"
+        exit 1
+        fi
+        """
+      shell = "bash"
+    }
+  }
+}

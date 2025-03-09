@@ -10,39 +10,132 @@
 
 name: Necronux Release
 'on':
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: Choose type of release
+        required: true
+        default: pre-release
+        type: choice
+        options:
+        - pre-release
+        - stable-release
+      release_tag:
+        description: Provide the existing tag to be used for the release
+        required: true
+        type: string
 permissions:
   contents: write
 jobs:
-  build:
-    name: Build
-    strategy:
-      matrix:
-        build:
-        - name: linux-x64
-          os: ubuntu-24.04
-          target: x86_64-unknown-linux-gnu
-        - name: windows-x64
-          os: windows-2022
-          target: x86_64-pc-windows-msvc
-        - name: windows-arm64
-          os: windows-2022
-          target: aarch64-pc-windows-msvc
-        - name: darwin-x64
-          os: macos-14
-          target: x86_64-apple-darwin
-        - name: darwin-arm64
-          os: macos-14
-          target: aarch64-apple-darwin
-      fail-fast: false
-    runs-on: ${{ matrix.build.os }}
+  validate-release:
+    name: Validate release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    - name: Setup Rust env
-      uses: ./.github/actions/setup-rust-env
-    - name: Run cargo build
-      run: cargo build --release --locked --target ${{ matrix.build.TARGET }}
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
+    - name: Display release version
+      shell: bash
+      run: 'echo "Release version: ${{ inputs.release_tag }}"'
+    - name: Check that tag version and Cargo.toml version are the same
+      shell: bash
+      run: |-
+        TAG_VERSION=${{ inputs.release_tag }}
+        ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
+        echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
+        if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
+        echo "Error: Tag version ($TAG_VERSION) does not match root Cargo.toml version ($ROOT_CARGO_PKG_VERSION)"
+        exit 1
+        fi
+    - name: Check that tag version and Stdschema PklProject version are the same
+      shell: bash
+      run: |-
+        TAG_VERSION=${{ inputs.release_tag }}
+        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
+        echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
+        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+        echo "Error: Tag version ($TAG_VERSION) does not match Stdschema PklProject version ($PKL_PROJECT_VERSION)"
+        exit 1
+        fi
+  build-necronux-cli:
+    name: Build Necronux CLI App
+    needs:
+    - validate-release
+    strategy:
+      matrix:
+        include:
+        - name: Linux x86_64 stable
+          os: ubuntu-latest
+          rust: stable
+          other: i686-unknown-linux-gnu
+        - name: Linux x86_64 beta
+          os: ubuntu-latest
+          rust: beta
+          other: i686-unknown-linux-gnu
+        - name: Linux x86_64 nightly
+          os: ubuntu-latest
+          rust: nightly
+          other: i686-unknown-linux-gnu
+        - name: Linux aarch64 stable
+          os: ubuntu-24.04-arm
+          rust: stable
+        - name: Linux aarch64 nightly
+          os: ubuntu-24.04-arm
+          rust: nightly
+        - name: Windows x86_64 MSVC stable
+          os: windows-latest
+          rust: stable-msvc
+          other: i686-pc-windows-msvc
+        - name: Windows x86_64 gnu nightly
+          os: windows-latest
+          rust: nightly-gnu
+          other: i686-pc-windows-gnu
+        - name: macOS aarch64 stable
+          os: macos-latest
+          rust: stable
+          other: x86_64-apple-darwin
+        - name: macOS aarch64 nightly
+          os: macos-latest
+          rust: nightly
+          other: x86_64-apple-darwin
+        - name: macOS x86_64 nightly
+          os: macos-13
+          rust: nightly
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    env:
+      CARGO_INCREMENTAL: 0
+      CARGO_NET_RETRY: 10
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: 1
+      RUSTFLAGS: -D warnings
+      RUSTUP_MAX_RETRIES: 10
+      CARGO_HACK_DENY_WARNINGS: 1
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rustup stable
+      shell: bash
+      run: rustup update --no-self-update stable
+    - name: Update rustup and set default version
+      shell: bash
+      run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+    - name: Add rustup targets
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: rustup target add ${{ matrix.other }}
+    - name: Configure extra test environment
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Build release binary
+      shell: bash
+      run: cargo build --release --locked --workspace
     - name: Rename necronux binary
       shell: bash
       run: |-
@@ -50,14 +143,14 @@ jobs:
 
         extension=""
         # windows binaries have ".exe" extension
-        if [[ "${{ matrix.build.OS }}" == *"windows"* ]]; then
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
         extension=".exe"
         fi
 
         mkdir bin
-        cp "target/${{ matrix.build.TARGET }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.NAME }}${extension}"
+        cp "target/${{ matrix.build.name }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.name }}${extension}"
     - name: Make binaries executable (Non-Windows)
-      if: '! contains(matrix.build.OS, ''windows'')'
+      if: '! contains(matrix.build.os, ''windows-latest'')'
       run: chmod +x bin/*
     - name: Tar the binaries
       shell: bash

@@ -9,8 +9,11 @@ module release
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Triggers.pkl"
+
 import "modules/release-necronux-cli.pkl" as Cli
 import "modules/release-necronux-stdschema.pkl" as Stdschema
+import "modules/release-validate-and-publish.pkl" as ValPub
 
 headercomment = """
 # ==---------------------------------------------------------------== #
@@ -23,7 +26,12 @@ headercomment = """
 name = "Necronux Release"
 
 on {
-  workflow_dispatch {}
+  workflow_dispatch {
+    inputs {
+      ["release_type"] = (Triggers.wDispatchReleaseType()) {}
+      ["release_tag"] = (Triggers.wDispatchReleaseTag()) {}
+    }
+  }
 }
 
 permissions {
@@ -31,7 +39,8 @@ permissions {
 }
 
 jobs {
-  ["build"] = (Cli.build()) {}
+  ["validate-release"] = (ValPub.validate()) {}
+  ["build-necronux-cli"] = (Cli.build()) {}
   ["stable-release"] = (Cli.stableRelease()) {}
   ["pre-release"] = (Cli.preRelease()) {}
   ["pklstable-release"] = (Stdschema.stableRelease()) {}

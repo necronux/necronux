@@ -20,6 +20,23 @@ const function wDispatchEventSim() = new gha.WorkflowInput {
   }
 }
 
+const function wDispatchReleaseType() = new gha.WorkflowInput {
+  description = "Choose type of release"
+  required = true
+  default = "pre-release"
+  type = "choice"
+  options {
+    "pre-release"
+    "stable-release"
+  }
+}
+
+const function wDispatchReleaseTag() = new gha.WorkflowInput {
+  description = "Provide the existing tag to be used for the release"
+  required = true
+  type = "string"
+}
+
 const function prBranches() = new Listing<String> {
   "develop"
   "release/**"

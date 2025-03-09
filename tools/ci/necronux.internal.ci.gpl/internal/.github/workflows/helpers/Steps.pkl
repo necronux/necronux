@@ -8,6 +8,7 @@
 module steps
 
 import "../../../../../commons/GitHubAction.pkl" as gha
+
 import "Actions.pkl"
 
 const function checkout(depth: Int?): gha.Step = new {
@@ -15,6 +16,15 @@ const function checkout(depth: Int?): gha.Step = new {
   uses = Actions.checkout
   with {
     ["fetch-depth"] = depth ?? 1
+  }
+}
+
+const function checkoutWithRef(depth: Int?, ref: String): gha.Step = new {
+  name = "Checkout code"
+  uses = Actions.checkout
+  with {
+    ["fetch-depth"] = depth ?? 1
+    ["ref"] = ref
   }
 }
 

@@ -8,19 +8,26 @@
 module ciRust.test
 
 import "../../../../../commons/GitHubAction.pkl" as gha
+
+import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
 const function testMinimal(): gha.Job = new {
   name = "Minimal Tests (${{ matrix.name }})"
   `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
-  strategy = (strategy()) {}
+  strategy {
+  `fail-fast` = false
+    matrix {
+      ["include"] = (Common.rustMatrix()) {}
+    }
+  }
   `runs-on` = "${{ matrix.os }}"
   `timeout-minutes` = 30
-  env = (Env) {}
+  env = (rustTestEnv) {}
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    ...rustupAndConfigExtra()
+    ...Common.rustupAndConfigExtra()
     new {
       name = "Run cargo test with default features in debug mode"
       run = "cargo test --lib --bins --workspace"
@@ -37,14 +44,19 @@ const function testMinimal(): gha.Job = new {
 const function testFull(): gha.Job = new {
   name = "Full Tests (${{ matrix.name }})"
   `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
-  strategy = (strategy()) {}
+  strategy {
+  `fail-fast` = false
+    matrix {
+      ["include"] = (Common.rustMatrix()) {}
+    }
+  }
   `runs-on` = "${{ matrix.os }}"
   `timeout-minutes` = 30
-  env = (Env) {}
+  env = (rustTestEnv) {}
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    ...rustupAndConfigExtra()
+    ...Common.rustupAndConfigExtra()
     new {
       name = "Run cargo test with default features in debug mode"
       run = "cargo test --all-targets --workspace"
@@ -68,103 +80,9 @@ const function testFull(): gha.Job = new {
   }
 }
 
-const function setupRustupStable(): gha.Step = new {
-  name = "Setup rustup stable"
-  run = "rustup update --no-self-update stable"
-  shell = "bash"
-}
-const function updateRustup(): gha.Step = new {
-  name = "Update rustup and set default version"
-  run = "rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}"
-  shell = "bash"
-}
-const function rustupTargetAdd(): gha.Step = new {
-  `if` = "${{ matrix.other != null }}"
-  name = "Add rustup targets"
-  run = "rustup target add ${{ matrix.other }}"
-  shell = "bash"
-}
-const function configExtra(): gha.Step = new {
-  name = "Configure extra test environment"
-  `if`= "matrix.os == 'ubuntu-latest'"
-  run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
-  shell = "bash"
-}
-const function rustupAndConfigExtra() = new {
-  setupRustupStable()
-  updateRustup()
-  rustupTargetAdd()
-  configExtra()
-}
-
-const Env: gha.EnvironmentVariables = new {
+const rustTestEnv: gha.EnvironmentVariables = new {
   ["CARGO_PROFILE_DEV_DEBUG"] = 1
   ["CARGO_PROFILE_TEST_DEBUG"] = 1
   // Workaround for https://github.com/rust-lang/rustup/issues/3036
   ["RUSTUP_WINDOWS_PATH_ADD_BIN"] = 0
-}
-
-const function strategy(): gha.Strategy = new {
-  `fail-fast` = false
-  matrix {
-    ["include"] {
-      new {
-        name = "Linux x86_64 stable"
-        os = "ubuntu-latest"
-        rust = "stable"
-        other = "i686-unknown-linux-gnu"
-      }
-      new {
-        name = "Linux x86_64 beta"
-        os = "ubuntu-latest"
-        rust = "beta"
-        other = "i686-unknown-linux-gnu"
-      }
-      new {
-        name = "Linux x86_64 nightly"
-        os = "ubuntu-latest"
-        rust = "nightly"
-        other = "i686-unknown-linux-gnu"
-      }
-      new {
-        name = "Linux aarch64 stable"
-        os = "ubuntu-24.04-arm"
-        rust = "stable"
-      }
-      new {
-        name = "Linux aarch64 nightly"
-        os = "ubuntu-24.04-arm"
-        rust = "nightly"
-      }
-      new {
-        name = "Windows x86_64 MSVC stable"
-        os = "windows-latest"
-        rust = "stable-msvc"
-        other = "i686-pc-windows-msvc"
-      }
-      new {
-        name = "Windows x86_64 gnu nightly"
-        os = "windows-latest"
-        rust = "nightly-gnu"
-        other = "i686-pc-windows-gnu"
-      }
-      new {
-        name = "macOS aarch64 stable"
-        os = "macos-latest"
-        rust = "stable"
-        other = "x86_64-apple-darwin"
-      }
-      new {
-        name = "macOS aarch64 nightly"
-        os = "macos-latest"
-        rust = "nightly"
-        other = "x86_64-apple-darwin"
-      }
-      new {
-        name = "macOS x86_64 nightly"
-        os = "macos-13"
-        rust = "nightly"
-      }
-    }
-  }
 }

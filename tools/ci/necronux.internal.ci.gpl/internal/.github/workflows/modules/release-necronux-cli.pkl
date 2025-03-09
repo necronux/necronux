@@ -8,56 +8,30 @@
 module release.necronux.cli
 
 import "../../../../../commons/GitHubAction.pkl" as gha
+
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
 const function build(): gha.Job = new {
-  name = "Build"
-  `runs-on` = "${{ matrix.build.os }}"
+  name = "Build Necronux CLI App"
+  needs {
+    "validate-release"
+  }
   strategy {
     `fail-fast` = false
     matrix {
-      ["build"] = new {
-        new {
-          name = "linux-x64"
-          os = "ubuntu-24.04"
-          target = "x86_64-unknown-linux-gnu"
-        }
-        new {
-          name = "windows-x64"
-          os = "windows-2022"
-          target = "x86_64-pc-windows-msvc"
-        }
-        new {
-          name = "windows-arm64"
-          os = "windows-2022"
-          target = "aarch64-pc-windows-msvc"
-        }
-        new {
-          name = "darwin-x64"
-          os = "macos-14"
-          target = "x86_64-apple-darwin"
-        }
-        new {
-          name = "darwin-arm64"
-          os = "macos-14"
-          target = "aarch64-apple-darwin"
-        }
-      }
+      ["include"] = (Common.rustMatrix()) {}
     }
   }
+  `runs-on` = "${{ matrix.os }}"
+  env = (Common.rustEnv) {}
   steps {
+    Steps.checkout(null)
+    ...Common.rustupAndConfigExtra()
     new {
-      name = "Checkout code"
-      uses = "actions/checkout@v4"
-    }
-    new {
-      name = "Setup Rust env"
-      uses = "./.github/actions/setup-rust-env"
-    }
-    new {
-      name = "Run cargo build"
-      run = "cargo build --release --locked --target ${{ matrix.build.TARGET }}"
+      name = "Build release binary"
+      run = "cargo build --release --locked --workspace"
+      shell = "bash"
     }
     new {
       name = "Rename necronux binary"
@@ -67,17 +41,17 @@ const function build(): gha.Job = new {
 
         extension=""
         # windows binaries have ".exe" extension
-        if [[ "${{ matrix.build.OS }}" == *"windows"* ]]; then
+        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
         extension=".exe"
         fi
 
         mkdir bin
-        cp "target/${{ matrix.build.TARGET }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.NAME }}${extension}"
+        cp "target/${{ matrix.build.name }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.name }}${extension}"
         """
     }
     new {
       name = "Make binaries executable (Non-Windows)"
-      `if` = "! contains(matrix.build.OS, 'windows')"
+      `if` = "! contains(matrix.build.os, 'windows-latest')"
       run = "chmod +x bin/*"
     }
     new {
