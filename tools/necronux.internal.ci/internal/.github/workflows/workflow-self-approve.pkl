@@ -5,7 +5,7 @@
 // ==----------------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module workflowSelfApprove
+module necronux.internal.ci.workflowSelfApprove
 
 amends "../../../../commons/GitHubAction.pkl"
 
@@ -46,8 +46,8 @@ permissions {
 
 jobs {
   ["auto-approve"] {
+    ...Common.standardJobConfig(null, null)
     name = "Approve PR Review"
-    ...Common.standardJobConfig()
     permissions {
       `pull-requests` = "write"
     }

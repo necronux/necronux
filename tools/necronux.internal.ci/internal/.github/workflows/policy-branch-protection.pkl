@@ -5,7 +5,7 @@
 // ==----------------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module policyBranchProtection
+module necronux.internal.ci.policyBranchProtection
 
 amends "../../../../commons/GitHubAction.pkl"
 
@@ -32,7 +32,7 @@ permissions {
 
 jobs {
   ["protect-develop-branch"] {
-    ...Common.standardJobConfig()
+    ...Common.standardJobConfig(null, null)
     name = "Protect Develop Branch"
     steps {
       Steps.checkout(null)
@@ -44,7 +44,7 @@ jobs {
     }
   }
   ["protect-release-branches"] {
-    ...Common.standardJobConfig()
+    ...Common.standardJobConfig(null, null)
     name = "Protect Release Branches"
     steps {
       Steps.checkout(null)

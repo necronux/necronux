@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module release.necronux.stdschema
+module necronux.internal.ci.release.necronuxStdschema
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
@@ -13,10 +13,9 @@ import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
 const function stableRelease(): gha.Job = new {
+  ...Common.standardJobConfig("ubuntu-24.04", null)
   name = "Release Necronux Standard Schema"
-  `runs-on` = "ubuntu-24.04"
   `if` = "startsWith(github.ref_name, 'necronux.std.schema') && !contains(github.ref_name, '-')"
-  `timeout-minutes` = 30
   steps {
     Steps.checkout(0)
     Steps.installAction("just")
@@ -54,10 +53,9 @@ const function stableRelease(): gha.Job = new {
 }
 
 const function preRelease(): gha.Job = new {
+  ...Common.standardJobConfig("ubuntu-24.04", null)
   name = "Pre-Release"
-  `runs-on` = "ubuntu-24.04"
   `if` = "startsWith(github.ref_name, 'necronux.std.schema') && contains(github.ref_name, '-')"
-  `timeout-minutes` = 30
   steps {
     Steps.checkout(0)
     Steps.installAction("just")

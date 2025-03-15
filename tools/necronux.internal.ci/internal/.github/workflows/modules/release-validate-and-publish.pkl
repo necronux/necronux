@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module release.necronux.validateAndPublish
+module necronux.internal.ci.release.validateAndPublish
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
@@ -14,7 +14,7 @@ import "../helpers/Steps.pkl"
 
 const function validate(): gha.Job = new {
   name = "Validate release"
-  ...Common.standardJobConfig()
+  ...Common.standardJobConfig(null, null)
   steps {
     Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
     new {

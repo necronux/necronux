@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module policyReuseLint
+module necronux.internal.ci.policyReuseLint
 
 amends "../../../../commons/GitHubAction.pkl"
 
@@ -35,8 +35,8 @@ permissions {
 
 jobs {
   ["reuse-compliance-check"] {
+    ...Common.standardJobConfig(null, null)
     name = "REUSE Compliance Check"
-    ...Common.standardJobConfig()
     steps {
       Steps.checkout(null)
       new {

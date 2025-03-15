@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ciRust.lint
+module necronux.internal.ci.ciRust.lint
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
@@ -14,7 +14,7 @@ import "../helpers/Steps.pkl"
 
 const function rustfmt(): gha.Job = new {
   name = "Rustfmt"
-  ...Common.standardJobConfig()
+  ...Common.standardJobConfig(null, null)
   steps {
     Steps.checkout(null)
     Steps.setupRustToolchainWithComponent("stable", "rustfmt")
@@ -27,6 +27,7 @@ const function rustfmt(): gha.Job = new {
 }
 
 const function clippy(): gha.Job = new {
+  ...Common.standardJobConfig("${{ matrix.os }}", null)
   name = "Clippy"
   strategy {
     `fail-fast` = false
@@ -40,8 +41,6 @@ const function clippy(): gha.Job = new {
       }
     }
   }
-  `runs-on` = "${{ matrix.os }}"
-  `timeout-minutes` = 30
   steps {
     Steps.checkout(null)
     Steps.setupRustCache()

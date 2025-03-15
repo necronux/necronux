@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ciCommon
+module necronux.internal.ci.ciCommon
 
 amends "../../../../commons/GitHubAction.pkl"
 
@@ -48,7 +48,7 @@ jobs {
   }
 
   ["typos"] {
-    ...Common.standardJobConfig()
+    ...Common.standardJobConfig(null, null)
     name = "Typos"
     steps {
       Steps.checkout(null)
@@ -59,7 +59,7 @@ jobs {
     }
   }
   ["taplo"] {
-    ...Common.standardJobConfig()
+    ...Common.standardJobConfig(null, null)
     name = "Taplofmt"
     steps {
       Steps.checkout(null)

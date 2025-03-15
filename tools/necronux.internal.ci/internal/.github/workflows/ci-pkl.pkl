@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ciPkl
+module necronux.internal.ci.ciPkl
 
 amends "../../../../commons/GitHubAction.pkl"
 
@@ -54,7 +54,7 @@ jobs {
   }
 
   ["resolvecheck"] {
-    ...Common.standardJobConfig()
+    ...Common.standardJobConfig(null, null)
     name = "Resolve Check"
     steps {
       Steps.checkout(null)
@@ -72,8 +72,8 @@ jobs {
     }
   }
   ["evalcheck"] {
+    ...Common.standardJobConfig(null, null)
     name = "Eval Check"
-    ...Common.standardJobConfig()
     steps {
       Steps.checkout(null)
       Steps.installAction("just")
@@ -95,8 +95,8 @@ jobs {
     }
   }
   ["test"] {
+    ...Common.standardJobConfig(null, null)
     name = "Tests"
-    ...Common.standardJobConfig()
     steps {
       Steps.checkout(null)
       Steps.installAction("just")

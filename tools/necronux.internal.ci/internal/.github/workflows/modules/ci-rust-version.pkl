@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ciRust.version
+module necronux.internal.ci.ciRust.version
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
@@ -13,8 +13,8 @@ import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
 const function lockfile(): gha.Job = new {
+  ...Common.standardJobConfig(null, null)
   name = "Cargo Lockfile"
-  ...Common.standardJobConfig()
   steps {
     Steps.checkout(null)
     Steps.setupRustCache()
@@ -28,8 +28,8 @@ const function lockfile(): gha.Job = new {
 }
 
 const function checkVersionBump(): gha.Job = new {
+  ...Common.standardJobConfig(null, null)
   name = "Check Version Bump"
-  ...Common.standardJobConfig()
   env {
     ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
     ["HEAD_SHA"] = "${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}"
@@ -59,8 +59,8 @@ const function checkVersionBump(): gha.Job = new {
 }
 
 const function msrv(): gha.Job = new {
+  ...Common.standardJobConfig(null, null)
   name = "MSRV"
-  ...Common.standardJobConfig()
   steps {
     Steps.checkout(null)
     Steps.setupRustCache()
