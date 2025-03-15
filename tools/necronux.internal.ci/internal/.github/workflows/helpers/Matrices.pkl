@@ -1,0 +1,70 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module necronux.internal.ci.matrices
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+const function rustMatrixFull() = new Listing {
+  new {
+    name = "Linux x86_64 stable"
+    os = "ubuntu-latest"
+    rust = "stable"
+    other = "i686-unknown-linux-gnu"
+  }
+  new {
+    name = "Linux x86_64 beta"
+    os = "ubuntu-latest"
+    rust = "beta"
+    other = "i686-unknown-linux-gnu"
+  }
+  new {
+    name = "Linux x86_64 nightly"
+    os = "ubuntu-latest"
+    rust = "nightly"
+    other = "i686-unknown-linux-gnu"
+  }
+  new {
+    name = "Linux aarch64 stable"
+    os = "ubuntu-24.04-arm"
+    rust = "stable"
+  }
+  new {
+    name = "Linux aarch64 nightly"
+    os = "ubuntu-24.04-arm"
+    rust = "nightly"
+  }
+  new {
+    name = "Windows x86_64 MSVC stable"
+    os = "windows-latest"
+    rust = "stable-msvc"
+    other = "i686-pc-windows-msvc"
+  }
+  new {
+    name = "Windows x86_64 gnu nightly"
+    os = "windows-latest"
+    rust = "nightly-gnu"
+    other = "i686-pc-windows-gnu"
+  }
+  new {
+    name = "macOS aarch64 stable"
+    os = "macos-latest"
+    rust = "stable"
+    other = "x86_64-apple-darwin"
+  }
+  new {
+    name = "macOS aarch64 nightly"
+    os = "macos-latest"
+    rust = "nightly"
+    other = "x86_64-apple-darwin"
+  }
+  new {
+    name = "macOS x86_64 nightly"
+    os = "macos-13"
+    rust = "nightly"
+  }
+}

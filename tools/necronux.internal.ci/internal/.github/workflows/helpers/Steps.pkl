@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module steps
+module necronux.internal.ci.steps
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
@@ -35,6 +35,19 @@ const function installAction(tool: String): gha.Step = new {
     ["tool"] = tool
   }
 }
+
+const function conclusionJQ(): gha.Step = new {
+  name = "Conclusion"
+  run = """
+  jq -C <<< '${{ toJson(needs) }}'
+  jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+  """
+  shell = "bash"
+}
+
+// ================ //
+// --- Rustup
+// =============== //
 
 const function setupRustToolchain(toolchain: String): gha.Step = new {
   name = "Setup rust toolchain"
@@ -68,4 +81,36 @@ const function setupRustCacheWithMatrixKey(): gha.Step = new {
     ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}"
     ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
   }
+}
+
+const function rustupAndConfigExtra() = new {
+  ...rustup()
+  configExtra()
+}
+const function rustup() = new {
+  setupRustupStable()
+  updateRustup()
+  rustupTargetAdd()
+}
+const function setupRustupStable(): gha.Step = new {
+  name = "Setup rustup stable"
+  run = "rustup update --no-self-update stable"
+  shell = "bash"
+}
+const function updateRustup(): gha.Step = new {
+  name = "Update rustup and set default version"
+  run = "rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}"
+  shell = "bash"
+}
+const function rustupTargetAdd(): gha.Step = new {
+  `if` = "${{ matrix.other != null }}"
+  name = "Add rustup targets"
+  run = "rustup target add ${{ matrix.other }}"
+  shell = "bash"
+}
+const function configExtra(): gha.Step = new {
+  name = "Configure extra test environment"
+  `if`= "matrix.os == 'ubuntu-latest'"
+  run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
+  shell = "bash"
 }
