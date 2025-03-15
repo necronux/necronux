@@ -9,6 +9,7 @@ module necronux.internal.ci.ciRust
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Common.pkl"
 import "helpers/EnvVars.pkl"
 import "helpers/Jobs.pkl"
 import "helpers/Triggers.pkl"
@@ -50,9 +51,7 @@ concurrency {
   `cancel-in-progress` = true
 }
 
-permissions {
-  contents = "read"
-}
+permissions = (Common.contentPermissions("read")) {}
 
 jobs {
   ["conclusion-pr"] = (Jobs.conclusionPR()) {

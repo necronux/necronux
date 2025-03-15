@@ -9,6 +9,7 @@ module necronux.internal.ci.ciPkl
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Common.pkl"
 import "helpers/Jobs.pkl"
 import "helpers/Triggers.pkl"
 
@@ -40,9 +41,7 @@ concurrency {
   `cancel-in-progress` = true
 }
 
-permissions {
-  contents = "write"
-}
+permissions = (Common.contentPermissions("read")) {}
 
 jobs {
   ["conclusion"] = (Jobs.conclusionAll()) {

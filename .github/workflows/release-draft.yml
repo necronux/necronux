@@ -25,7 +25,7 @@ name: Necronux Release
         required: true
         type: string
 permissions:
-  contents: write
+  contents: read
 jobs:
   validate-release:
     name: Validate release

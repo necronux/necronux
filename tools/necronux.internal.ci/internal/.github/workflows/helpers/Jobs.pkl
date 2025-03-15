@@ -34,9 +34,7 @@ const function conclusionAll() = new gha.Job {
 } |> conclusionBase()
 
 const function conclusionBase() = new Mixin {
-  permissions = new gha.Permissions {
-    contents = "none"
-  }
+  permissions = (Common.contentPermissions("none")) {}
   steps = new Listing<gha.Step> {
     // Manually check the status of all dependencies. `if: failure()` does not work.
     Steps.conclusionJQ()

@@ -9,6 +9,8 @@ module necronux.internal.ci.releaseDraft
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Common.pkl"
+
 import "helpers/Triggers.pkl"
 
 import "modules/release-necronux-cli.pkl" as Cli
@@ -34,9 +36,7 @@ on {
   }
 }
 
-permissions {
-  contents = "write"
-}
+permissions = (Common.contentPermissions("read")) {}
 
 jobs {
   ["validate-release"] = (ValPub.validate()) {}

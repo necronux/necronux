@@ -9,6 +9,7 @@ module necronux.internal.ci.ciCommon
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Common.pkl"
 import "helpers/Jobs.pkl"
 
 import "modules/ci-common-jobs.pkl" as CiCommon
@@ -34,9 +35,7 @@ concurrency {
   `cancel-in-progress` = true
 }
 
-permissions {
-  contents = "read"
-}
+permissions = (Common.contentPermissions("read")) {}
 
 jobs {
   ["conclusion"] = (Jobs.conclusionAll()) {

@@ -9,6 +9,8 @@ module necronux.internal.ci.workflowSelfApprove
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Common.pkl"
+
 import "modules/workflow-self-approve-jobs.pkl" as WorkflowSelfApproveJobs
 
 headercomment = """
@@ -39,9 +41,7 @@ on {
   }
 }
 
-permissions {
-  contents = "read"
-}
+permissions = (Common.contentPermissions("read")) {}
 
 jobs {
   ["auto-approve"] = (WorkflowSelfApproveJobs.approvePRReview()) {}

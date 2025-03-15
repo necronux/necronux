@@ -9,6 +9,7 @@ module necronux.internal.ci.policyAudit
 
 amends "../../../../commons/GitHubAction.pkl"
 
+import "helpers/Common.pkl"
 import "helpers/Triggers.pkl"
 
 import "modules/policy-audit-jobs.pkl" as PolicyAuditJobs
@@ -23,9 +24,7 @@ headercomment = """
 
 name = "Audit"
 
-permissions {
-  contents = "read"
-}
+permissions = (Common.contentPermissions("read")) {}
 
 on {
   pull_request {}

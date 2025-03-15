@@ -7,7 +7,13 @@
 @ModuleInfo { minPklVersion = "0.27.0" }
 module necronux.internal.ci.common
 
+import "../../../../../commons/GitHubAction.pkl" as gha
+
 const function standardJobConfig(machine: String?, timeout: Int?) = new Mixin {
   `runs-on` = machine ?? "ubuntu-latest"
   `timeout-minutes` = timeout ?? 30
+}
+
+const function contentPermissions(content: String) = new gha.Permissions {
+  contents = content
 }
