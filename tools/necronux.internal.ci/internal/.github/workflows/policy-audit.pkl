@@ -5,13 +5,14 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module audit
+module necronux.internal.ci.policyAudit
 
 amends "../../../../commons/GitHubAction.pkl"
 
 import "helpers/Actions.pkl"
 import "helpers/Common.pkl"
 import "helpers/Steps.pkl"
+import "helpers/Triggers.pkl"
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -29,23 +30,17 @@ permissions {
 
 on {
   pull_request {
-    paths {
-      "Cargo.toml"
-      "Cargo.lock"
-      "**/Cargo.toml"
-      "**/Cargo.lock"
-      "deny.toml"
-    }
+    paths = (Triggers.rustPaths()) {}
   }
   push {
-    paths = (on.pull_request.paths) {}
+    paths = (Triggers.rustPaths()) {}
   }
   workflow_dispatch {}
 }
 
 jobs {
   ["cargo_deny"] {
-    ...Common.standardJobConfig()
+    ...Common.standardJobConfig(null, null)
     name = "Cargo Deny"
     steps {
       Steps.checkout(null)
@@ -60,7 +55,7 @@ jobs {
       new {
         name = "Run cargo deny check advisories"
         // Prevent sudden announcement of a new advisory from failing ci:
-        run = "cargo deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }"
+        run = "cargo cargo-deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }"
         shell = "bash"
       }
     }

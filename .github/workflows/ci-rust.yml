@@ -24,6 +24,8 @@ name: CI-Rust
     - crates/**
     - Cargo.toml
     - Cargo.lock
+    - '**/Cargo.toml'
+    - '**/Cargo.lock'
     - deny.toml
   push:
     paths:
@@ -33,6 +35,8 @@ name: CI-Rust
     - crates/**
     - Cargo.toml
     - Cargo.lock
+    - '**/Cargo.toml'
+    - '**/Cargo.lock'
     - deny.toml
   workflow_dispatch:
     inputs:

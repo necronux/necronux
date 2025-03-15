@@ -12,6 +12,10 @@ name: Security audit
 'on':
   pull_request:
     paths:
+    - '*.rs'
+    - '**/*.rs'
+    - src/**
+    - crates/**
     - Cargo.toml
     - Cargo.lock
     - '**/Cargo.toml'
@@ -19,6 +23,10 @@ name: Security audit
     - deny.toml
   push:
     paths:
+    - '*.rs'
+    - '**/*.rs'
+    - src/**
+    - crates/**
     - Cargo.toml
     - Cargo.lock
     - '**/Cargo.toml'
@@ -44,4 +52,4 @@ jobs:
         rust-version: stable
     - name: Run cargo deny check advisories
       shell: bash
-      run: cargo deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }
+      run: cargo cargo-deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }
