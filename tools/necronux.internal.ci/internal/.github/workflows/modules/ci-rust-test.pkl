@@ -5,29 +5,30 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ciRust.test
+module necronux.internal.ci.ciRust.test
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
 import "../helpers/Common.pkl"
+import "../helpers/EnvVars.pkl"
+import "../helpers/Matrices.pkl"
 import "../helpers/Steps.pkl"
 
 const function testMinimal(): gha.Job = new {
+  ...Common.standardJobConfig("${{ matrix.os }}", null)
   name = "Minimal Tests (${{ matrix.name }})"
   `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
   strategy {
   `fail-fast` = false
     matrix {
-      ["include"] = (Common.rustMatrix()) {}
+      ["include"] = (Matrices.rustMatrixFull()) {}
     }
   }
-  `runs-on` = "${{ matrix.os }}"
-  `timeout-minutes` = 30
-  env = (rustTestEnv) {}
+  env = (EnvVars.rustEnvTest) {}
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    ...Common.rustupAndConfigExtra()
+    ...Steps.rustupAndConfigExtra()
     new {
       name = "Run cargo test with default features in debug mode"
       run = "cargo test --lib --bins --workspace"
@@ -42,21 +43,20 @@ const function testMinimal(): gha.Job = new {
 }
 
 const function testFull(): gha.Job = new {
+  ...Common.standardJobConfig("${{ matrix.os }}", null)
   name = "Full Tests (${{ matrix.name }})"
   `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
   strategy {
   `fail-fast` = false
     matrix {
-      ["include"] = (Common.rustMatrix()) {}
+      ["include"] = (Matrices.rustMatrixFull()) {}
     }
   }
-  `runs-on` = "${{ matrix.os }}"
-  `timeout-minutes` = 30
-  env = (rustTestEnv) {}
+  env = (EnvVars.rustEnvTest) {}
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    ...Common.rustupAndConfigExtra()
+    ...Steps.rustupAndConfigExtra()
     new {
       name = "Run cargo test with default features in debug mode"
       run = "cargo test --all-targets --workspace"
@@ -80,9 +80,3 @@ const function testFull(): gha.Job = new {
   }
 }
 
-const rustTestEnv: gha.EnvironmentVariables = new {
-  ["CARGO_PROFILE_DEV_DEBUG"] = 1
-  ["CARGO_PROFILE_TEST_DEBUG"] = 1
-  // Workaround for https://github.com/rust-lang/rustup/issues/3036
-  ["RUSTUP_WINDOWS_PATH_ADD_BIN"] = 0
-}

@@ -5,14 +5,17 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module release.necronux.cli
+module necronux.internal.ci.release.necronuxCli
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
 import "../helpers/Common.pkl"
+import "../helpers/EnvVars.pkl"
+import "../helpers/Matrices.pkl"
 import "../helpers/Steps.pkl"
 
 const function build(): gha.Job = new {
+  ...Common.standardJobConfig("${{ matrix.os }}", null)
   name = "Build Necronux CLI App"
   needs {
     "validate-release"
@@ -20,14 +23,13 @@ const function build(): gha.Job = new {
   strategy {
     `fail-fast` = false
     matrix {
-      ["include"] = (Common.rustMatrix()) {}
+      ["include"] = (Matrices.rustMatrixFull()) {}
     }
   }
-  `runs-on` = "${{ matrix.os }}"
-  env = (Common.rustEnv) {}
+  env = (EnvVars.rustEnvFull) {}
   steps {
     Steps.checkout(null)
-    ...Common.rustupAndConfigExtra()
+    ...Steps.rustupAndConfigExtra()
     new {
       name = "Build release binary"
       run = "cargo build --release --locked --workspace"
@@ -71,18 +73,12 @@ const function build(): gha.Job = new {
 }
 
 const function stableRelease(): gha.Job = new {
+  ...Common.standardJobConfig("ubuntu-24.04", null)
   name = "Release"
-  `runs-on` = "ubuntu-24.04"
   needs = "build"
   `if` = "startsWith(github.ref_name, 'v') && !contains(github.ref_name, '-')"
   steps {
-    new {
-      name = "Checkout code"
-      uses = "actions/checkout@v4"
-      with {
-        ["fetch-depth"] = 2
-      }
-    }
+    Steps.checkout(null)
     new {
       name = "Download binaries"
       uses = "actions/download-artifact@v4"
@@ -119,18 +115,12 @@ const function stableRelease(): gha.Job = new {
 }
 
 const function preRelease(): gha.Job = new {
+  ...Common.standardJobConfig("ubuntu-24.04", null)
   name = "Pre-Release"
-  `runs-on` = "ubuntu-24.04"
   needs = "build"
   `if` = "startsWith(github.ref_name, 'v') && contains(github.ref_name, '-')"
   steps {
-    new {
-      name = "Checkout code"
-      uses = "actions/checkout@v4"
-      with {
-        ["fetch-depth"] = 2
-      }
-    }
+    Steps.checkout(null)
     new {
       name = "Download binaries"
       uses = "actions/download-artifact@v4"

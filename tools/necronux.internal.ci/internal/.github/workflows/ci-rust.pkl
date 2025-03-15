@@ -5,11 +5,12 @@
 // ==----------------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module ciRust
+module necronux.internal.ci.ciRust
 
 amends "../../../../commons/GitHubAction.pkl"
 
 import "helpers/Common.pkl"
+import "helpers/EnvVars.pkl"
 import "helpers/Jobs.pkl"
 import "helpers/Steps.pkl"
 import "helpers/Triggers.pkl"
@@ -43,7 +44,7 @@ on {
   }
 }
 
-env = (Common.rustEnv) {}
+env = (EnvVars.rustEnvFull) {}
 
 concurrency {
   group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
@@ -82,9 +83,9 @@ jobs {
   ["test-full"] = (Test.testFull()) {}
 
   ["docs"] {
+    ...Common.standardJobConfig(null, null)
     name = "Docs"
-    ...Common.standardJobConfig()
-    env = (module.env) {
+    env = (EnvVars.rustEnvFull) {
       ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
     }
     steps {
