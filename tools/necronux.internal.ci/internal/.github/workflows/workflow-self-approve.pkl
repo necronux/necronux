@@ -1,18 +1,22 @@
 // ==----------------------------------------------------------------== //
 // SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
 //
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 // ==----------------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
+module workflowSelfApprove
 
 amends "../../../../commons/GitHubAction.pkl"
+
+import "helpers/Actions.pkl"
+import "helpers/Common.pkl"
 
 headercomment = """
 # ==----------------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 # ==----------------------------------------------------------------== #
 """
 
@@ -43,14 +47,14 @@ permissions {
 jobs {
   ["auto-approve"] {
     name = "Approve PR Review"
-    `runs-on` = "ubuntu-latest"
+    ...Common.standardJobConfig()
     permissions {
       `pull-requests` = "write"
     }
     steps {
       new {
         name = "Approve Review by NayanTheSpaceGuy"
-        uses = "actions/github-script@v7"
+        uses = Actions.githubScript
         `if` = "github.actor == 'NayanTheSpaceGuy' && contains(github.event.comment.body, 'LGTM')"
         with {
           ["script"] = """

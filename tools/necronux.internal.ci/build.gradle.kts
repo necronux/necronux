@@ -10,7 +10,7 @@ plugins {
 
 pkl {
   evaluators {
-    register("evalWorkflowsGPL") {
+    register("evalWorkflows") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/*.pkl") })
       outputFile.set(file("${rootProject.projectDir}/.github/workflows/%{moduleName}.%{outputFormat}"))
@@ -18,7 +18,7 @@ pkl {
     }
   }
   evaluators {
-    register("evalWorkflowsModulesGPL") {
+    register("evalWorkflowsModules") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/modules/*.pkl") })
       outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
@@ -26,7 +26,7 @@ pkl {
     }
   }
   evaluators {
-    register("evalWorkflowsHelpersGPL") {
+    register("evalWorkflowsHelpers") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("internal/.github/workflows/helpers/*.pkl") })
       outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
@@ -36,7 +36,7 @@ pkl {
 
   project {
     resolvers {
-      register("resolveInternalCIGPL") {
+      register("resolveInternalCI") {
         projectDirectories.from(file("."))
       }
     }

@@ -1,7 +1,7 @@
 # ==----------------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 # ==----------------------------------------------------------------== #
 
 # Do not modify!
@@ -27,6 +27,7 @@ jobs:
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
     - name: Approve Review by NayanTheSpaceGuy
       if: github.actor == 'NayanTheSpaceGuy' && contains(github.event.comment.body, 'LGTM')

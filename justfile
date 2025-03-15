@@ -40,14 +40,12 @@ eval-internalpkl:
     just eval-internalci
 
 resolve-internalci:
-    ./gradlew resolveInternalCIApache
-    ./gradlew resolveInternalCIGPL
+    ./gradlew resolveInternalCI
 
 eval-internalci:
-    ./gradlew evalWorkflowsHelpersGPL
-    ./gradlew evalWorkflowsModulesGPL
-    ./gradlew evalWorkflowsGPL
-    ./gradlew evalWorkflowsApache
+    ./gradlew evalWorkflowsHelpers
+    ./gradlew evalWorkflowsModules
+    ./gradlew evalWorkflows
 
 # stdschema
 
