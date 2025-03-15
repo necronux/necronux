@@ -1,0 +1,37 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module necronux.internal.ci.policyBranchProtection.jobs
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+import "../helpers/Common.pkl"
+import "../helpers/Steps.pkl"
+
+const function protectDevelopBranch() = new gha.Job {
+  name = "Protect Develop Branch"
+  steps {
+    Steps.checkout(null)
+    new {
+      name = "Ensure PRs to develop branch are only from allowed branches"
+      run = "tools/scripts/ci/protect-develop-branch.sh"
+      shell = "bash"
+    }
+  }
+} |> Common.standardJobConfig(null, null)
+
+const function protectReleaseBranches() = new gha.Job {
+  name = "Protect Release Branches"
+  steps {
+    Steps.checkout(null)
+    new {
+      name = "Ensure PRs to release branches are only from allowed branches"
+      run = "tools/scripts/ci/protect-release-branches.sh"
+      shell = "bash"
+    }
+  }
+} |> Common.standardJobConfig(null, null)

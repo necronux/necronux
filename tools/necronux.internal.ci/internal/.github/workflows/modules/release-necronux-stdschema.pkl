@@ -12,8 +12,7 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
-const function stableRelease(): gha.Job = new {
-  ...Common.standardJobConfig("ubuntu-24.04", null)
+const function stableRelease() = new gha.Job {
   name = "Release Necronux Standard Schema"
   `if` = "startsWith(github.ref_name, 'necronux.std.schema') && !contains(github.ref_name, '-')"
   steps {
@@ -50,10 +49,9 @@ const function stableRelease(): gha.Job = new {
       }
     }
   }
-}
+} |> Common.standardJobConfig("ubuntu-24.04", null)
 
-const function preRelease(): gha.Job = new {
-  ...Common.standardJobConfig("ubuntu-24.04", null)
+const function preRelease() = new gha.Job {
   name = "Pre-Release"
   `if` = "startsWith(github.ref_name, 'necronux.std.schema') && contains(github.ref_name, '-')"
   steps {
@@ -90,4 +88,4 @@ const function preRelease(): gha.Job = new {
       }
     }
   }
-}
+} |> Common.standardJobConfig("ubuntu-24.04", null)

@@ -14,8 +14,7 @@ import "../helpers/EnvVars.pkl"
 import "../helpers/Matrices.pkl"
 import "../helpers/Steps.pkl"
 
-const function testMinimal(): gha.Job = new {
-  ...Common.standardJobConfig("${{ matrix.os }}", null)
+const function testMinimal() = new gha.Job {
   name = "Minimal Tests (${{ matrix.name }})"
   `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
   strategy {
@@ -40,10 +39,9 @@ const function testMinimal(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig("${{ matrix.os }}", null)
 
-const function testFull(): gha.Job = new {
-  ...Common.standardJobConfig("${{ matrix.os }}", null)
+const function testFull() = new gha.Job {
   name = "Full Tests (${{ matrix.name }})"
   `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
   strategy {
@@ -78,5 +76,4 @@ const function testFull(): gha.Job = new {
       shell = "bash"
     }
   }
-}
-
+} |> Common.standardJobConfig("${{ matrix.os }}", null)

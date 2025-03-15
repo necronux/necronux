@@ -9,8 +9,7 @@ module necronux.internal.ci.policyBranchProtection
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "helpers/Common.pkl"
-import "helpers/Steps.pkl"
+import "modules/policy-branch-protection-jobs.pkl" as PolicyBranchProtJobs
 
 headercomment = """
 # ==----------------------------------------------------------------== #
@@ -31,28 +30,6 @@ permissions {
 }
 
 jobs {
-  ["protect-develop-branch"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Protect Develop Branch"
-    steps {
-      Steps.checkout(null)
-      new {
-        name = "Ensure PRs to develop branch are only from allowed branches"
-        run = "tools/scripts/ci/protect-develop-branch.sh"
-        shell = "bash"
-      }
-    }
-  }
-  ["protect-release-branches"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Protect Release Branches"
-    steps {
-      Steps.checkout(null)
-      new {
-        name = "Ensure PRs to release branches are only from allowed branches"
-        run = "tools/scripts/ci/protect-release-branches.sh"
-        shell = "bash"
-      }
-    }
-  }
+  ["protect-develop-branch"] = (PolicyBranchProtJobs.protectDevelopBranch()) {}
+  ["protect-release-branches"] = (PolicyBranchProtJobs.protectReleaseBranches()) {}
 }

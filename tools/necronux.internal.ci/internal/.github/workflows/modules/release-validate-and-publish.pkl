@@ -12,9 +12,8 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
-const function validate(): gha.Job = new {
+const function validate() = new gha.Job {
   name = "Validate release"
-  ...Common.standardJobConfig(null, null)
   steps {
     Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
     new {
@@ -51,4 +50,4 @@ const function validate(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig(null, null)

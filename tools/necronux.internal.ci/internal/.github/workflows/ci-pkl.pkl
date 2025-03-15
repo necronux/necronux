@@ -9,10 +9,10 @@ module necronux.internal.ci.ciPkl
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "helpers/Common.pkl"
 import "helpers/Jobs.pkl"
-import "helpers/Steps.pkl"
 import "helpers/Triggers.pkl"
+
+import "modules/ci-pkl-jobs.pkl" as CiPklJobs
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -53,58 +53,7 @@ jobs {
     }
   }
 
-  ["resolvecheck"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Resolve Check"
-    steps {
-      Steps.checkout(null)
-      Steps.installAction("just")
-      new {
-        name = "Check if necronux.std.schema pkl project can be resolved"
-        run = "just resolve-stdschemapkl"
-        shell = "bash"
-      }
-      new {
-        name = "Check if necronux internal pkl projects can be resolved"
-        run = "just resolve-internalpkl"
-        shell = "bash"
-      }
-    }
-  }
-  ["evalcheck"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Eval Check"
-    steps {
-      Steps.checkout(null)
-      Steps.installAction("just")
-      new {
-        name = "Check if necronux.std.schema pkl modules can be evaluated"
-        run = "just eval-stdschemapkl"
-        shell = "bash"
-      }
-      new {
-        name = "Check if necronux internal pkl modules can be evaluated"
-        run = "just eval-internalpkl"
-        shell = "bash"
-      }
-      new {
-        name = "Verify necronux internal pkl modules evaluation reflects the latest changes"
-        run = "git diff --exit-code"
-        shell = "bash"
-      }
-    }
-  }
-  ["test"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Tests"
-    steps {
-      Steps.checkout(null)
-      Steps.installAction("just")
-      new {
-        name = "Test necronux.std.schema pkl modules"
-        run = "just test-stdschemapkl"
-        shell = "bash"
-      }
-    }
-  }
+  ["resolvecheck"] = (CiPklJobs.resolveCheck()) {}
+  ["evalcheck"] = (CiPklJobs.evalCheck()) {}
+  ["test"] = (CiPklJobs.tests()) {}
 }

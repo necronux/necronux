@@ -1,0 +1,39 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module necronux.internal.ci.ciRust.docs
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+import "../helpers/Common.pkl"
+import "../helpers/EnvVars.pkl"
+import "../helpers/Steps.pkl"
+
+const function docs() = new gha.Job {
+  name = "Docs"
+  env = (EnvVars.rustEnvFull) {
+    ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
+  }
+  steps {
+    Steps.checkout(null)
+    Steps.setupRustCache()
+    Steps.setupRustToolchain("stable")
+    new {
+      name = "Run cargo doc"
+      run = "cargo doc --workspace --all-features --no-deps --document-private-items --keep-going"
+      shell = "bash"
+      env {
+        ["RUSTDOCFLAGS"] = "-D warnings"
+      }
+    }
+    new {
+      name = "Run cargo test with all features in debug mode"
+      run = "cargo test --doc --workspace --all-features"
+      shell = "bash"
+    }
+  }
+} |> Common.standardJobConfig(null, null)

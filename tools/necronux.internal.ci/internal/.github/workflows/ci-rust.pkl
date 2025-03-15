@@ -9,12 +9,11 @@ module necronux.internal.ci.ciRust
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "helpers/Common.pkl"
 import "helpers/EnvVars.pkl"
 import "helpers/Jobs.pkl"
-import "helpers/Steps.pkl"
 import "helpers/Triggers.pkl"
 
+import "modules/ci-rust-docs.pkl" as Docs
 import "modules/ci-rust-lint.pkl" as Lint
 import "modules/ci-rust-test.pkl" as Test
 import "modules/ci-rust-version.pkl" as Version
@@ -75,38 +74,10 @@ jobs {
 
   ["rustfmt"] = (Lint.rustfmt()) {}
   ["clippy"] = (Lint.clippy()) {}
-
   ["lockfile"] = (Version.lockfile()) {}
   ["check-version-bump"] = (Version.checkVersionBump()) {}
-
   ["test-minimal"] = (Test.testMinimal()) {}
   ["test-full"] = (Test.testFull()) {}
-
-  ["docs"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Docs"
-    env = (EnvVars.rustEnvFull) {
-      ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
-    }
-    steps {
-      Steps.checkout(null)
-      Steps.setupRustCache()
-      Steps.setupRustToolchain("stable")
-      new {
-        name = "Run cargo doc"
-        run = "cargo doc --workspace --all-features --no-deps --document-private-items --keep-going"
-        shell = "bash"
-        env {
-          ["RUSTDOCFLAGS"] = "-D warnings"
-        }
-      }
-      new {
-        name = "Run cargo test with all features in debug mode"
-        run = "cargo test --doc --workspace --all-features"
-        shell = "bash"
-      }
-    }
-  }
-
+  ["docs"] = (Docs.docs()) {}
   ["msrv"] = (Version.msrv()) {}
 }

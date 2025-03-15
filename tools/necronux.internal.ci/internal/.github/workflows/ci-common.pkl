@@ -9,10 +9,9 @@ module necronux.internal.ci.ciCommon
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "helpers/Actions.pkl"
-import "helpers/Common.pkl"
 import "helpers/Jobs.pkl"
-import "helpers/Steps.pkl"
+
+import "modules/ci-common-jobs.pkl" as CiCommon
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -47,28 +46,6 @@ jobs {
     }
   }
 
-  ["typos"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Typos"
-    steps {
-      Steps.checkout(null)
-      new {
-        name = "Check for typos"
-        uses = Actions.typos
-      }
-    }
-  }
-  ["taplo"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Taplofmt"
-    steps {
-      Steps.checkout(null)
-      Steps.installAction("taplo-cli")
-      new {
-        name = "Run Taplo"
-        run = "taplo fmt --check --diff"
-        shell = "bash"
-      }
-    }
-  }
+  ["typos"] = (CiCommon.typos()) {}
+  ["taplo"] = (CiCommon.taplo()) {}
 }

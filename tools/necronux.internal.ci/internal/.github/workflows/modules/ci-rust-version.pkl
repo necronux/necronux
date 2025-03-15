@@ -12,8 +12,7 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
-const function lockfile(): gha.Job = new {
-  ...Common.standardJobConfig(null, null)
+const function lockfile() = new gha.Job {
   name = "Cargo Lockfile"
   steps {
     Steps.checkout(null)
@@ -25,10 +24,9 @@ const function lockfile(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig(null, null)
 
-const function checkVersionBump(): gha.Job = new {
-  ...Common.standardJobConfig(null, null)
+const function checkVersionBump() = new gha.Job {
   name = "Check Version Bump"
   env {
     ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
@@ -56,10 +54,9 @@ const function checkVersionBump(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig(null, null)
 
-const function msrv(): gha.Job = new {
-  ...Common.standardJobConfig(null, null)
+const function msrv() = new gha.Job {
   name = "MSRV"
   steps {
     Steps.checkout(null)
@@ -71,4 +68,4 @@ const function msrv(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig(null, null)

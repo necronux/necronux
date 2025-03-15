@@ -11,7 +11,7 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 
 import "Actions.pkl"
 
-const function checkout(depth: Int?): gha.Step = new {
+const function checkout(depth: Int?) = new gha.Step {
   name = "Checkout code"
   uses = Actions.checkout
   with {
@@ -19,7 +19,7 @@ const function checkout(depth: Int?): gha.Step = new {
   }
 }
 
-const function checkoutWithRef(depth: Int?, ref: String): gha.Step = new {
+const function checkoutWithRef(depth: Int?, ref: String) = new gha.Step {
   name = "Checkout code"
   uses = Actions.checkout
   with {
@@ -28,7 +28,7 @@ const function checkoutWithRef(depth: Int?, ref: String): gha.Step = new {
   }
 }
 
-const function installAction(tool: String): gha.Step = new {
+const function installAction(tool: String) = new gha.Step {
   name = "Install \(tool)"
   uses = Actions.installAction
   with {
@@ -36,7 +36,7 @@ const function installAction(tool: String): gha.Step = new {
   }
 }
 
-const function conclusionJQ(): gha.Step = new {
+const function conclusionJQ() = new gha.Step {
   name = "Conclusion"
   run = """
   jq -C <<< '${{ toJson(needs) }}'
@@ -49,7 +49,7 @@ const function conclusionJQ(): gha.Step = new {
 // --- Rustup
 // =============== //
 
-const function setupRustToolchain(toolchain: String): gha.Step = new {
+const function setupRustToolchain(toolchain: String) = new gha.Step {
   name = "Setup rust toolchain"
   uses = Actions.rustToolchain
   with {
@@ -57,7 +57,7 @@ const function setupRustToolchain(toolchain: String): gha.Step = new {
   }
 }
 
-const function setupRustToolchainWithComponent(toolchain: String, component: String): gha.Step = new {
+const function setupRustToolchainWithComponent(toolchain: String, component: String) = new gha.Step {
   name = "Setup rust toolchain"
   uses = Actions.rustToolchain
   with {
@@ -66,7 +66,7 @@ const function setupRustToolchainWithComponent(toolchain: String, component: Str
   }
 }
 
-const function setupRustCache(): gha.Step = new {
+const function setupRustCache() = new gha.Step {
   name = "Setup rust cache"
   uses = Actions.rustCache
   with {
@@ -74,7 +74,7 @@ const function setupRustCache(): gha.Step = new {
   }
 }
 
-const function setupRustCacheWithMatrixKey(): gha.Step = new {
+const function setupRustCacheWithMatrixKey() = new gha.Step {
   name = "Setup rust cache"
   uses = Actions.rustCache
   with {
@@ -92,23 +92,23 @@ const function rustup() = new {
   updateRustup()
   rustupTargetAdd()
 }
-const function setupRustupStable(): gha.Step = new {
+const function setupRustupStable() = new gha.Step {
   name = "Setup rustup stable"
   run = "rustup update --no-self-update stable"
   shell = "bash"
 }
-const function updateRustup(): gha.Step = new {
+const function updateRustup() = new gha.Step {
   name = "Update rustup and set default version"
   run = "rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}"
   shell = "bash"
 }
-const function rustupTargetAdd(): gha.Step = new {
+const function rustupTargetAdd() = new gha.Step {
   `if` = "${{ matrix.other != null }}"
   name = "Add rustup targets"
   run = "rustup target add ${{ matrix.other }}"
   shell = "bash"
 }
-const function configExtra(): gha.Step = new {
+const function configExtra() = new gha.Step {
   name = "Configure extra test environment"
   `if`= "matrix.os == 'ubuntu-latest'"
   run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"

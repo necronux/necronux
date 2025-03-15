@@ -9,8 +9,7 @@ module necronux.internal.ci.workflowSelfApprove
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "helpers/Actions.pkl"
-import "helpers/Common.pkl"
+import "modules/workflow-self-approve-jobs.pkl" as WorkflowSelfApproveJobs
 
 headercomment = """
 # ==----------------------------------------------------------------== #
@@ -45,30 +44,5 @@ permissions {
 }
 
 jobs {
-  ["auto-approve"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Approve PR Review"
-    permissions {
-      `pull-requests` = "write"
-    }
-    steps {
-      new {
-        name = "Approve Review by NayanTheSpaceGuy"
-        uses = Actions.githubScript
-        `if` = "github.actor == 'NayanTheSpaceGuy' && contains(github.event.comment.body, 'LGTM')"
-        with {
-          ["script"] = """
-          github.rest.pulls.createReview({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            pull_number: context.issue.number,
-            review_id: 1,
-            event: 'APPROVE',
-            body: 'Let`s get this merged then.'
-          })
-          """
-        }
-      }
-    }
-  }
+  ["auto-approve"] = (WorkflowSelfApproveJobs.approvePRReview()) {}
 }

@@ -9,10 +9,9 @@ module necronux.internal.ci.policyAudit
 
 amends "../../../../commons/GitHubAction.pkl"
 
-import "helpers/Actions.pkl"
-import "helpers/Common.pkl"
-import "helpers/Steps.pkl"
 import "helpers/Triggers.pkl"
+
+import "modules/policy-audit-jobs.pkl" as PolicyAuditJobs
 
 headercomment = """
 # ==-----------------------------------------------------------== #
@@ -22,42 +21,19 @@ headercomment = """
 # ==-----------------------------------------------------------== #
 """
 
-name = "Security audit"
+name = "Audit"
 
 permissions {
   contents = "read"
 }
 
 on {
-  pull_request {
-    paths = (Triggers.rustPaths()) {}
-  }
-  push {
-    paths = (Triggers.rustPaths()) {}
-  }
+  pull_request {}
+  push {}
   workflow_dispatch {}
 }
 
 jobs {
-  ["cargo_deny"] {
-    ...Common.standardJobConfig(null, null)
-    name = "Cargo Deny"
-    steps {
-      Steps.checkout(null)
-      new {
-        name = "Run cargo deny check without advisories"
-        uses = Actions.cargoDenyAction
-        with {
-          ["command"] = "check bans licenses sources"
-          ["rust-version"] = "stable"
-        }
-      }
-      new {
-        name = "Run cargo deny check advisories"
-        // Prevent sudden announcement of a new advisory from failing ci:
-        run = "cargo cargo-deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }"
-        shell = "bash"
-      }
-    }
-  }
+  ["reuse-compliance-check"] = (PolicyAuditJobs.reuseCompliance()) {}
+  ["cargo_deny"] = (PolicyAuditJobs.cargoDeny()) {}
 }

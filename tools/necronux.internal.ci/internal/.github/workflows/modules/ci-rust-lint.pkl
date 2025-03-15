@@ -12,9 +12,8 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
-const function rustfmt(): gha.Job = new {
+const function rustfmt() = new gha.Job {
   name = "Rustfmt"
-  ...Common.standardJobConfig(null, null)
   steps {
     Steps.checkout(null)
     Steps.setupRustToolchainWithComponent("stable", "rustfmt")
@@ -24,10 +23,9 @@ const function rustfmt(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig(null, null)
 
-const function clippy(): gha.Job = new {
-  ...Common.standardJobConfig("${{ matrix.os }}", null)
+const function clippy() = new gha.Job {
   name = "Clippy"
   strategy {
     `fail-fast` = false
@@ -51,4 +49,4 @@ const function clippy(): gha.Job = new {
       shell = "bash"
     }
   }
-}
+} |> Common.standardJobConfig("${{ matrix.os }}", null)

@@ -14,8 +14,7 @@ import "../helpers/EnvVars.pkl"
 import "../helpers/Matrices.pkl"
 import "../helpers/Steps.pkl"
 
-const function build(): gha.Job = new {
-  ...Common.standardJobConfig("${{ matrix.os }}", null)
+const function build() = new gha.Job {
   name = "Build Necronux CLI App"
   needs {
     "validate-release"
@@ -70,10 +69,9 @@ const function build(): gha.Job = new {
       }
     }
   }
-}
+} |> Common.standardJobConfig("${{ matrix.os }}", null)
 
-const function stableRelease(): gha.Job = new {
-  ...Common.standardJobConfig("ubuntu-24.04", null)
+const function stableRelease() = new gha.Job {
   name = "Release"
   needs = "build"
   `if` = "startsWith(github.ref_name, 'v') && !contains(github.ref_name, '-')"
@@ -112,10 +110,9 @@ const function stableRelease(): gha.Job = new {
       }
     }
   }
-}
+} |> Common.standardJobConfig("ubuntu-24.04", null)
 
-const function preRelease(): gha.Job = new {
-  ...Common.standardJobConfig("ubuntu-24.04", null)
+const function preRelease() = new gha.Job {
   name = "Pre-Release"
   needs = "build"
   `if` = "startsWith(github.ref_name, 'v') && contains(github.ref_name, '-')"
@@ -155,4 +152,4 @@ const function preRelease(): gha.Job = new {
       }
     }
   }
-}
+} |> Common.standardJobConfig("ubuntu-24.04", null)

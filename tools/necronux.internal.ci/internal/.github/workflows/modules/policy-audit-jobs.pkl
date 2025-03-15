@@ -1,0 +1,46 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module necronux.internal.ci.policyAudit.jobs
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+import "../helpers/Actions.pkl"
+import "../helpers/Common.pkl"
+import "../helpers/Steps.pkl"
+
+const function cargoDeny() = new gha.Job {
+  name = "Cargo Deny"
+  steps {
+    Steps.checkout(null)
+    new {
+      name = "Run cargo deny check without advisories"
+      uses = Actions.cargoDenyAction
+      with {
+        ["command"] = "check bans licenses sources"
+        ["rust-version"] = "stable"
+      }
+    }
+    new {
+      name = "Run cargo deny check advisories"
+      // Prevent sudden announcement of a new advisory from failing ci:
+      run = "cargo cargo-deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }"
+      shell = "bash"
+    }
+  }
+} |> Common.standardJobConfig(null, null)
+
+const function reuseCompliance() = new gha.Job {
+  name = "REUSE Compliance Check"
+  steps {
+    Steps.checkout(null)
+    new {
+      name = "REUSE Compliance Check"
+      uses = Actions.reuseAction
+    }
+  }
+} |> Common.standardJobConfig(null, null)
