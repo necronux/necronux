@@ -17,3 +17,8 @@ const function standardJobConfig(machine: String?, timeout: Int?) = new Mixin {
 const function contentPermissions(content: String) = new gha.Permissions {
   contents = content
 }
+
+const function concurrencyPROrRef() = new gha.Concurrency {
+  group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  `cancel-in-progress` = true
+}

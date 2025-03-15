@@ -9,7 +9,7 @@ module necronux.internal.ci.envVars
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
-const rustEnvFull: gha.EnvironmentVariables = new  {
+const rustEnvFull = new gha.EnvironmentVariables {
   ["CARGO_INCREMENTAL"] = 0
   ["CARGO_NET_RETRY"] = 10
   ["CARGO_TERM_COLOR"] = "always"
@@ -19,7 +19,7 @@ const rustEnvFull: gha.EnvironmentVariables = new  {
   ["CARGO_HACK_DENY_WARNINGS"] = 1
 }
 
-const rustEnvTest: gha.EnvironmentVariables = new {
+const rustEnvTest = new gha.EnvironmentVariables {
   ["CARGO_PROFILE_DEV_DEBUG"] = 1
   ["CARGO_PROFILE_TEST_DEBUG"] = 1
   // Workaround for https://github.com/rust-lang/rustup/issues/3036

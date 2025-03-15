@@ -45,12 +45,7 @@ on {
 }
 
 env = (EnvVars.rustEnvFull) {}
-
-concurrency {
-  group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
-  `cancel-in-progress` = true
-}
-
+concurrency = (Common.concurrencyPROrRef()) {}
 permissions = (Common.contentPermissions("read")) {}
 
 jobs {
