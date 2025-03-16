@@ -13,15 +13,9 @@ import "helpers/Common.pkl"
 
 import "modules/workflow-self-approve-jobs.pkl" as WorkflowSelfApproveJobs
 
-headercomment = """
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
-"""
-
+headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "LGTM Self Approve"
+permissions = (Common.contentPermissions("read")) {}
 
 on {
   issue_comment {
@@ -40,9 +34,6 @@ on {
     }
   }
 }
-
-permissions = (Common.contentPermissions("read")) {}
-
 jobs {
   ["auto-approve"] = (WorkflowSelfApproveJobs.approvePRReview()) {}
 }

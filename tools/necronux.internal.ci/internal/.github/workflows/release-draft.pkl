@@ -10,22 +10,15 @@ module necronux.internal.ci.releaseDraft
 amends "../../../../commons/GitHubAction.pkl"
 
 import "helpers/Common.pkl"
-
 import "helpers/Triggers.pkl"
 
 import "modules/release-necronux-cli.pkl" as Cli
 import "modules/release-necronux-stdschema.pkl" as Stdschema
 import "modules/release-validate-and-publish.pkl" as ValPub
 
-headercomment = """
-# ==---------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==---------------------------------------------------------------== #
-"""
-
-name = "Necronux Release"
+headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
+name = "Necronux Release Draft"
+permissions = (Common.contentPermissions("read")) {}
 
 on {
   workflow_dispatch {
@@ -35,9 +28,6 @@ on {
     }
   }
 }
-
-permissions = (Common.contentPermissions("read")) {}
-
 jobs {
   ["validate-release"] = (ValPub.validate()) {}
   ["build-necronux-cli"] = (Cli.build()) {}

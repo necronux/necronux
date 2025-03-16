@@ -1,14 +1,14 @@
-# ==---------------------------------------------------------------== #
+# ==----------------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
-# ==---------------------------------------------------------------== #
+# ==----------------------------------------------------------------== #
 
 # Do not modify!
 # This file was generated from a template using the necronux internal pkl package.
 # Any changes should be made to the template, not this file.
 
-name: Necronux Release
+name: Necronux Release Draft
 'on':
   workflow_dispatch:
     inputs:

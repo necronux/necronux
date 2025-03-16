@@ -13,22 +13,13 @@ import "helpers/Common.pkl"
 
 import "modules/policy-branch-protection-jobs.pkl" as PolicyBranchProtJobs
 
-headercomment = """
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
-"""
-
+headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "Branch Protection"
+permissions = (Common.contentPermissions("read")) {}
 
 on {
   pull_request {}
 }
-
-permissions = (Common.contentPermissions("read")) {}
-
 jobs {
   ["protect-develop-branch"] = (PolicyBranchProtJobs.protectDevelopBranch()) {}
   ["protect-release-branches"] = (PolicyBranchProtJobs.protectReleaseBranches()) {}

@@ -19,15 +19,11 @@ import "modules/ci-rust-lint.pkl" as Lint
 import "modules/ci-rust-test.pkl" as Test
 import "modules/ci-rust-version.pkl" as Version
 
-headercomment = """
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
-"""
-
+headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "CI-Rust"
+permissions = (Common.contentPermissions("read")) {}
+concurrency = (Common.concurrencyPROrRef()) {}
+env = (EnvVars.rustEnvFull) {}
 
 on {
   pull_request {
@@ -43,11 +39,6 @@ on {
     }
   }
 }
-
-env = (EnvVars.rustEnvFull) {}
-concurrency = (Common.concurrencyPROrRef()) {}
-permissions = (Common.contentPermissions("read")) {}
-
 jobs {
   ["conclusion-pr"] = (Jobs.conclusionPR()) {
     needs = (jobs["conclusion-push"].needs) {

@@ -10,20 +10,11 @@ module necronux.internal.ci.policyAudit
 amends "../../../../commons/GitHubAction.pkl"
 
 import "helpers/Common.pkl"
-import "helpers/Triggers.pkl"
 
 import "modules/policy-audit-jobs.pkl" as PolicyAuditJobs
 
-headercomment = """
-# ==-----------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==-----------------------------------------------------------== #
-"""
-
+headercomment = Common.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "Audit"
-
 permissions = (Common.contentPermissions("read")) {}
 
 on {
@@ -31,7 +22,6 @@ on {
   push {}
   workflow_dispatch {}
 }
-
 jobs {
   ["reuse-compliance-check"] = (PolicyAuditJobs.reuseCompliance()) {}
   ["cargo_deny"] = (PolicyAuditJobs.cargoDeny()) {}

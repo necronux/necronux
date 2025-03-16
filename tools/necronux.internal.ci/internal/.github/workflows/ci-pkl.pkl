@@ -15,15 +15,10 @@ import "helpers/Triggers.pkl"
 
 import "modules/ci-pkl-jobs.pkl" as CiPklJobs
 
-headercomment = """
-# ==-----------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==-----------------------------------------------------------== #
-"""
-
+headercomment = Common.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "CI-Pkl"
+permissions = (Common.contentPermissions("read")) {}
+concurrency = (Common.concurrencyPROrRef()) {}
 
 on {
   pull_request {
@@ -35,10 +30,6 @@ on {
   }
   workflow_dispatch {}
 }
-
-concurrency = (Common.concurrencyPROrRef()) {}
-permissions = (Common.contentPermissions("read")) {}
-
 jobs {
   ["conclusion"] = (Jobs.conclusionAll()) {
     needs {

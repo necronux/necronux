@@ -22,3 +22,14 @@ const function concurrencyPROrRef() = new gha.Concurrency {
   group = "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
   `cancel-in-progress` = true
 }
+
+const function headerComment(year: String, holders: String, identifier: String): String =
+  let (copyrightLine = "# SPDX-FileCopyrightText: © \(year) \(holders)")
+  let (decorationLine = "# ==" + "-".repeat(copyrightLine.length - 6) + "== #")
+    """
+    \(decorationLine)
+    \(copyrightLine)
+    #
+    # SPDX-License-Identifier: \(identifier)
+    \(decorationLine)
+    """
