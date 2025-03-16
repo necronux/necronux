@@ -19,11 +19,8 @@ const function checkout(depth: Int?) = new gha.Step {
   }
 }
 
-const function checkoutWithRef(depth: Int?, ref: String) = new gha.Step {
-  name = "Checkout code"
-  uses = Actions.checkout
+const function checkoutWithRef(depth: Int?, ref: String) = (checkout(depth)) {
   with {
-    ["fetch-depth"] = depth ?? 1
     ["ref"] = ref
   }
 }
@@ -34,15 +31,6 @@ const function installAction(tool: String) = new gha.Step {
   with {
     ["tool"] = tool
   }
-}
-
-const function conclusionJQ() = new gha.Step {
-  name = "Conclusion"
-  run = """
-  jq -C <<< '${{ toJson(needs) }}'
-  jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
-  """
-  shell = "bash"
 }
 
 // ================ //
@@ -57,11 +45,8 @@ const function setupRustToolchain(toolchain: String) = new gha.Step {
   }
 }
 
-const function setupRustToolchainWithComponent(toolchain: String, component: String) = new gha.Step {
-  name = "Setup rust toolchain"
-  uses = Actions.rustToolchain
+const function setupRustToolchainWithComponent(toolchain: String, component: String) = (setupRustToolchain(toolchain)) {
   with {
-    ["toolchain"] = toolchain
     ["components"] = component
   }
 }
@@ -74,11 +59,8 @@ const function setupRustCache() = new gha.Step {
   }
 }
 
-const function setupRustCacheWithMatrixKey() = new gha.Step {
-  name = "Setup rust cache"
-  uses = Actions.rustCache
+const function setupRustCacheWithMatrixKey() = (setupRustCache()) {
   with {
-    ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}"
     ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
   }
 }
