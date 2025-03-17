@@ -105,7 +105,10 @@ const function installi686WindowsDeps() = new gha.Step {
   `if` = "${{ matrix.other == 'i686-pc-windows-gnu' }}"
   name = "Install MinGW-w64 for i686"
   run = """
-  choco install mingw --params "/threads:win32 /arch:i686" -y
+  choco install mingw-w64 --params "/threads:win32 /exception:seh /arch:i686" -y
+  echo "C:\\ProgramData\\chocolatey\\lib\\mingw-w64\\tools\\install\\mingw32\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+  refreshenv
+  i686-w64-mingw32-gcc --version
   """
   shell = "powershell"
 }
