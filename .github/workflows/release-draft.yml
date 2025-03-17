@@ -145,7 +145,7 @@ jobs:
       if: ${{ matrix.other != null }}
       shell: bash
       run: rustup target add ${{ matrix.other }}
-    - name: Install MinGW for i686
+    - name: Install dependencies for ${{ matrix.other }}
       if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
       shell: powershell
       run: |-
@@ -153,6 +153,19 @@ jobs:
         echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw32\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         refreshenv
         i686-pc-mingw32-gcc --version
+    - name: Install dependencies for ${{ matrix.target }}
+      if: ${{ matrix.target == 'x86_64-unknown-freebsd' }}
+      shell: bash
+      run: |-
+        sudo apt-get update
+        sudo apt-get install clang llvm lld binutils-gold libclang-dev freebsd64-headers
+    - name: Install dependencies for ${{ matrix.target }}
+      if: ${{ matrix.target == 'i686-unknown-linux-gnu' }}
+      shell: bash
+      run: |-
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install gcc-multilib g++-multilib libc6-dev-i386 lib32gcc1 lib32stdc++6
     - name: Build release binary
       shell: bash
       run: cargo build --release --locked --workspace

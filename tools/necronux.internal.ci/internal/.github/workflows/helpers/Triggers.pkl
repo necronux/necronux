@@ -63,6 +63,7 @@ const function rustPaths() = new Listing<String> {
   "**/*.rs"
   "src/**"
   "crates/**"
+  ".cargo/**"
   "Cargo.toml"
   "Cargo.lock"
   "**/Cargo.toml"

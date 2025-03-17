@@ -98,12 +98,14 @@ const function configExtraTestEnv(os: String) = new gha.Step {
 }
 
 const function installRustMatrixDeps() = new Listing {
-  installi686WindowsDeps()
+  installi686WindowsGnuDeps()
+  installx8664FreeBSDDeps()
+  installi686LinuxGnuDeps()
 }
 
-const function installi686WindowsDeps() = new gha.Step {
+const function installi686WindowsGnuDeps() = new gha.Step {
   `if` = "${{ matrix.other == 'i686-pc-windows-gnu' }}"
-  name = "Install MinGW for i686"
+  name = "Install dependencies for ${{ matrix.other }}"
   run = """
   choco install mingw --params "/threads:win32 /arch:i686" -y
   echo "C:\\ProgramData\\chocolatey\\lib\\mingw\\tools\\install\\mingw32\\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -111,4 +113,25 @@ const function installi686WindowsDeps() = new gha.Step {
   i686-pc-mingw32-gcc --version
   """
   shell = "powershell"
+}
+
+const function installx8664FreeBSDDeps() = new gha.Step {
+  `if` = "${{ matrix.target == 'x86_64-unknown-freebsd' }}"
+  name = "Install dependencies for ${{ matrix.target }}"
+  run = """
+  sudo apt-get update
+  sudo apt-get install clang llvm lld binutils-gold libclang-dev freebsd64-headers
+  """
+  shell = "bash"
+}
+
+const function installi686LinuxGnuDeps() = new gha.Step {
+  `if` = "${{ matrix.target == 'i686-unknown-linux-gnu' }}"
+  name = "Install dependencies for ${{ matrix.target }}"
+  run = """
+  sudo dpkg --add-architecture i386
+  sudo apt-get update
+  sudo apt-get install gcc-multilib g++-multilib libc6-dev-i386 lib32gcc1 lib32stdc++6
+  """
+  shell = "bash"
 }
