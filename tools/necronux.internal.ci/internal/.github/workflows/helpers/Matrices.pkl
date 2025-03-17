@@ -34,35 +34,35 @@ const function rustMatrixTestFull() = new Listing {
 const function rustMatrixBuild() = new Listing {
   ...rustMatrixBase(true)
   new {
-    name = "[freeBSD, netBSD] x86_64 Stable"
+    name = "[freeBSD & netBSD] x86_64 Stable"
     os = linuxRunner64
     toolchain = rustStableLinux64
     target = "x86_64-unknown-freebsd"
     other = "x86_64-unknown-netbsd"
   }
   new {
-    name = "Linux-GNU [i686, PowerPC] Stable"
+    name = "Linux-GNU [i686 & PowerPC] Stable"
     os = linuxRunner64
     toolchain = rustStableLinux64
     target = "i686-unknown-linux-gnu"
     other = "powerpc-unknown-linux-gnu"
   }
   new {
-    name = "Linux-GNU [PPC64, PPC64LE] Stable"
+    name = "Linux-GNU [PPC64 & PPC64LE] Stable"
     os = linuxRunner64
     toolchain = rustStableLinux64
     target = "powerpc64-unknown-linux-gnu"
     other = "powerpc64le-unknown-linux-gnu"
   }
   new {
-    name = "[Linux-GNU, Linux-MUSL] armv7 Stable"
+    name = "[Linux-GNU & Linux-MUSL] armv7 Stable"
     os = linuxRunner64Arm
     toolchain = rustStableLinux64Arm
     target = "armv7-unknown-linux-gnueabi"
     other = "armv7-unknown-linux-musleabi"
   }
   new {
-    name = "[Linux-GNUhf, Linux-MUSLhf] armv7 Stable"
+    name = "[Linux-GNUhf & Linux-MUSLhf] armv7 Stable"
     os = linuxRunner64Arm
     toolchain = rustStableLinux64Arm
     target = "armv7-unknown-linux-gnueabihf"
@@ -101,13 +101,13 @@ const function rustMatrixBase(other: Boolean?) = new Listing {
 
 const function linuxx8664BetaAndNightly() = new {
   new {
-    name = "[Linux-GNU, Linux-MUSL] x86_64 Nightly"
+    name = "Linux-GNU x86_64 Nightly"
     os = linuxRunner64
     toolchain = rustNightlyLinux64
     target = "x86_64-unknown-linux-gnu"
   }
   new {
-    name = "[Linux-GNU, Linux-MUSL] x86_64 Beta"
+    name = "Linux-GNU x86_64 Beta"
     os = linuxRunner64
     toolchain = rustBetaLinux64
     target = "x86_64-unknown-linux-gnu"
@@ -115,7 +115,7 @@ const function linuxx8664BetaAndNightly() = new {
 }
 
 const function linuxx8664Stable(other: Boolean) = if (other) new {
-  name = "[Linux-GNU, Linux-MUSL] x86_64 Stable"
+  name = "[Linux-GNU & Linux-MUSL] x86_64 Stable"
   os = linuxRunner64
   toolchain = rustStableLinux64
   target = "x86_64-unknown-linux-gnu"
@@ -127,7 +127,7 @@ const function linuxx8664Stable(other: Boolean) = if (other) new {
   target = "x86_64-unknown-linux-gnu"
 }
 const function windowsMSVCStable(other: Boolean) = if (other) new {
-  name = "Windows-MSVC [x86_64, i686] Stable"
+  name = "Windows-MSVC [x86_64 & i686] Stable"
   os = windowsRunner64
   toolchain = rustStableWindowsMSVC64
   target = "x86_64-pc-windows-msvc"
@@ -139,7 +139,7 @@ const function windowsMSVCStable(other: Boolean) = if (other) new {
   target = "x86_64-pc-windows-msvc"
 }
 const function windowsGNUStable(other: Boolean) = if (other) new {
-  name = "Windows-GNU [x86_64, i686] Stable"
+  name = "Windows-GNU [x86_64 & i686] Stable"
   os = windowsRunner64
   toolchain = rustStableWindowsGNU64
   target = "x86_64-pc-windows-gnu"

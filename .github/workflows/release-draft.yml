@@ -67,7 +67,7 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: '[Linux-GNU, Linux-MUSL] x86_64 Stable'
+        - name: '[Linux-GNU & Linux-MUSL] x86_64 Stable'
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
@@ -80,37 +80,37 @@ jobs:
           os: macos-15
           toolchain: stable-aarch64-apple-darwin
           target: aarch64-apple-darwin
-        - name: Windows-MSVC [x86_64, i686] Stable
+        - name: Windows-MSVC [x86_64 & i686] Stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
           other: i686-pc-windows-msvc
-        - name: Windows-GNU [x86_64, i686] Stable
+        - name: Windows-GNU [x86_64 & i686] Stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
           other: i686-pc-windows-gnu
-        - name: '[freeBSD, netBSD] x86_64 Stable'
+        - name: '[freeBSD & netBSD] x86_64 Stable'
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-freebsd
           other: x86_64-unknown-netbsd
-        - name: Linux-GNU [i686, PowerPC] Stable
+        - name: Linux-GNU [i686 & PowerPC] Stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: i686-unknown-linux-gnu
           other: powerpc-unknown-linux-gnu
-        - name: Linux-GNU [PPC64, PPC64LE] Stable
+        - name: Linux-GNU [PPC64 & PPC64LE] Stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: powerpc64-unknown-linux-gnu
           other: powerpc64le-unknown-linux-gnu
-        - name: '[Linux-GNU, Linux-MUSL] armv7 Stable'
+        - name: '[Linux-GNU & Linux-MUSL] armv7 Stable'
           os: ubuntu-24.04-arm
           toolchain: stable-aarch64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabi
           other: armv7-unknown-linux-musleabi
-        - name: '[Linux-GNUhf, Linux-MUSLhf] armv7 Stable'
+        - name: '[Linux-GNUhf & Linux-MUSLhf] armv7 Stable'
           os: ubuntu-24.04-arm
           toolchain: stable-aarch64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabihf
