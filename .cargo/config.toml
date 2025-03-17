@@ -1,0 +1,22 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+
+[target.x86_64-unknown-freebsd]
+cc = "/usr/bin/clang"
+cxx = "/usr/bin/clang++"
+linker = "lld"
+rustflags = ["-C", "link-args=-fuse-ld=lld"]
+
+[target.i686-unknown-linux-gnu]
+linker = "gcc-10"
+rustflags = [
+  "-C",
+  "target-cpu=i686",
+  "-C",
+  "linker-flavor=ld",
+  "-C",
+  "link-args=-m32",
+]
