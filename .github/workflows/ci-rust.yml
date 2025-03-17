@@ -409,8 +409,9 @@ jobs:
       if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
       shell: powershell
       run: |-
-        choco install mingw -y
-        echo "C:\ProgramData\chocolatey\bin" >> $GITHUB_PATH
+        curl -L https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip -o llvm-mingw.zip
+        unzip llvm-mingw.zip -d llvm-mingw
+        echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
         refreshenv
     - name: Install dependencies for x86_64-unknown-freebsd
       if: ${{ matrix.target == 'x86_64-unknown-freebsd' }}
@@ -532,8 +533,9 @@ jobs:
       if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
       shell: powershell
       run: |-
-        choco install mingw -y
-        echo "C:\ProgramData\chocolatey\bin" >> $GITHUB_PATH
+        curl -L https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip -o llvm-mingw.zip
+        unzip llvm-mingw.zip -d llvm-mingw
+        echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
         refreshenv
     - name: Install dependencies for x86_64-unknown-freebsd
       if: ${{ matrix.target == 'x86_64-unknown-freebsd' }}

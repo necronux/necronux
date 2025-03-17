@@ -107,8 +107,9 @@ const function installi686WindowsGnuDeps() = new gha.Step {
   `if` = "${{ matrix.other == 'i686-pc-windows-gnu' }}"
   name = "Install dependencies for i686-pc-windows-gnu"
   run = """
-  choco install mingw -y
-  echo "C:\\ProgramData\\chocolatey\\bin" >> $GITHUB_PATH
+  curl -L https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip -o llvm-mingw.zip
+  unzip llvm-mingw.zip -d llvm-mingw
+  echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
   refreshenv
   """
   shell = "powershell"
