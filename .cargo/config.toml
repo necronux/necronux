@@ -4,17 +4,17 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # ==-----------------------------------------------------------== #
 
-[target.x86_64-unknown-freebsd]
-linker = "clang"
-rustflags = ["-C", "link-arg=-fuse-ld=lld", "-C", "target-feature=+crt-static"]
+#[target.x86_64-unknown-freebsd]
+#linker = "clang"
+#rustflags = ["-C", "link-arg=-fuse-ld=lld", "-C", "target-feature=+crt-static"]
 
-[target.i686-unknown-linux-gnu]
-linker = "gcc-10"
-rustflags = [
-  "-C",
-  "target-cpu=i686",
-  "-C",
-  "linker-flavor=ld",
-  "-C",
-  "link-args=-m32",
-]
+#[target.i686-unknown-linux-gnu]
+#linker = "gcc-10"
+#rustflags = [
+#  "-C",
+#  "target-cpu=i686",
+#  "-C",
+#  "linker-flavor=ld",
+#  "-C",
+#  "link-args=-m32",
+#]
