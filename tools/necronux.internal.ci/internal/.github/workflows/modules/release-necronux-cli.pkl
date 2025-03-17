@@ -22,13 +22,15 @@ const function build() = new gha.Job {
   strategy {
     `fail-fast` = false
     matrix {
-      ["include"] = (Matrices.rustMatrixFull()) {}
+      ["include"] = (Matrices.rustMatrixBuild()) {}
     }
   }
   env = (EnvVars.rustEnvFull) {}
   steps {
     Steps.checkout(null)
-    ...Steps.rustupAndConfigExtra()
+    Steps.setupRustup("${{ matrix.toolchain }}")
+    Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
     new {
       name = "Build release binary"
       run = "cargo build --release --locked --workspace"

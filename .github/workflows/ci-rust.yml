@@ -67,8 +67,8 @@ jobs:
     if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
     needs:
     - test-full
+    - clippy-full
     - check-version-bump
-    - clippy
     - docs
     - lockfile
     - msrv
@@ -88,8 +88,8 @@ jobs:
     if: ${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}
     needs:
     - test-minimal
+    - clippy-minimal
     - check-version-bump
-    - clippy
     - docs
     - lockfile
     - msrv
@@ -114,23 +114,47 @@ jobs:
       with:
         fetch-depth: 1
     - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
+      uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         toolchain: stable
         components: rustfmt
     - name: Run cargo fmt
       shell: bash
       run: cargo fmt --all --check
-  clippy:
-    name: Clippy
+  clippy-minimal:
+    name: Minimal Clippy (${{ matrix.name }})
+    if: ${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}
     strategy:
       matrix:
-        os:
-        - ubuntu-latest
-        - ubuntu-24.04-arm
-        - windows-latest
-        - macos-latest
-        - macos-13
+        include:
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Nightly'
+          os: ubuntu-24.04
+          toolchain: nightly-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Beta'
+          os: ubuntu-24.04
+          toolchain: beta-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: Linux-GNU x86_64 Stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: macOS x86_64 Stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+        - name: macOS aarch64 Stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+        - name: Windows-MSVC x86_64 Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+        - name: Windows-GNU x86_64 Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -143,14 +167,124 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: stable
-        components: clippy
+    - name: Update rustup and set default version
+      shell: bash
+      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+    - name: Add rustup target
+      shell: bash
+      run: rustup target add ${{ matrix.target }}
+    - name: Configure extra test environment
+      if: matrix.os == 'ubuntu-24.04'
+      shell: bash
+      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Install rustup components
+      shell: bash
+      run: rustup component add  clippy
     - name: Run cargo clippy
       shell: bash
-      run: cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all
+      run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all
+  clippy-full:
+    name: Full Clippy (${{ matrix.name }})
+    if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
+    strategy:
+      matrix:
+        include:
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Nightly'
+          os: ubuntu-24.04
+          toolchain: nightly-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Beta'
+          os: ubuntu-24.04
+          toolchain: beta-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Stable'
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          other: x86_64-unknown-linux-musl
+        - name: macOS x86_64 Stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+        - name: macOS aarch64 Stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+        - name: Windows-MSVC [x86_64, i686] Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          other: i686-pc-windows-msvc
+        - name: Windows-GNU [x86_64, i686] Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          other: i686-pc-windows-gnu
+        - name: '[freeBSD, netBSD] x86_64 Stable'
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          other: x86_64-unknown-netbsd
+        - name: Linux-GNU [i686, PowerPC] Stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          other: powerpc-unknown-linux-gnu
+        - name: Linux-GNU [PPC64, PPC64LE] Stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          other: powerpc64le-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] armv7 Stable'
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          other: armv7-unknown-linux-musleabi
+        - name: '[Linux-GNUhf, Linux-MUSLhf] armv7 Stable'
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          other: armv7-unknown-linux-musleabihf
+        - name: Windows-MSVC aarch64 Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: aarch64-pc-windows-msvc
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+    - name: Update rustup and set default version
+      shell: bash
+      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+    - name: Add rustup target
+      shell: bash
+      run: rustup target add ${{ matrix.target }}
+    - name: Add more rustup targets
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: rustup target add ${{ matrix.other }}
+    - name: Configure extra test environment
+      if: matrix.os == 'ubuntu-24.04'
+      shell: bash
+      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Install rustup components
+      shell: bash
+      run: rustup component add  clippy
+    - name: Run cargo clippy
+      shell: bash
+      run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all
+    - name: Run cargo clippy for ${{ matrix.other }} target
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.other }} -- -D clippy::all
   lockfile:
     name: Cargo Lockfile
     runs-on: ubuntu-latest
@@ -165,7 +299,7 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
     - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
+      uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         toolchain: stable
     - name: Ensure Cargo.lock is up-to-date
@@ -206,43 +340,34 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: Linux x86_64 stable
-          os: ubuntu-latest
-          rust: stable
-          other: i686-unknown-linux-gnu
-        - name: Linux x86_64 beta
-          os: ubuntu-latest
-          rust: beta
-          other: i686-unknown-linux-gnu
-        - name: Linux x86_64 nightly
-          os: ubuntu-latest
-          rust: nightly
-          other: i686-unknown-linux-gnu
-        - name: Linux aarch64 stable
-          os: ubuntu-24.04-arm
-          rust: stable
-        - name: Linux aarch64 nightly
-          os: ubuntu-24.04-arm
-          rust: nightly
-        - name: Windows x86_64 MSVC stable
-          os: windows-latest
-          rust: stable-msvc
-          other: i686-pc-windows-msvc
-        - name: Windows x86_64 gnu nightly
-          os: windows-latest
-          rust: nightly-gnu
-          other: i686-pc-windows-gnu
-        - name: macOS aarch64 stable
-          os: macos-latest
-          rust: stable
-          other: x86_64-apple-darwin
-        - name: macOS aarch64 nightly
-          os: macos-latest
-          rust: nightly
-          other: x86_64-apple-darwin
-        - name: macOS x86_64 nightly
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Nightly'
+          os: ubuntu-24.04
+          toolchain: nightly-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Beta'
+          os: ubuntu-24.04
+          toolchain: beta-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: Linux-GNU x86_64 Stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: macOS x86_64 Stable
           os: macos-13
-          rust: nightly
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+        - name: macOS aarch64 Stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+        - name: Windows-MSVC x86_64 Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+        - name: Windows-GNU x86_64 Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -260,69 +385,88 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
-    - name: Setup rustup stable
-      shell: bash
-      run: rustup update --no-self-update stable
     - name: Update rustup and set default version
       shell: bash
-      run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
-    - name: Add rustup targets
-      if: ${{ matrix.other != null }}
+      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+    - name: Add rustup target
       shell: bash
-      run: rustup target add ${{ matrix.other }}
+      run: rustup target add ${{ matrix.target }}
     - name: Configure extra test environment
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
     - name: Run cargo test with default features in debug mode
       shell: bash
-      run: cargo test --lib --bins --workspace
+      run: cargo test --lib --bins --workspace --target ${{ matrix.target }}
     - name: Run cargo test with all features in debug mode
       shell: bash
-      run: cargo test --lib --bins --workspace --all-features
+      run: cargo test --lib --bins --workspace --all-features --target ${{ matrix.target }}
   test-full:
     name: Full Tests (${{ matrix.name }})
     if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
     strategy:
       matrix:
         include:
-        - name: Linux x86_64 stable
-          os: ubuntu-latest
-          rust: stable
-          other: i686-unknown-linux-gnu
-        - name: Linux x86_64 beta
-          os: ubuntu-latest
-          rust: beta
-          other: i686-unknown-linux-gnu
-        - name: Linux x86_64 nightly
-          os: ubuntu-latest
-          rust: nightly
-          other: i686-unknown-linux-gnu
-        - name: Linux aarch64 stable
-          os: ubuntu-24.04-arm
-          rust: stable
-        - name: Linux aarch64 nightly
-          os: ubuntu-24.04-arm
-          rust: nightly
-        - name: Windows x86_64 MSVC stable
-          os: windows-latest
-          rust: stable-msvc
-          other: i686-pc-windows-msvc
-        - name: Windows x86_64 gnu nightly
-          os: windows-latest
-          rust: nightly-gnu
-          other: i686-pc-windows-gnu
-        - name: macOS aarch64 stable
-          os: macos-latest
-          rust: stable
-          other: x86_64-apple-darwin
-        - name: macOS aarch64 nightly
-          os: macos-latest
-          rust: nightly
-          other: x86_64-apple-darwin
-        - name: macOS x86_64 nightly
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Nightly'
+          os: ubuntu-24.04
+          toolchain: nightly-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Beta'
+          os: ubuntu-24.04
+          toolchain: beta-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] x86_64 Stable'
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          other: x86_64-unknown-linux-musl
+        - name: macOS x86_64 Stable
           os: macos-13
-          rust: nightly
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+        - name: macOS aarch64 Stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+        - name: Windows-MSVC [x86_64, i686] Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          other: i686-pc-windows-msvc
+        - name: Windows-GNU [x86_64, i686] Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          other: i686-pc-windows-gnu
+        - name: '[freeBSD, netBSD] x86_64 Stable'
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          other: x86_64-unknown-netbsd
+        - name: Linux-GNU [i686, PowerPC] Stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          other: powerpc-unknown-linux-gnu
+        - name: Linux-GNU [PPC64, PPC64LE] Stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          other: powerpc64le-unknown-linux-gnu
+        - name: '[Linux-GNU, Linux-MUSL] armv7 Stable'
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          other: armv7-unknown-linux-musleabi
+        - name: '[Linux-GNUhf, Linux-MUSLhf] armv7 Stable'
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          other: armv7-unknown-linux-musleabihf
+        - name: Windows-MSVC aarch64 Stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: aarch64-pc-windows-msvc
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -340,32 +484,48 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
-    - name: Setup rustup stable
-      shell: bash
-      run: rustup update --no-self-update stable
     - name: Update rustup and set default version
       shell: bash
-      run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
-    - name: Add rustup targets
+      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+    - name: Add rustup target
+      shell: bash
+      run: rustup target add ${{ matrix.target }}
+    - name: Add more rustup targets
       if: ${{ matrix.other != null }}
       shell: bash
       run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
     - name: Run cargo test with default features in debug mode
       shell: bash
-      run: cargo test --all-targets --workspace
+      run: cargo test --all-targets --workspace --target ${{ matrix.target }}
+    - name: Run cargo test with default features in debug mode for ${{ matrix.other }} target
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: cargo test --all-targets --workspace --target ${{ matrix.other }}
     - name: Run cargo test with all features in debug mode
       shell: bash
-      run: cargo test --all-targets --workspace --all-features
+      run: cargo test --all-targets --workspace --all-features --target ${{ matrix.target }}
+    - name: Run cargo test with all features in debug mode for ${{ matrix.other }} target
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: cargo test --all-targets --workspace --all-features --target ${{ matrix.other }}
     - name: Run cargo test with default features in release mode
       shell: bash
-      run: cargo test --all-targets --workspace --release
+      run: cargo test --all-targets --workspace --release --target ${{ matrix.target }}
+    - name: Run cargo test with default features in release mode for ${{ matrix.other }} target
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: cargo test --all-targets --workspace --release --target ${{ matrix.other }}
     - name: Run cargo test with all features in release mode
       shell: bash
-      run: cargo test --all-targets --workspace --all-features --release
+      run: cargo test --all-targets --workspace --all-features --release --target ${{ matrix.target }}
+    - name: Run cargo test with all features in release mode for ${{ matrix.other }} target
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: cargo test --all-targets --workspace --all-features --release --target ${{ matrix.other }}
   docs:
     name: Docs
     runs-on: ubuntu-latest
@@ -388,7 +548,7 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
     - name: Setup rust toolchain
-      uses: dtolnay/rust-toolchain@master
+      uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         toolchain: stable
     - name: Run cargo doc

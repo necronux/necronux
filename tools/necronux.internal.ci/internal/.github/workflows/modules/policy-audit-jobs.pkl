@@ -13,6 +13,17 @@ import "../helpers/Actions.pkl"
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
+const function reuseCompliance() = new gha.Job {
+  name = "REUSE Compliance Check"
+  steps {
+    Steps.checkout(null)
+    new {
+      name = "REUSE Compliance Check"
+      uses = Actions.reuseAction
+    }
+  }
+} |> Common.standardJobConfig(null, null)
+
 const function cargoDeny() = new gha.Job {
   name = "Cargo Deny"
   steps {
@@ -30,17 +41,6 @@ const function cargoDeny() = new gha.Job {
       // Prevent sudden announcement of a new advisory from failing ci:
       run = "cargo cargo-deny check advisories || { echo 'Advisories check failed, but continuing the workflow...'; exit 0; }"
       shell = "bash"
-    }
-  }
-} |> Common.standardJobConfig(null, null)
-
-const function reuseCompliance() = new gha.Job {
-  name = "REUSE Compliance Check"
-  steps {
-    Steps.checkout(null)
-    new {
-      name = "REUSE Compliance Check"
-      uses = Actions.reuseAction
     }
   }
 } |> Common.standardJobConfig(null, null)

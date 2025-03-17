@@ -39,7 +39,7 @@ const function installAction(tool: String) = new gha.Step {
 
 const function setupRustToolchain(toolchain: String) = new gha.Step {
   name = "Setup rust toolchain"
-  uses = Actions.rustToolchain
+  uses = Actions.setupRustToolchain
   with {
     ["toolchain"] = toolchain
   }
@@ -65,34 +65,34 @@ const function setupRustCacheWithMatrixKey() = (setupRustCache()) {
   }
 }
 
-const function rustupAndConfigExtra() = new {
-  ...rustup()
-  configExtra()
-}
-const function rustup() = new {
-  setupRustupStable()
-  updateRustup()
-  rustupTargetAdd()
-}
-const function setupRustupStable() = new gha.Step {
-  name = "Setup rustup stable"
-  run = "rustup update --no-self-update stable"
-  shell = "bash"
-}
-const function updateRustup() = new gha.Step {
+const function setupRustup(toolchain: String) = new gha.Step {
   name = "Update rustup and set default version"
-  run = "rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}"
+  run = "rustup update --no-self-update \(toolchain) && rustup default \(toolchain)"
   shell = "bash"
 }
-const function rustupTargetAdd() = new gha.Step {
+
+const function installComponentsRustup(components: String) = new gha.Step {
+  name = "Install rustup components"
+  run = "rustup component add  \(components)"
+  shell = "bash"
+}
+
+const function addTargetRustup(target: String) = new gha.Step {
+  name = "Add rustup target"
+  run = "rustup target add \(target)"
+  shell = "bash"
+}
+
+const function addMatrixOtherTargetRustup(otherTarget: String) = new gha.Step {
   `if` = "${{ matrix.other != null }}"
-  name = "Add rustup targets"
-  run = "rustup target add ${{ matrix.other }}"
+  name = "Add more rustup targets"
+  run = "rustup target add \(otherTarget)"
   shell = "bash"
 }
-const function configExtra() = new gha.Step {
+
+const function configExtraTestEnv(os: String) = new gha.Step {
   name = "Configure extra test environment"
-  `if`= "matrix.os == 'ubuntu-latest'"
+  `if`= "matrix.os == '\(os)'"
   run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
   shell = "bash"
 }

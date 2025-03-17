@@ -43,13 +43,14 @@ jobs {
   ["conclusion-pr"] = (Jobs.conclusionPR()) {
     needs = (jobs["conclusion-push"].needs) {
       [0] = "test-full"
+      [1] = "clippy-full"
     }
   }
   ["conclusion-push"] = (Jobs.conclusionPush()) {
     needs {
       "test-minimal"
+      "clippy-minimal"
       "check-version-bump"
-      "clippy"
       "docs"
       "lockfile"
       "msrv"
@@ -58,7 +59,8 @@ jobs {
   }
 
   ["rustfmt"] = (Lint.rustfmt()) {}
-  ["clippy"] = (Lint.clippy()) {}
+  ["clippy-minimal"] = (Lint.clippyMinimal()) {}
+  ["clippy-full"] = (Lint.clippyFull()) {}
   ["lockfile"] = (Version.lockfile()) {}
   ["check-version-bump"] = (Version.checkVersionBump()) {}
   ["test-minimal"] = (Test.testMinimal()) {}

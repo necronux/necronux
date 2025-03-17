@@ -20,22 +20,24 @@ const function testMinimal() = new gha.Job {
   strategy {
   `fail-fast` = false
     matrix {
-      ["include"] = (Matrices.rustMatrixFull()) {}
+      ["include"] = (Matrices.rustMatrixTestMinimal()) {}
     }
   }
   env = (EnvVars.rustEnvTest) {}
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    ...Steps.rustupAndConfigExtra()
+    Steps.setupRustup("${{ matrix.toolchain }}")
+    Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.configExtraTestEnv(Matrices.linuxRunner64)
     new {
       name = "Run cargo test with default features in debug mode"
-      run = "cargo test --lib --bins --workspace"
+      run = "cargo test --lib --bins --workspace --target ${{ matrix.target }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with all features in debug mode"
-      run = "cargo test --lib --bins --workspace --all-features"
+      run = "cargo test --lib --bins --workspace --all-features --target ${{ matrix.target }}"
       shell = "bash"
     }
   }
@@ -47,32 +49,59 @@ const function testFull() = new gha.Job {
   strategy {
   `fail-fast` = false
     matrix {
-      ["include"] = (Matrices.rustMatrixFull()) {}
+      ["include"] = (Matrices.rustMatrixTestFull()) {}
     }
   }
   env = (EnvVars.rustEnvTest) {}
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    ...Steps.rustupAndConfigExtra()
+    Steps.setupRustup("${{ matrix.toolchain }}")
+    Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
+    Steps.configExtraTestEnv(Matrices.linuxRunner64)
     new {
       name = "Run cargo test with default features in debug mode"
-      run = "cargo test --all-targets --workspace"
+      run = "cargo test --all-targets --workspace --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      `if` = "${{ matrix.other != null }}"
+      name = "Run cargo test with default features in debug mode for ${{ matrix.other }} target"
+      run = "cargo test --all-targets --workspace --target ${{ matrix.other }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with all features in debug mode"
-      run = "cargo test --all-targets --workspace --all-features"
+      run = "cargo test --all-targets --workspace --all-features --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      `if` = "${{ matrix.other != null }}"
+      name = "Run cargo test with all features in debug mode for ${{ matrix.other }} target"
+      run = "cargo test --all-targets --workspace --all-features --target ${{ matrix.other }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with default features in release mode"
-      run = "cargo test --all-targets --workspace --release"
+      run = "cargo test --all-targets --workspace --release --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      `if` = "${{ matrix.other != null }}"
+      name = "Run cargo test with default features in release mode for ${{ matrix.other }} target"
+      run = "cargo test --all-targets --workspace --release --target ${{ matrix.other }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with all features in release mode"
-      run = "cargo test --all-targets --workspace --all-features --release"
+      run = "cargo test --all-targets --workspace --all-features --release --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      `if` = "${{ matrix.other != null }}"
+      name = "Run cargo test with all features in release mode for ${{ matrix.other }} target"
+      run = "cargo test --all-targets --workspace --all-features --release --target ${{ matrix.other }}"
       shell = "bash"
     }
   }

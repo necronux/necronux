@@ -10,6 +10,7 @@ module necronux.internal.ci.ciRust.lint
 import "../../../../../commons/GitHubAction.pkl" as gha
 
 import "../helpers/Common.pkl"
+import "../helpers/Matrices.pkl"
 import "../helpers/Steps.pkl"
 
 const function rustfmt() = new gha.Job {
@@ -25,27 +26,56 @@ const function rustfmt() = new gha.Job {
   }
 } |> Common.standardJobConfig(null, null)
 
-const function clippy() = new gha.Job {
-  name = "Clippy"
+const function clippyMinimal() = new gha.Job {
+  `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
+  name = "Minimal Clippy (${{ matrix.name }})"
   strategy {
     `fail-fast` = false
     matrix {
-      ["os"] {
-        "ubuntu-latest"
-        "ubuntu-24.04-arm"
-        "windows-latest"
-        "macos-latest"
-        "macos-13"
-      }
+      ["include"] = (Matrices.rustMatrixTestMinimal()) {}
     }
   }
   steps {
     Steps.checkout(null)
     Steps.setupRustCache()
-    Steps.setupRustToolchainWithComponent("stable", "clippy")
+    Steps.setupRustup("${{ matrix.toolchain }}")
+    Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.configExtraTestEnv(Matrices.linuxRunner64)
+    Steps.installComponentsRustup("clippy")
     new {
       name = "Run cargo clippy"
-      run = "cargo clippy --workspace --all-targets --all-features --no-deps -- -D clippy::all" // temporarily removed -D clippy::cargo
+      run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+  }
+} |> Common.standardJobConfig("${{ matrix.os }}", null)
+
+const function clippyFull() = new gha.Job {
+  `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
+  name = "Full Clippy (${{ matrix.name }})"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["include"] = (Matrices.rustMatrixTestFull()) {}
+    }
+  }
+  steps {
+    Steps.checkout(null)
+    Steps.setupRustCache()
+    Steps.setupRustup("${{ matrix.toolchain }}")
+    Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
+    Steps.configExtraTestEnv(Matrices.linuxRunner64)
+    Steps.installComponentsRustup("clippy")
+    new {
+      name = "Run cargo clippy"
+      run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+    new {
+      `if` = "${{ matrix.other != null }}"
+      name = "Run cargo clippy for ${{ matrix.other }} target"
+      run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.other }} -- -D clippy::all" // temporarily removed -D clippy::cargo
       shell = "bash"
     }
   }
