@@ -102,7 +102,7 @@ const function installRustMatrixDeps() = new Listing {
 }
 
 const function installi686WindowsDeps() = new gha.Step {
-  `if` = "${{ matrix.other == i686-pc-windows-gnu }}"
+  `if` = "${{ matrix.other == 'i686-pc-windows-gnu' }}"
   name = "Install MinGW-w64 for i686"
   run = """
   choco install mingw --params "/threads:win32 /arch:i686" -y

@@ -404,7 +404,7 @@ jobs:
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
     - name: Install MinGW-w64 for i686
-      if: ${{ matrix.other == i686-pc-windows-gnu }}
+      if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
       shell: powershell
       run: choco install mingw --params "/threads:win32 /arch:i686" -y
     - name: Run cargo test with default features in debug mode
@@ -511,7 +511,7 @@ jobs:
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
     - name: Install MinGW-w64 for i686
-      if: ${{ matrix.other == i686-pc-windows-gnu }}
+      if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
       shell: powershell
       run: choco install mingw --params "/threads:win32 /arch:i686" -y
     - name: Run cargo test with default features in debug mode
