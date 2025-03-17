@@ -5,13 +5,13 @@
 # ==-----------------------------------------------------------== #
 
 [target.x86_64-unknown-freebsd]
-cc = "/usr/bin/clang"
-cxx = "/usr/bin/clang++"
-linker = "lld"
-rustflags = ["-C", "link-args=-fuse-ld=lld"]
+cc = ["/usr/bin/clang"]
+cxx = ["/usr/bin/clang++"]
+linker = ["clang"]
+rustflags = ["-C", "link-arg=-fuse-ld=lld", "-C", "target-feature=+crt-static"]
 
 [target.i686-unknown-linux-gnu]
-linker = "gcc-10"
+linker = ["gcc-10"]
 rustflags = [
   "-C",
   "target-cpu=i686",
