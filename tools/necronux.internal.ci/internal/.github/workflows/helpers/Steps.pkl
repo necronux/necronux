@@ -91,8 +91,8 @@ const function addMatrixOtherTargetRustup(otherTarget: String) = new gha.Step {
 }
 
 const function configExtraTestEnv(os: String) = new gha.Step {
+  `if` = "${{ matrix.os == '\(os)' }}"
   name = "Configure extra test environment"
-  `if` = "${{ matrix.os }} == '\(os)'"
   run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
   shell = "bash"
 }
@@ -102,8 +102,10 @@ const function installRustMatrixDeps() = new Listing {
 }
 
 const function installi686WindowsDeps() = new gha.Step {
+  `if` = "${{ matrix.other == i686-pc-windows-gnu }}"
   name = "Install MinGW-w64 for i686"
-  `if` = "${{ matrix.target }} == i686-pc-windows-gnu"
-  run = "choco install mingw --version=8.1.0 -y"
+  run = """
+  choco install mingw --params "/threads:win32 /arch:i686" -y
+  """
   shell = "powershell"
 }

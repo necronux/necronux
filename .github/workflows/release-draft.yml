@@ -146,9 +146,9 @@ jobs:
       shell: bash
       run: rustup target add ${{ matrix.other }}
     - name: Install MinGW-w64 for i686
-      if: ${{ matrix.target }} == i686-pc-windows-gnu
+      if: ${{ matrix.other == i686-pc-windows-gnu }}
       shell: powershell
-      run: choco install mingw --version=8.1.0 -y
+      run: choco install mingw --params "/threads:win32 /arch:i686" -y
     - name: Build release binary
       shell: bash
       run: cargo build --release --locked --workspace
