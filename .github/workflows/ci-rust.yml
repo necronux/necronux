@@ -173,8 +173,12 @@ jobs:
     - name: Add rustup target
       shell: bash
       run: rustup target add ${{ matrix.target }}
+    - name: Add more rustup targets
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
-      if: matrix.os == 'ubuntu-24.04'
+      if: ${{ matrix.os }} == 'ubuntu-24.04'
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
     - name: Install rustup components
@@ -272,7 +276,7 @@ jobs:
       shell: bash
       run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
-      if: matrix.os == 'ubuntu-24.04'
+      if: ${{ matrix.os }} == 'ubuntu-24.04'
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
     - name: Install rustup components
@@ -391,10 +395,18 @@ jobs:
     - name: Add rustup target
       shell: bash
       run: rustup target add ${{ matrix.target }}
+    - name: Add more rustup targets
+      if: ${{ matrix.other != null }}
+      shell: bash
+      run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
-      if: matrix.os == 'ubuntu-24.04'
+      if: ${{ matrix.os }} == 'ubuntu-24.04'
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Install MinGW-w64 for i686
+      if: ${{ matrix.target }} == i686-pc-windows-gnu
+      shell: powershell
+      run: choco install mingw --version=8.1.0 -y
     - name: Run cargo test with default features in debug mode
       shell: bash
       run: cargo test --lib --bins --workspace --target ${{ matrix.target }}
@@ -495,9 +507,13 @@ jobs:
       shell: bash
       run: rustup target add ${{ matrix.other }}
     - name: Configure extra test environment
-      if: matrix.os == 'ubuntu-24.04'
+      if: ${{ matrix.os }} == 'ubuntu-24.04'
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+    - name: Install MinGW-w64 for i686
+      if: ${{ matrix.target }} == i686-pc-windows-gnu
+      shell: powershell
+      run: choco install mingw --version=8.1.0 -y
     - name: Run cargo test with default features in debug mode
       shell: bash
       run: cargo test --all-targets --workspace --target ${{ matrix.target }}

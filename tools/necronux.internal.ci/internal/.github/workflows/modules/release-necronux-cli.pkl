@@ -31,6 +31,7 @@ const function build() = new gha.Job {
     Steps.setupRustup("${{ matrix.toolchain }}")
     Steps.addTargetRustup("${{ matrix.target }}")
     Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
+    ...Steps.installRustMatrixDeps()
     new {
       name = "Build release binary"
       run = "cargo build --release --locked --workspace"

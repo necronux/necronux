@@ -145,6 +145,10 @@ jobs:
       if: ${{ matrix.other != null }}
       shell: bash
       run: rustup target add ${{ matrix.other }}
+    - name: Install MinGW-w64 for i686
+      if: ${{ matrix.target }} == i686-pc-windows-gnu
+      shell: powershell
+      run: choco install mingw --version=8.1.0 -y
     - name: Build release binary
       shell: bash
       run: cargo build --release --locked --workspace

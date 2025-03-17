@@ -40,6 +40,7 @@ const function clippyMinimal() = new gha.Job {
     Steps.setupRustCache()
     Steps.setupRustup("${{ matrix.toolchain }}")
     Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
     Steps.configExtraTestEnv(Matrices.linuxRunner64)
     Steps.installComponentsRustup("clippy")
     new {

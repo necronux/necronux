@@ -29,7 +29,9 @@ const function testMinimal() = new gha.Job {
     Steps.setupRustCacheWithMatrixKey()
     Steps.setupRustup("${{ matrix.toolchain }}")
     Steps.addTargetRustup("${{ matrix.target }}")
+    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
     Steps.configExtraTestEnv(Matrices.linuxRunner64)
+    ...Steps.installRustMatrixDeps()
     new {
       name = "Run cargo test with default features in debug mode"
       run = "cargo test --lib --bins --workspace --target ${{ matrix.target }}"
@@ -60,6 +62,7 @@ const function testFull() = new gha.Job {
     Steps.addTargetRustup("${{ matrix.target }}")
     Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
     Steps.configExtraTestEnv(Matrices.linuxRunner64)
+    ...Steps.installRustMatrixDeps()
     new {
       name = "Run cargo test with default features in debug mode"
       run = "cargo test --all-targets --workspace --target ${{ matrix.target }}"
