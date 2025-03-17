@@ -21,4 +21,3 @@
 
 [target.i686-pc-windows-gnu]
 linker = "clang"
-linker_flavor = "gcc"

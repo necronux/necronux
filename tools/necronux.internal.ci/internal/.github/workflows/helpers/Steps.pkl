@@ -107,10 +107,9 @@ const function installi686WindowsGnuDeps() = new gha.Step {
   `if` = "${{ matrix.other == 'i686-pc-windows-gnu' }}"
   name = "Install dependencies for i686-pc-windows-gnu"
   run = """
-  curl -L https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip -o llvm-mingw.zip
-  unzip llvm-mingw.zip -d llvm-mingw
-  echo "$PWD/llvm-mingw/bin" >> $GITHUB_PATH
-  refreshenv
+  Invoke-WebRequest -Uri "https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip" -OutFile "llvm-mingw.zip"
+  Expand-Archive -Path "llvm-mingw.zip" -DestinationPath "llvm-mingw"
+  Write-Output "$(PWD)\\llvm-mingw\\bin" >> $env:GITHUB_PATH
   """
   shell = "powershell"
 }
