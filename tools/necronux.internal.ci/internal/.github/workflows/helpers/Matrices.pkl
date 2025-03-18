@@ -85,7 +85,7 @@ const function rustMatrixBuild() = new Listing {
     name = "powerpc-linux-gnu-stable"
     os = x86_64_LinuxRunner
     toolchain = rustStable_x86_64_LinuxGNU
-    other = "powerpc-unknown-linux-gnu"
+    target = "powerpc-unknown-linux-gnu"
     buildtool = "cross"
   }
   new {

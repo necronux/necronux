@@ -42,9 +42,8 @@ const function installPodmanAptIf(condition: String) = new gha.Step {
   `if` = condition
   name = "Install podman"
   run = """
-  apt-get update
-  apt-get install -y podman
-  podman version
+  sudo apt-get update
+  sudo apt-get install -y podman
   """
   shell = "bash"
 }

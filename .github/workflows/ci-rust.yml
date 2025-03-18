@@ -334,7 +334,7 @@ jobs:
         - name: powerpc-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
-          other: powerpc-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
           buildtool: cross
         - name: powerpc64-linux-gnu-stable
           os: ubuntu-24.04
@@ -558,9 +558,8 @@ jobs:
       if: ${{ matrix.buildtool == 'cross' }}
       shell: bash
       run: |-
-        apt-get update
-        apt-get install -y podman
-        podman version
+        sudo apt-get update
+        sudo apt-get install -y podman
     - name: Setup rustup
       if: ${{ matrix.buildtool != 'cross' }}
       uses: dtolnay/rust-toolchain@v1
@@ -697,7 +696,7 @@ jobs:
         - name: powerpc-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
-          other: powerpc-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
           buildtool: cross
         - name: powerpc64-linux-gnu-stable
           os: ubuntu-24.04
@@ -775,9 +774,8 @@ jobs:
       if: ${{ matrix.buildtool == 'cross' }}
       shell: bash
       run: |-
-        apt-get update
-        apt-get install -y podman
-        podman version
+        sudo apt-get update
+        sudo apt-get install -y podman
     - name: Setup rustup
       if: ${{ matrix.buildtool != 'cross' }}
       uses: dtolnay/rust-toolchain@v1
