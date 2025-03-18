@@ -555,34 +555,34 @@ jobs:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
     - name: Install podman
-      if: ${{ matrix.build == 'cross' }}
+      if: ${{ matrix.buildtool == 'cross' }}
       shell: bash
       run: |-
         apt-get update
         apt-get install -y podman
         podman version
     - name: Setup rustup
-      if: ${{ matrix.build != 'cross' }}
+      if: ${{ matrix.buildtool != 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
         targets: ${{ matrix.target }}
     - name: Setup rustup
-      if: ${{ matrix.build == 'cross' }}
+      if: ${{ matrix.buildtool == 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
     - name: Install cross
-      if: ${{ matrix.build == 'cross' }}
+      if: ${{ matrix.buildtool == 'cross' }}
       uses: taiki-e/install-action@v2
       with:
         tool: cross
     - name: Run cargo test with default features in debug mode
       shell: bash
-      run: ${{ matrix.build }} test --lib --bins --workspace --target ${{ matrix.target }}
+      run: ${{ matrix.buildtool }} test --lib --bins --workspace --target ${{ matrix.target }}
     - name: Run cargo test with all features in debug mode
       shell: bash
-      run: ${{ matrix.build }} test --lib --bins --workspace --all-features --target ${{ matrix.target }}
+      run: ${{ matrix.buildtool }} test --lib --bins --workspace --all-features --target ${{ matrix.target }}
   test-full:
     name: Full Tests (${{ matrix.name }})
     if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
@@ -772,40 +772,40 @@ jobs:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
     - name: Install podman
-      if: ${{ matrix.build == 'cross' }}
+      if: ${{ matrix.buildtool == 'cross' }}
       shell: bash
       run: |-
         apt-get update
         apt-get install -y podman
         podman version
     - name: Setup rustup
-      if: ${{ matrix.build != 'cross' }}
+      if: ${{ matrix.buildtool != 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
         targets: ${{ matrix.target }}
     - name: Setup rustup
-      if: ${{ matrix.build == 'cross' }}
+      if: ${{ matrix.buildtool == 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
     - name: Install cross
-      if: ${{ matrix.build == 'cross' }}
+      if: ${{ matrix.buildtool == 'cross' }}
       uses: taiki-e/install-action@v2
       with:
         tool: cross
     - name: Run cargo test with default features in debug mode
       shell: bash
-      run: ${{ matrix.build }} test --all-targets --workspace --target ${{ matrix.target }}
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --target ${{ matrix.target }}
     - name: Run cargo test with all features in debug mode
       shell: bash
-      run: ${{ matrix.build }} test --all-targets --workspace --all-features --target ${{ matrix.target }}
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --all-features --target ${{ matrix.target }}
     - name: Run cargo test with default features in release mode
       shell: bash
-      run: ${{ matrix.build }} test --all-targets --workspace --release --target ${{ matrix.target }}
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --release --target ${{ matrix.target }}
     - name: Run cargo test with all features in release mode
       shell: bash
-      run: ${{ matrix.build }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}
   docs:
     name: Docs
     runs-on: ubuntu-latest

@@ -27,9 +27,9 @@ const function testMinimal() = new gha.Job {
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    Steps.installPodmanAptIf("${{ matrix.build == 'cross' }}")
+    Steps.installPodmanAptIf("${{ matrix.buildtool == 'cross' }}")
     new {
-      `if` = "${{ matrix.build != 'cross' }}"
+      `if` = "${{ matrix.buildtool != 'cross' }}"
       ...Common.setupRustToolchainCommon()
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
@@ -37,21 +37,21 @@ const function testMinimal() = new gha.Job {
       }
     }
     new {
-      `if` = "${{ matrix.build == 'cross' }}"
+      `if` = "${{ matrix.buildtool == 'cross' }}"
       ...Common.setupRustToolchainCommon()
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
       }
     }
-    Steps.installActionIf("cross", "${{ matrix.build == 'cross' }}")
+    Steps.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
     new {
       name = "Run cargo test with default features in debug mode"
-      run = "${{ matrix.build }} test --lib --bins --workspace --target ${{ matrix.target }}"
+      run = "${{ matrix.buildtool }} test --lib --bins --workspace --target ${{ matrix.target }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with all features in debug mode"
-      run = "${{ matrix.build }} test --lib --bins --workspace --all-features --target ${{ matrix.target }}"
+      run = "${{ matrix.buildtool }} test --lib --bins --workspace --all-features --target ${{ matrix.target }}"
       shell = "bash"
     }
   }
@@ -70,9 +70,9 @@ const function testFull() = new gha.Job {
   steps {
     Steps.checkout(null)
     Steps.setupRustCacheWithMatrixKey()
-    Steps.installPodmanAptIf("${{ matrix.build == 'cross' }}")
+    Steps.installPodmanAptIf("${{ matrix.buildtool == 'cross' }}")
     new {
-      `if` = "${{ matrix.build != 'cross' }}"
+      `if` = "${{ matrix.buildtool != 'cross' }}"
       ...Common.setupRustToolchainCommon()
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
@@ -80,31 +80,31 @@ const function testFull() = new gha.Job {
       }
     }
     new {
-      `if` = "${{ matrix.build == 'cross' }}"
+      `if` = "${{ matrix.buildtool == 'cross' }}"
       ...Common.setupRustToolchainCommon()
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
       }
     }
-    Steps.installActionIf("cross", "${{ matrix.build == 'cross' }}")
+    Steps.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
     new {
       name = "Run cargo test with default features in debug mode"
-      run = "${{ matrix.build }} test --all-targets --workspace --target ${{ matrix.target }}"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --target ${{ matrix.target }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with all features in debug mode"
-      run = "${{ matrix.build }} test --all-targets --workspace --all-features --target ${{ matrix.target }}"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --all-features --target ${{ matrix.target }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with default features in release mode"
-      run = "${{ matrix.build }} test --all-targets --workspace --release --target ${{ matrix.target }}"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --release --target ${{ matrix.target }}"
       shell = "bash"
     }
     new {
       name = "Run cargo test with all features in release mode"
-      run = "${{ matrix.build }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}"
       shell = "bash"
     }
   }
