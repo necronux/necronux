@@ -10,6 +10,7 @@ module necronux.internal.ci.steps
 import "../../../../../commons/GitHubAction.pkl" as gha
 
 import "Actions.pkl"
+import "Common.pkl"
 
 const function checkout(depth: Int?) = new gha.Step {
   name = "Checkout code"
@@ -33,13 +34,27 @@ const function installAction(tool: String) = new gha.Step {
   }
 }
 
+const function installActionIf(tool: String, condition: String) = (installAction(tool)) {
+  `if` = condition
+}
+
+const function installPodmanAptIf(condition: String) = new gha.Step {
+  `if` = condition
+  name = "Install podman"
+  run = """
+  apt-get update
+  apt-get install -y podman
+  podman version
+  """
+  shell = "bash"
+}
+
 // ================ //
 // --- Rustup
 // =============== //
 
 const function setupRustToolchain(toolchain: String) = new gha.Step {
-  name = "Setup rust toolchain"
-  uses = Actions.setupRustToolchain
+  ...Common.setupRustToolchainCommon()
   with {
     ["toolchain"] = toolchain
   }
@@ -48,6 +63,16 @@ const function setupRustToolchain(toolchain: String) = new gha.Step {
 const function setupRustToolchainWithComponent(toolchain: String, component: String) = (setupRustToolchain(toolchain)) {
   with {
     ["components"] = component
+  }
+}
+const function setupRustToolchainWithTarget(toolchain: String, target: String) = (setupRustToolchain(toolchain)) {
+  with {
+    ["targets"] = target
+  }
+}
+const function setupRustToolchainFull(toolchain: String, component: String, target: String) = (setupRustToolchain(toolchain, component)) {
+  with {
+    ["targets"] = target
   }
 }
 
@@ -63,36 +88,4 @@ const function setupRustCacheWithMatrixKey() = (setupRustCache()) {
   with {
     ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
   }
-}
-
-const function setupRustup(toolchain: String) = new gha.Step {
-  name = "Update rustup and set default version"
-  run = "rustup update --no-self-update \(toolchain) && rustup default \(toolchain)"
-  shell = "bash"
-}
-
-const function installComponentsRustup(components: String) = new gha.Step {
-  name = "Install rustup components"
-  run = "rustup component add  \(components)"
-  shell = "bash"
-}
-
-const function addTargetRustup(target: String) = new gha.Step {
-  name = "Add rustup target"
-  run = "rustup target add \(target)"
-  shell = "bash"
-}
-
-const function addMatrixOtherTargetRustup(otherTarget: String) = new gha.Step {
-  `if` = "${{ matrix.other != null }}"
-  name = "Add more rustup targets"
-  run = "rustup target add \(otherTarget)"
-  shell = "bash"
-}
-
-const function configExtraTestEnv(os: String) = new gha.Step {
-  `if` = "${{ matrix.os == '\(os)' }}"
-  name = "Configure extra test environment"
-  run = "echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV"
-  shell = "bash"
 }

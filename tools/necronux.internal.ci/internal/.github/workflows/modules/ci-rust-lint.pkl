@@ -17,7 +17,13 @@ const function rustfmt() = new gha.Job {
   name = "Rustfmt"
   steps {
     Steps.checkout(null)
-    Steps.setupRustToolchainWithComponent("stable", "rustfmt")
+    new {
+      ...Common.setupRustToolchainCommon()
+      with {
+        ["toolchain"] = "stable"
+        ["components"] = "rustfmt"
+      }
+    }
     new {
       name = "Run cargo fmt"
       run = "cargo fmt --all --check"
@@ -38,11 +44,14 @@ const function clippyMinimal() = new gha.Job {
   steps {
     Steps.checkout(null)
     Steps.setupRustCache()
-    Steps.setupRustup("${{ matrix.toolchain }}")
-    Steps.addTargetRustup("${{ matrix.target }}")
-    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
-    Steps.configExtraTestEnv(Matrices.linuxRunner64)
-    Steps.installComponentsRustup("clippy")
+    new {
+      ...Common.setupRustToolchainCommon()
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+        ["components"] = "clippy"
+      }
+    }
     new {
       name = "Run cargo clippy"
       run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
@@ -63,20 +72,17 @@ const function clippyFull() = new gha.Job {
   steps {
     Steps.checkout(null)
     Steps.setupRustCache()
-    Steps.setupRustup("${{ matrix.toolchain }}")
-    Steps.addTargetRustup("${{ matrix.target }}")
-    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
-    Steps.configExtraTestEnv(Matrices.linuxRunner64)
-    Steps.installComponentsRustup("clippy")
+    new {
+      ...Common.setupRustToolchainCommon()
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+        ["components"] = "clippy"
+      }
+    }
     new {
       name = "Run cargo clippy"
       run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
-      shell = "bash"
-    }
-    new {
-      `if` = "${{ matrix.other != null }}"
-      name = "Run cargo clippy for ${{ matrix.other }} target"
-      run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.other }} -- -D clippy::all" // temporarily removed -D clippy::cargo
       shell = "bash"
     }
   }

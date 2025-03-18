@@ -115,8 +115,8 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
-    - name: Setup rust toolchain
-      uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Setup rustup
+      uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: stable
         components: rustfmt
@@ -129,34 +129,76 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: Linux-GNU x86_64 Nightly
+        - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: Linux-GNU x86_64 Beta
+          buildtool: cargo
+        - name: x86_64-linux-gnu-beta
           os: ubuntu-24.04
           toolchain: beta-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: Linux-GNU x86_64 Stable
+          buildtool: cargo
+        - name: aarch64-linux-gnu-nightly
+          os: ubuntu-24.04-arm
+          toolchain: nightly-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-beta
+          os: ubuntu-24.04-arm
+          toolchain: beta-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-macos-nightly
+          os: macos-15
+          toolchain: nightly-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-beta
+          os: macos-15
+          toolchain: beta-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-nightly
+          os: windows-2025
+          toolchain: nightly-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-msvc-beta
+          os: windows-2025
+          toolchain: beta-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x86_64-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: macOS x86_64 Stable
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
           os: macos-13
           toolchain: stable-x86_64-apple-darwin
           target: x86_64-apple-darwin
-        - name: macOS aarch64 Stable
+          buildtool: cargo
+        - name: aarch64-macos-stable
           os: macos-15
           toolchain: stable-aarch64-apple-darwin
           target: aarch64-apple-darwin
-        - name: Windows-MSVC x86_64 Stable
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-        - name: Windows-GNU x86_64 Stable
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
+          buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -169,23 +211,12 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Update rustup and set default version
-      shell: bash
-      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-    - name: Add rustup target
-      shell: bash
-      run: rustup target add ${{ matrix.target }}
-    - name: Add more rustup targets
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: rustup target add ${{ matrix.other }}
-    - name: Configure extra test environment
-      if: ${{ matrix.os == 'ubuntu-24.04' }}
-      shell: bash
-      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
-    - name: Install rustup components
-      shell: bash
-      run: rustup component add  clippy
+    - name: Setup rustup
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+        components: clippy
     - name: Run cargo clippy
       shell: bash
       run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all
@@ -195,65 +226,171 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: Linux-GNU x86_64 Nightly
+        - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: Linux-GNU x86_64 Beta
+          buildtool: cargo
+        - name: x86_64-linux-gnu-beta
           os: ubuntu-24.04
           toolchain: beta-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: '[Linux-GNU & Linux-MUSL] x86_64 Stable'
+          buildtool: cargo
+        - name: aarch64-linux-gnu-nightly
+          os: ubuntu-24.04-arm
+          toolchain: nightly-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-beta
+          os: ubuntu-24.04-arm
+          toolchain: beta-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-macos-nightly
+          os: macos-15
+          toolchain: nightly-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-beta
+          os: macos-15
+          toolchain: beta-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-nightly
+          os: windows-2025
+          toolchain: nightly-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-msvc-beta
+          os: windows-2025
+          toolchain: beta-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x86_64-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-          other: x86_64-unknown-linux-musl
-        - name: macOS x86_64 Stable
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
           os: macos-13
           toolchain: stable-x86_64-apple-darwin
           target: x86_64-apple-darwin
-        - name: macOS aarch64 Stable
+          buildtool: cargo
+        - name: aarch64-macos-stable
           os: macos-15
           toolchain: stable-aarch64-apple-darwin
           target: aarch64-apple-darwin
-        - name: Windows-MSVC [x86_64 & i686] Stable
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-          other: i686-pc-windows-msvc
-        - name: Windows-GNU x86_64 Stable
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
-        - name: '[freeBSD & netBSD] x86_64 Stable'
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-freebsd
-          other: x86_64-unknown-netbsd
-        - name: Linux-GNU [i686 & PowerPC] Stable
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: i686-unknown-linux-gnu
-          other: powerpc-unknown-linux-gnu
-        - name: Linux-GNU [PPC64 & PPC64LE] Stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: powerpc64-unknown-linux-gnu
-          other: powerpc64le-unknown-linux-gnu
-        - name: '[Linux-GNU & Linux-MUSL] armv7 Stable'
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
           os: ubuntu-24.04-arm
           toolchain: stable-aarch64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabi
-          other: armv7-unknown-linux-musleabi
-        - name: '[Linux-GNUhf & Linux-MUSLhf] armv7 Stable'
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
           os: ubuntu-24.04-arm
           toolchain: stable-aarch64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabihf
-          other: armv7-unknown-linux-musleabihf
-        - name: Windows-MSVC aarch64 Stable
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          other: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-android-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-linux-android
+          buildtool: cross
+        - name: x86_64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-linux-android
+          buildtool: cross
+        - name: x86_64-freebsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          buildtool: cross
+        - name: x86_64-netbsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-netbsd
+          buildtool: cross
+        - name: i686-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: i686-pc-windows-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+        - name: aarch64-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: aarch64-pc-windows-msvc
+          buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -266,30 +403,15 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Update rustup and set default version
-      shell: bash
-      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-    - name: Add rustup target
-      shell: bash
-      run: rustup target add ${{ matrix.target }}
-    - name: Add more rustup targets
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: rustup target add ${{ matrix.other }}
-    - name: Configure extra test environment
-      if: ${{ matrix.os == 'ubuntu-24.04' }}
-      shell: bash
-      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
-    - name: Install rustup components
-      shell: bash
-      run: rustup component add  clippy
+    - name: Setup rustup
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+        components: clippy
     - name: Run cargo clippy
       shell: bash
       run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all
-    - name: Run cargo clippy for ${{ matrix.other }} target
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.other }} -- -D clippy::all
   lockfile:
     name: Cargo Lockfile
     runs-on: ubuntu-latest
@@ -303,8 +425,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rust toolchain
-      uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Setup rustup
+      uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: stable
     - name: Ensure Cargo.lock is up-to-date
@@ -345,34 +467,76 @@ jobs:
     strategy:
       matrix:
         include:
-        - name: Linux-GNU x86_64 Nightly
+        - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: Linux-GNU x86_64 Beta
+          buildtool: cargo
+        - name: x86_64-linux-gnu-beta
           os: ubuntu-24.04
           toolchain: beta-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: Linux-GNU x86_64 Stable
+          buildtool: cargo
+        - name: aarch64-linux-gnu-nightly
+          os: ubuntu-24.04-arm
+          toolchain: nightly-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-beta
+          os: ubuntu-24.04-arm
+          toolchain: beta-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-macos-nightly
+          os: macos-15
+          toolchain: nightly-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-beta
+          os: macos-15
+          toolchain: beta-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-nightly
+          os: windows-2025
+          toolchain: nightly-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-msvc-beta
+          os: windows-2025
+          toolchain: beta-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x86_64-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: macOS x86_64 Stable
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
           os: macos-13
           toolchain: stable-x86_64-apple-darwin
           target: x86_64-apple-darwin
-        - name: macOS aarch64 Stable
+          buildtool: cargo
+        - name: aarch64-macos-stable
           os: macos-15
           toolchain: stable-aarch64-apple-darwin
           target: aarch64-apple-darwin
-        - name: Windows-MSVC x86_64 Stable
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-        - name: Windows-GNU x86_64 Stable
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
+          buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -390,91 +554,206 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
-    - name: Update rustup and set default version
+    - name: Install podman
+      if: ${{ matrix.build == 'cross' }}
       shell: bash
-      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-    - name: Add rustup target
-      shell: bash
-      run: rustup target add ${{ matrix.target }}
-    - name: Add more rustup targets
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: rustup target add ${{ matrix.other }}
-    - name: Configure extra test environment
-      if: ${{ matrix.os == 'ubuntu-24.04' }}
-      shell: bash
-      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+      run: |-
+        apt-get update
+        apt-get install -y podman
+        podman version
+    - name: Setup rustup
+      if: ${{ matrix.build != 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+    - name: Setup rustup
+      if: ${{ matrix.build == 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+    - name: Install cross
+      if: ${{ matrix.build == 'cross' }}
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cross
     - name: Run cargo test with default features in debug mode
       shell: bash
-      run: cargo test --lib --bins --workspace --target ${{ matrix.target }}
+      run: ${{ matrix.build }} test --lib --bins --workspace --target ${{ matrix.target }}
     - name: Run cargo test with all features in debug mode
       shell: bash
-      run: cargo test --lib --bins --workspace --all-features --target ${{ matrix.target }}
+      run: ${{ matrix.build }} test --lib --bins --workspace --all-features --target ${{ matrix.target }}
   test-full:
     name: Full Tests (${{ matrix.name }})
     if: ${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}
     strategy:
       matrix:
         include:
-        - name: Linux-GNU x86_64 Nightly
+        - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: Linux-GNU x86_64 Beta
+          buildtool: cargo
+        - name: x86_64-linux-gnu-beta
           os: ubuntu-24.04
           toolchain: beta-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-        - name: '[Linux-GNU & Linux-MUSL] x86_64 Stable'
+          buildtool: cargo
+        - name: aarch64-linux-gnu-nightly
+          os: ubuntu-24.04-arm
+          toolchain: nightly-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-beta
+          os: ubuntu-24.04-arm
+          toolchain: beta-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-macos-nightly
+          os: macos-15
+          toolchain: nightly-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-beta
+          os: macos-15
+          toolchain: beta-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-nightly
+          os: windows-2025
+          toolchain: nightly-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-msvc-beta
+          os: windows-2025
+          toolchain: beta-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x86_64-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-linux-gnu
-          other: x86_64-unknown-linux-musl
-        - name: macOS x86_64 Stable
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
           os: macos-13
           toolchain: stable-x86_64-apple-darwin
           target: x86_64-apple-darwin
-        - name: macOS aarch64 Stable
+          buildtool: cargo
+        - name: aarch64-macos-stable
           os: macos-15
           toolchain: stable-aarch64-apple-darwin
           target: aarch64-apple-darwin
-        - name: Windows-MSVC [x86_64 & i686] Stable
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-          other: i686-pc-windows-msvc
-        - name: Windows-GNU x86_64 Stable
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
-        - name: '[freeBSD & netBSD] x86_64 Stable'
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-freebsd
-          other: x86_64-unknown-netbsd
-        - name: Linux-GNU [i686 & PowerPC] Stable
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: i686-unknown-linux-gnu
-          other: powerpc-unknown-linux-gnu
-        - name: Linux-GNU [PPC64 & PPC64LE] Stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: powerpc64-unknown-linux-gnu
-          other: powerpc64le-unknown-linux-gnu
-        - name: '[Linux-GNU & Linux-MUSL] armv7 Stable'
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
           os: ubuntu-24.04-arm
           toolchain: stable-aarch64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabi
-          other: armv7-unknown-linux-musleabi
-        - name: '[Linux-GNUhf & Linux-MUSLhf] armv7 Stable'
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
           os: ubuntu-24.04-arm
           toolchain: stable-aarch64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabihf
-          other: armv7-unknown-linux-musleabihf
-        - name: Windows-MSVC aarch64 Stable
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          other: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-android-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-linux-android
+          buildtool: cross
+        - name: x86_64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-linux-android
+          buildtool: cross
+        - name: x86_64-freebsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          buildtool: cross
+        - name: x86_64-netbsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-netbsd
+          buildtool: cross
+        - name: i686-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: i686-pc-windows-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+        - name: aarch64-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: aarch64-pc-windows-msvc
+          buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -492,48 +771,41 @@ jobs:
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
-    - name: Update rustup and set default version
+    - name: Install podman
+      if: ${{ matrix.build == 'cross' }}
       shell: bash
-      run: rustup update --no-self-update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
-    - name: Add rustup target
-      shell: bash
-      run: rustup target add ${{ matrix.target }}
-    - name: Add more rustup targets
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: rustup target add ${{ matrix.other }}
-    - name: Configure extra test environment
-      if: ${{ matrix.os == 'ubuntu-24.04' }}
-      shell: bash
-      run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
+      run: |-
+        apt-get update
+        apt-get install -y podman
+        podman version
+    - name: Setup rustup
+      if: ${{ matrix.build != 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+    - name: Setup rustup
+      if: ${{ matrix.build == 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+    - name: Install cross
+      if: ${{ matrix.build == 'cross' }}
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cross
     - name: Run cargo test with default features in debug mode
       shell: bash
-      run: cargo test --all-targets --workspace --target ${{ matrix.target }}
-    - name: Run cargo test with default features in debug mode for ${{ matrix.other }} target
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: cargo test --all-targets --workspace --target ${{ matrix.other }}
+      run: ${{ matrix.build }} test --all-targets --workspace --target ${{ matrix.target }}
     - name: Run cargo test with all features in debug mode
       shell: bash
-      run: cargo test --all-targets --workspace --all-features --target ${{ matrix.target }}
-    - name: Run cargo test with all features in debug mode for ${{ matrix.other }} target
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: cargo test --all-targets --workspace --all-features --target ${{ matrix.other }}
+      run: ${{ matrix.build }} test --all-targets --workspace --all-features --target ${{ matrix.target }}
     - name: Run cargo test with default features in release mode
       shell: bash
-      run: cargo test --all-targets --workspace --release --target ${{ matrix.target }}
-    - name: Run cargo test with default features in release mode for ${{ matrix.other }} target
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: cargo test --all-targets --workspace --release --target ${{ matrix.other }}
+      run: ${{ matrix.build }} test --all-targets --workspace --release --target ${{ matrix.target }}
     - name: Run cargo test with all features in release mode
       shell: bash
-      run: cargo test --all-targets --workspace --all-features --release --target ${{ matrix.target }}
-    - name: Run cargo test with all features in release mode for ${{ matrix.other }} target
-      if: ${{ matrix.other != null }}
-      shell: bash
-      run: cargo test --all-targets --workspace --all-features --release --target ${{ matrix.other }}
+      run: ${{ matrix.build }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}
   docs:
     name: Docs
     runs-on: ubuntu-latest
@@ -555,8 +827,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rust toolchain
-      uses: actions-rust-lang/setup-rust-toolchain@v1
+    - name: Setup rustup
+      uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: stable
     - name: Run cargo doc

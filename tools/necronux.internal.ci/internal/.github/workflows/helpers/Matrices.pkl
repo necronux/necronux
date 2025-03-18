@@ -10,136 +10,280 @@ module necronux.internal.ci.matrices
 import "../../../../../commons/GitHubAction.pkl" as gha
 
 // Runners
-const linuxRunner64 = "ubuntu-24.04"
-const linuxRunner64Arm = "ubuntu-24.04-arm"
-const macOSRunner64 = "macos-13"
-const macOSRunner64Arm = "macos-15"
-const windowsRunner64 = "windows-2025"
+const x86_64_LinuxRunner = "ubuntu-24.04"
+const aarch64_LinuxRunner = "ubuntu-24.04-arm"
+const x86_64_MacOSRunner = "macos-13"
+const aarch64_MacOSRunner = "macos-15"
+const x86_64_WindowsRunner = "windows-2025"
 
 // Toolchains
-const rustStableLinux64 = "stable-x86_64-unknown-linux-gnu"
-const rustBetaLinux64 = "beta-x86_64-unknown-linux-gnu"
-const rustNightlyLinux64 = "nightly-x86_64-unknown-linux-gnu"
-const rustStableLinux64Arm = "stable-aarch64-unknown-linux-gnu"
-const rustStableMacOS64 = "stable-x86_64-apple-darwin"
-const rustStableMacOS64Arm = "stable-aarch64-apple-darwin"
-const rustStableWindowsMSVC64 = "stable-x86_64-pc-windows-msvc"
-const rustStableWindowsGNU64 = "stable-x86_64-pc-windows-gnu"
+const rustStable_x86_64_LinuxGNU = "stable-x86_64-unknown-linux-gnu"
+const rustStable_aarch64_LinuxGNU = "stable-aarch64-unknown-linux-gnu"
+const rustStable_x86_64_WindowsMSVC = "stable-x86_64-pc-windows-msvc"
+const rustStable_x86_64_WindowsGNU = "stable-x86_64-pc-windows-gnu"
 
 const function rustMatrixTestFull() = new Listing {
-  ...linuxx8664BetaAndNightly()
+  ...x8664LinuxGNUExtraChannels()
+  ...aarch64LinuxGNUExtraChannels()
+  ...aarch64MacOSExtraChannels()
+  ...x8664WindowsMSVCExtraChannels()
   ...rustMatrixBuild()
 }
 
 const function rustMatrixBuild() = new Listing {
-  ...rustMatrixBase(true)
+  ...rustMatrixBase()
   new {
-    name = "[freeBSD & netBSD] x86_64 Stable"
-    os = linuxRunner64
-    toolchain = rustStableLinux64
-    target = "x86_64-unknown-freebsd"
-    other = "x86_64-unknown-netbsd"
+    name = "x86_64-linux-musl-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "x86_64-unknown-linux-musl"
+    buildtool = "cross"
   }
   new {
-    name = "Linux-GNU [i686 & PowerPC] Stable"
-    os = linuxRunner64
-    toolchain = rustStableLinux64
+    name = "i686-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "i686-unknown-linux-gnu"
-    other = "powerpc-unknown-linux-gnu"
+    buildtool = "cross"
   }
   new {
-    name = "Linux-GNU [PPC64 & PPC64LE] Stable"
-    os = linuxRunner64
-    toolchain = rustStableLinux64
-    target = "powerpc64-unknown-linux-gnu"
-    other = "powerpc64le-unknown-linux-gnu"
+    name = "aarch64-linux-musl-stable"
+    os = aarch64_LinuxRunner
+    toolchain = rustStable_aarch64_LinuxGNU
+    target = "aarch64-unknown-linux-musl"
+    buildtool = "cross"
   }
   new {
-    name = "[Linux-GNU & Linux-MUSL] armv7 Stable"
-    os = linuxRunner64Arm
-    toolchain = rustStableLinux64Arm
+    name = "armv7-linux-gnueabi-stable"
+    os = aarch64_LinuxRunner
+    toolchain = rustStable_aarch64_LinuxGNU
     target = "armv7-unknown-linux-gnueabi"
-    other = "armv7-unknown-linux-musleabi"
+    buildtool = "cross"
   }
   new {
-    name = "[Linux-GNUhf & Linux-MUSLhf] armv7 Stable"
-    os = linuxRunner64Arm
-    toolchain = rustStableLinux64Arm
+    name = "armv7-linux-musleabi-stable"
+    os = aarch64_LinuxRunner
+    toolchain = rustStable_aarch64_LinuxGNU
+    target = "armv7-unknown-linux-musleabi"
+    buildtool = "cross"
+  }
+  new {
+    name = "armv7-linux-gnueabihf-stable"
+    os = aarch64_LinuxRunner
+    toolchain = rustStable_aarch64_LinuxGNU
     target = "armv7-unknown-linux-gnueabihf"
-    other = "armv7-unknown-linux-musleabihf"
+    buildtool = "cross"
   }
   new {
-    name = "Windows-MSVC aarch64 Stable"
-    os = windowsRunner64
-    toolchain = rustStableWindowsMSVC64
+    name = "armv7-linux-musleabihf-stable"
+    os = aarch64_LinuxRunner
+    toolchain = rustStable_aarch64_LinuxGNU
+    target = "armv7-unknown-linux-musleabihf"
+    buildtool = "cross"
+  }
+  new {
+    name = "powerpc-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    other = "powerpc-unknown-linux-gnu"
+    buildtool = "cross"
+  }
+  new {
+    name = "powerpc64-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "powerpc64-unknown-linux-gnu"
+    buildtool = "cross"
+  }
+  new {
+    name = "powerpc64le-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "powerpc64le-unknown-linux-gnu"
+    buildtool = "cross"
+  }
+  new {
+    name = "riscv64gc-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "riscv64gc-unknown-linux-gnu"
+    buildtool = "cross"
+  }
+  new {
+    name = "s390x-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "s390x-unknown-linux-gnu"
+    buildtool = "cross"
+  }
+  new {
+    name = "aarch64-linux-android-stable"
+    os = aarch64_LinuxRunner
+    toolchain = rustStable_aarch64_LinuxGNU
+    target = "aarch64-linux-android"
+    buildtool = "cross"
+  }
+  new {
+    name = "x86_64-linux-android-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "x86_64-linux-android"
+    buildtool = "cross"
+  }
+  new {
+    name = "x86_64-freebsd-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "x86_64-unknown-freebsd"
+    buildtool = "cross"
+  }
+  new {
+    name = "x86_64-netbsd-stable"
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
+    target = "x86_64-unknown-netbsd"
+    buildtool = "cross"
+  }
+  new {
+    name = "i686-windows-gnu-stable"
+    os = x86_64_WindowsRunner
+    toolchain = rustStable_x86_64_WindowsGNU
+    target = "i686-pc-windows-gnu"
+    buildtool = "cross"
+  }
+  new {
+    name = "i686-windows-msvc-stable"
+    os = x86_64_WindowsRunner
+    toolchain = rustStable_x86_64_WindowsMSVC
+    target = "i686-pc-windows-msvc"
+    buildtool = "cargo"
+  }
+  new {
+    name = "aarch64-windows-msvc-stable"
+    os = x86_64_WindowsRunner
+    toolchain = rustStable_x86_64_WindowsMSVC
     target = "aarch64-pc-windows-msvc"
+    buildtool = "cargo"
   }
 }
 
 const function rustMatrixTestMinimal() = new Listing {
-  ...linuxx8664BetaAndNightly()
-  ...rustMatrixBase(false)
+  ...x8664LinuxGNUExtraChannels()
+  ...aarch64LinuxGNUExtraChannels()
+  ...aarch64MacOSExtraChannels()
+  ...x8664WindowsMSVCExtraChannels()
+  ...rustMatrixBase()
 }
 
-const function rustMatrixBase(other: Boolean?) = new Listing {
-  linuxx8664Stable(other ?? false)
+const function rustMatrixBase() = new Listing {
   new {
-    name = "macOS x86_64 Stable"
-    os = macOSRunner64
-    toolchain = rustStableMacOS64
+    name = "x86_64-linux-gnu-stable"
+    os = x86_64_LinuxRunner
+    toolchain = "stable-\(this.target)"
+    target = "x86_64-unknown-linux-gnu"
+    buildtool = "cargo"
+  }
+  new {
+    name = "aarch64-linux-gnu-stable"
+    os = aarch64_LinuxRunner
+    toolchain = "stable-\(this.target)"
+    target = "aarch64-unknown-linux-gnu"
+    buildtool = "cargo"
+  }
+  new {
+    name = "x86_64-macos-stable"
+    os = x86_64_MacOSRunner
+    toolchain = "stable-\(this.target)"
     target = "x86_64-apple-darwin"
+    buildtool = "cargo"
   }
   new {
-    name = "macOS aarch64 Stable"
-    os = macOSRunner64Arm
-    toolchain = rustStableMacOS64Arm
+    name = "aarch64-macos-stable"
+    os = aarch64_MacOSRunner
+    toolchain = "stable-\(this.target)"
     target = "aarch64-apple-darwin"
+    buildtool = "cargo"
   }
-  windowsMSVCStable(other ?? false)
   new {
-    name = "Windows-GNU x86_64 Stable"
-    os = windowsRunner64
-    toolchain = rustStableWindowsGNU64
+    name = "x84_64-windows-msvc-stable"
+    os = x86_64_WindowsRunner
+    toolchain = "stable-\(this.target)"
+    target = "x86_64-pc-windows-msvc"
+    buildtool = "cargo"
+  }
+  new {
+    name = "x84_64-windows-gnu-stable"
+    os = x86_64_WindowsRunner
+    toolchain = "stable-\(this.target)"
     target = "x86_64-pc-windows-gnu"
+    buildtool = "cargo"
   }
 }
 
-const function linuxx8664BetaAndNightly() = new {
+const function x8664LinuxGNUExtraChannels() = new {
   new {
-    name = "Linux-GNU x86_64 Nightly"
-    os = linuxRunner64
-    toolchain = rustNightlyLinux64
+    name = "x86_64-linux-gnu-nightly"
+    os = x86_64_LinuxRunner
+    toolchain = "nightly-\(this.target)"
     target = "x86_64-unknown-linux-gnu"
+    buildtool = "cargo"
   }
   new {
-    name = "Linux-GNU x86_64 Beta"
-    os = linuxRunner64
-    toolchain = rustBetaLinux64
+    name = "x86_64-linux-gnu-beta"
+    os = x86_64_LinuxRunner
+    toolchain = "beta-\(this.target)"
     target = "x86_64-unknown-linux-gnu"
+    buildtool = "cargo"
   }
 }
 
-const function linuxx8664Stable(other: Boolean) = if (other) new {
-  name = "[Linux-GNU & Linux-MUSL] x86_64 Stable"
-  os = linuxRunner64
-  toolchain = rustStableLinux64
-  target = "x86_64-unknown-linux-gnu"
-  other = "x86_64-unknown-linux-musl"
-} else new {
-  name = "Linux-GNU x86_64 Stable"
-  os = linuxRunner64
-  toolchain = rustStableLinux64
-  target = "x86_64-unknown-linux-gnu"
+const function aarch64LinuxGNUExtraChannels() = new {
+  new {
+    name = "aarch64-linux-gnu-nightly"
+    os = aarch64_LinuxRunner
+    toolchain = "nightly-\(this.target)"
+    target = "aarch64-unknown-linux-gnu"
+    buildtool = "cargo"
+  }
+  new {
+    name = "aarch64-linux-gnu-beta"
+    os = aarch64_LinuxRunner
+    toolchain = "beta-\(this.target)"
+    target = "aarch64-unknown-linux-gnu"
+    buildtool = "cargo"
+  }
 }
-const function windowsMSVCStable(other: Boolean) = if (other) new {
-  name = "Windows-MSVC [x86_64 & i686] Stable"
-  os = windowsRunner64
-  toolchain = rustStableWindowsMSVC64
-  target = "x86_64-pc-windows-msvc"
-  other = "i686-pc-windows-msvc"
-} else new {
-  name = "Windows-MSVC x86_64 Stable"
-  os = windowsRunner64
-  toolchain = rustStableWindowsMSVC64
-  target = "x86_64-pc-windows-msvc"
+
+const function aarch64MacOSExtraChannels() = new {
+  new {
+    name = "aarch64-macos-nightly"
+    os = aarch64_MacOSRunner
+    toolchain = "nightly-\(this.target)"
+    target = "aarch64-apple-darwin"
+    buildtool = "cargo"
+  }
+  new {
+    name = "aarch64-macos-beta"
+    os = aarch64_MacOSRunner
+    toolchain = "beta-\(this.target)"
+    target = "aarch64-apple-darwin"
+    buildtool = "cargo"
+  }
+}
+
+const function x8664WindowsMSVCExtraChannels() = new {
+  new {
+    name = "x84_64-windows-msvc-nightly"
+    os = x86_64_WindowsRunner
+    toolchain = "nightly-\(this.target)"
+    target = "x86_64-pc-windows-msvc"
+    buildtool = "cargo"
+  }
+  new {
+    name = "x84_64-windows-msvc-beta"
+    os = x86_64_WindowsRunner
+    toolchain = "beta-\(this.target)"
+    target = "x86_64-pc-windows-msvc"
+    buildtool = "cargo"
+  }
 }

@@ -28,12 +28,26 @@ const function build() = new gha.Job {
   env = (EnvVars.rustEnvFull) {}
   steps {
     Steps.checkout(null)
-    Steps.setupRustup("${{ matrix.toolchain }}")
-    Steps.addTargetRustup("${{ matrix.target }}")
-    Steps.addMatrixOtherTargetRustup("${{ matrix.other }}")
+    Steps.installPodmanAptIf("${{ matrix.build == 'cross' }}")
+    new {
+      `if` = "${{ matrix.build != 'cross' }}"
+      ...Common.setupRustToolchainCommon()
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      `if` = "${{ matrix.build == 'cross' }}"
+      ...Common.setupRustToolchainCommon()
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+      }
+    }
+    Steps.installActionIf("cross", "${{ matrix.build == 'cross' }}")
     new {
       name = "Build release binary"
-      run = "cargo build --release --locked --workspace"
+      run = "${{ matrix.build }} build --release --locked --workspace"
       shell = "bash"
     }
     new {
@@ -44,12 +58,12 @@ const function build() = new gha.Job {
 
         extension=""
         # windows binaries have ".exe" extension
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+        if [[ "${{ matrix.os }}" == "windows-2025" ]]; then
         extension=".exe"
         fi
 
         mkdir bin
-        cp "target/${{ matrix.build.name }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.build.name }}${extension}"
+        cp "target/${{ matrix.name }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.name }}${extension}"
         """
     }
     new {
