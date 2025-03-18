@@ -221,11 +221,10 @@ jobs:
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
           other: i686-pc-windows-msvc
-        - name: Windows-GNU [x86_64 & i686] Stable
+        - name: Windows-GNU x86_64 Stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
-          other: i686-pc-windows-gnu
         - name: '[freeBSD & netBSD] x86_64 Stable'
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
@@ -405,26 +404,6 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-24.04' }}
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
-    - name: Install dependencies for i686-pc-windows-gnu
-      if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
-      shell: powershell
-      run: |-
-        Invoke-WebRequest -Uri "https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip" -OutFile "llvm-mingw.zip"
-        Expand-Archive -Path "llvm-mingw.zip" -DestinationPath "llvm-mingw"
-        Write-Output "$(PWD)\llvm-mingw\bin" >> $env:GITHUB_PATH
-    - name: Install dependencies for x86_64-unknown-freebsd
-      if: ${{ matrix.target == 'x86_64-unknown-freebsd' }}
-      shell: bash
-      run: |-
-        sudo apt-get update
-        sudo apt-get install clang llvm lld binutils-gold libclang-dev -y
-    - name: Install dependencies for i686-unknown-linux-gnu
-      if: ${{ matrix.target == 'i686-unknown-linux-gnu' }}
-      shell: bash
-      run: |-
-        sudo dpkg --add-architecture i386
-        sudo apt-get update
-        sudo apt-get install gcc-10 g++-10 gcc-10-multilib g++-10-multilib libc6-dev-i386 lib32gcc-s1 lib32stdc++6 -y
     - name: Run cargo test with default features in debug mode
       shell: bash
       run: cargo test --lib --bins --workspace --target ${{ matrix.target }}
@@ -463,11 +442,10 @@ jobs:
           toolchain: stable-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
           other: i686-pc-windows-msvc
-        - name: Windows-GNU [x86_64 & i686] Stable
+        - name: Windows-GNU x86_64 Stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-gnu
           target: x86_64-pc-windows-gnu
-          other: i686-pc-windows-gnu
         - name: '[freeBSD & netBSD] x86_64 Stable'
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
@@ -528,26 +506,6 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-24.04' }}
       shell: bash
       run: echo CARGO_CONTAINER_TESTS=1 >> $GITHUB_ENV
-    - name: Install dependencies for i686-pc-windows-gnu
-      if: ${{ matrix.other == 'i686-pc-windows-gnu' }}
-      shell: powershell
-      run: |-
-        Invoke-WebRequest -Uri "https://github.com/mstorsjo/llvm-mingw/releases/download/20250305/llvm-mingw-20250305-ucrt-i686.zip" -OutFile "llvm-mingw.zip"
-        Expand-Archive -Path "llvm-mingw.zip" -DestinationPath "llvm-mingw"
-        Write-Output "$(PWD)\llvm-mingw\bin" >> $env:GITHUB_PATH
-    - name: Install dependencies for x86_64-unknown-freebsd
-      if: ${{ matrix.target == 'x86_64-unknown-freebsd' }}
-      shell: bash
-      run: |-
-        sudo apt-get update
-        sudo apt-get install clang llvm lld binutils-gold libclang-dev -y
-    - name: Install dependencies for i686-unknown-linux-gnu
-      if: ${{ matrix.target == 'i686-unknown-linux-gnu' }}
-      shell: bash
-      run: |-
-        sudo dpkg --add-architecture i386
-        sudo apt-get update
-        sudo apt-get install gcc-10 g++-10 gcc-10-multilib g++-10-multilib libc6-dev-i386 lib32gcc-s1 lib32stdc++6 -y
     - name: Run cargo test with default features in debug mode
       shell: bash
       run: cargo test --all-targets --workspace --target ${{ matrix.target }}

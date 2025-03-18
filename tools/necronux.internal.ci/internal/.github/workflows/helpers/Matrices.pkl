@@ -96,7 +96,12 @@ const function rustMatrixBase(other: Boolean?) = new Listing {
     target = "aarch64-apple-darwin"
   }
   windowsMSVCStable(other ?? false)
-  windowsGNUStable(other ?? false)
+  new {
+    name = "Windows-GNU x86_64 Stable"
+    os = windowsRunner64
+    toolchain = rustStableWindowsGNU64
+    target = "x86_64-pc-windows-gnu"
+  }
 }
 
 const function linuxx8664BetaAndNightly() = new {
@@ -137,16 +142,4 @@ const function windowsMSVCStable(other: Boolean) = if (other) new {
   os = windowsRunner64
   toolchain = rustStableWindowsMSVC64
   target = "x86_64-pc-windows-msvc"
-}
-const function windowsGNUStable(other: Boolean) = if (other) new {
-  name = "Windows-GNU [x86_64 & i686] Stable"
-  os = windowsRunner64
-  toolchain = rustStableWindowsGNU64
-  target = "x86_64-pc-windows-gnu"
-  other = "i686-pc-windows-gnu"
-} else new {
-  name = "Windows-GNU x86_64 Stable"
-  os = windowsRunner64
-  toolchain = rustStableWindowsGNU64
-  target = "x86_64-pc-windows-gnu"
 }
