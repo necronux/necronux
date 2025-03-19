@@ -211,7 +211,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -400,7 +400,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -424,7 +424,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -449,7 +449,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Install cargo-semver-checks
       uses: taiki-e/install-action@v2
@@ -556,7 +556,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
@@ -743,7 +743,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
@@ -800,7 +800,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -827,7 +827,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rust
-        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
+        save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
         key: ${{ runner.os }}-${{ github.job.name }}
     - name: Install cargo-hack
       uses: taiki-e/install-action@v2
