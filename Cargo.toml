@@ -86,7 +86,7 @@ necronux_internal = { path = "crates/necronux_internal", version = "0.3.0-dev", 
 color-eyre = { version = "0.6.3", default-features = false, optional = true }
 
 [workspace.dependencies]
-clap = { version = "4.5.31", features = ["derive", "cargo"] }
+clap = { version = "4.5.32", features = ["derive", "cargo"] }
 clap-verbosity-flag = "3.0.2"
 color-eyre = { version = "0.6.3", default-features = false }
 config = "0.15.4"
