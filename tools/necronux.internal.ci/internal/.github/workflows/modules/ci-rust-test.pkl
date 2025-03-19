@@ -16,8 +16,8 @@ import "../helpers/MatricesRust.pkl"
 import "../helpers/Steps.pkl"
 
 const function testMinimal() = new gha.Job {
+  `if` = Common.ifDevelopOrPushOrWDPushAndNotCancelled
   name = "Minimal Tests (${{ matrix.name }})"
-  `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
   strategy {
   `fail-fast` = false
     matrix {
@@ -59,8 +59,8 @@ const function testMinimal() = new gha.Job {
 } |> Common.standardJobConfig("${{ matrix.os }}", null)
 
 const function testFull() = new gha.Job {
+  `if` = Common.ifDevelopOrPrOrWDPrAndNotCancelled
   name = "Full Tests (${{ matrix.name }})"
-  `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
   strategy {
   `fail-fast` = false
     matrix {

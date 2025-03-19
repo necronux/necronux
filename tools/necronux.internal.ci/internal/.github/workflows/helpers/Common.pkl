@@ -34,3 +34,6 @@ const function headerComment(year: String, holders: String, identifier: String):
     # SPDX-License-Identifier: \(identifier)
     \(decorationLine)
     """
+
+const ifDevelopOrPushOrWDPushAndNotCancelled = "${{ ((github.ref == 'refs/heads/develop') || (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request'))) && !cancelled() }}"
+const ifDevelopOrPrOrWDPrAndNotCancelled = "${{ ((github.ref == 'refs/heads/develop') || (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push'))) && !cancelled() }}"

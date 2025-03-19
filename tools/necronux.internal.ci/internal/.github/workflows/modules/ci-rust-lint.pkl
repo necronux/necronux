@@ -33,7 +33,7 @@ const function rustfmt() = new gha.Job {
 } |> Common.standardJobConfig(null, null)
 
 const function clippyMinimal() = new gha.Job {
-  `if` = "${{ (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'push')) && !cancelled() }}"
+  `if` = Common.ifDevelopOrPushOrWDPushAndNotCancelled
   name = "Minimal Clippy (${{ matrix.name }})"
   strategy {
     `fail-fast` = false
@@ -61,7 +61,7 @@ const function clippyMinimal() = new gha.Job {
 } |> Common.standardJobConfig("${{ matrix.os }}", null)
 
 const function clippyFull() = new gha.Job {
-  `if` = "${{ (github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.event.inputs.trigger_event == 'pull_request')) && !cancelled() }}"
+  `if` = Common.ifDevelopOrPrOrWDPrAndNotCancelled
   name = "Full Clippy (${{ matrix.name }})"
   strategy {
     `fail-fast` = false
