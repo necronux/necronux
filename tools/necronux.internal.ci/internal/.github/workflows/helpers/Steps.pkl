@@ -79,12 +79,8 @@ const function setupRustCache() = new gha.Step {
   name = "Setup rust cache"
   uses = Actions.rustCache
   with {
+    ["prefix-key"] = "rust"
     ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}"
-  }
-}
-
-const function setupRustCacheWithMatrixKey() = (setupRustCache()) {
-  with {
-    ["key"] = "${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}"
+    ["key"] = "${{ runner.os }}-${{ github.job.name }}"
   }
 }
