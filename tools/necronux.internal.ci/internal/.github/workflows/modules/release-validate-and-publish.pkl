@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module necronux.internal.ci.release.validateAndPublish
+module ReleaseValidateAndPublish
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 

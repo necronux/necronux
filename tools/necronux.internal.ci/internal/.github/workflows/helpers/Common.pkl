@@ -1,5 +1,5 @@
 @ModuleInfo { minPklVersion = "0.27.0" }
-module necronux.internal.ci.common
+module Common
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 

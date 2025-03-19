@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 @ModuleInfo { minPklVersion = "0.27.0" }
-module necronux.internal.ci.ciRust.version
+module CiRustVersion
 
 import "../../../../../commons/GitHubAction.pkl" as gha
 
