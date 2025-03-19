@@ -18,7 +18,6 @@ const x86_64_WindowsRunner = "windows-2025"
 
 // Toolchains
 const rustStable_x86_64_LinuxGNU = "stable-x86_64-unknown-linux-gnu"
-const rustStable_aarch64_LinuxGNU = "stable-aarch64-unknown-linux-gnu"
 const rustStable_x86_64_WindowsMSVC = "stable-x86_64-pc-windows-msvc"
 const rustStable_x86_64_WindowsGNU = "stable-x86_64-pc-windows-gnu"
 
@@ -48,36 +47,36 @@ const function rustMatrixBuild() = new Listing {
   }
   new {
     name = "aarch64-linux-musl-stable"
-    os = aarch64_LinuxRunner
-    toolchain = rustStable_aarch64_LinuxGNU
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "aarch64-unknown-linux-musl"
     buildtool = "cross"
   }
   new {
     name = "armv7-linux-gnueabi-stable"
-    os = aarch64_LinuxRunner
-    toolchain = rustStable_aarch64_LinuxGNU
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "armv7-unknown-linux-gnueabi"
     buildtool = "cross"
   }
   new {
     name = "armv7-linux-musleabi-stable"
-    os = aarch64_LinuxRunner
-    toolchain = rustStable_aarch64_LinuxGNU
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "armv7-unknown-linux-musleabi"
     buildtool = "cross"
   }
   new {
     name = "armv7-linux-gnueabihf-stable"
-    os = aarch64_LinuxRunner
-    toolchain = rustStable_aarch64_LinuxGNU
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "armv7-unknown-linux-gnueabihf"
     buildtool = "cross"
   }
   new {
     name = "armv7-linux-musleabihf-stable"
-    os = aarch64_LinuxRunner
-    toolchain = rustStable_aarch64_LinuxGNU
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "armv7-unknown-linux-musleabihf"
     buildtool = "cross"
   }
@@ -118,8 +117,8 @@ const function rustMatrixBuild() = new Listing {
   }
   new {
     name = "aarch64-linux-android-stable"
-    os = aarch64_LinuxRunner
-    toolchain = rustStable_aarch64_LinuxGNU
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "aarch64-linux-android"
     buildtool = "cross"
   }
@@ -146,8 +145,9 @@ const function rustMatrixBuild() = new Listing {
   }
   new {
     name = "i686-windows-gnu-stable"
-    os = x86_64_WindowsRunner
-    toolchain = rustStable_x86_64_WindowsGNU
+    // Use linux runner to install podman with breeze
+    os = x86_64_LinuxRunner
+    toolchain = rustStable_x86_64_LinuxGNU
     target = "i686-pc-windows-gnu"
     buildtool = "cross"
   }
@@ -156,13 +156,6 @@ const function rustMatrixBuild() = new Listing {
     os = x86_64_WindowsRunner
     toolchain = rustStable_x86_64_WindowsMSVC
     target = "i686-pc-windows-msvc"
-    buildtool = "cargo"
-  }
-  new {
-    name = "aarch64-windows-msvc-stable"
-    os = x86_64_WindowsRunner
-    toolchain = rustStable_x86_64_WindowsMSVC
-    target = "aarch64-pc-windows-msvc"
     buildtool = "cargo"
   }
 }

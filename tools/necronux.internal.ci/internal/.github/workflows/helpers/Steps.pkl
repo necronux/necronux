@@ -53,7 +53,7 @@ const function installPodmanAptIf(condition: String) = new gha.Step {
 // =============== //
 
 const function setupRustToolchain(toolchain: String) = new gha.Step {
-  ...Common.setupRustToolchainCommon()
+  ...Common.setupRustToolchainCommon("cargo")
   with {
     ["toolchain"] = toolchain
   }

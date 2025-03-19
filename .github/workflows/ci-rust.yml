@@ -115,7 +115,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: stable
@@ -211,7 +211,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
@@ -307,28 +307,28 @@ jobs:
           target: i686-unknown-linux-gnu
           buildtool: cross
         - name: aarch64-linux-musl-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: aarch64-unknown-linux-musl
           buildtool: cross
         - name: armv7-linux-gnueabi-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabi
           buildtool: cross
         - name: armv7-linux-musleabi-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-musleabi
           buildtool: cross
         - name: armv7-linux-gnueabihf-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabihf
           buildtool: cross
         - name: armv7-linux-musleabihf-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-musleabihf
           buildtool: cross
         - name: powerpc-linux-gnu-stable
@@ -357,8 +357,8 @@ jobs:
           target: s390x-unknown-linux-gnu
           buildtool: cross
         - name: aarch64-linux-android-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: aarch64-linux-android
           buildtool: cross
         - name: x86_64-linux-android-stable
@@ -377,19 +377,14 @@ jobs:
           target: x86_64-unknown-netbsd
           buildtool: cross
         - name: i686-windows-gnu-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: i686-pc-windows-gnu
           buildtool: cross
         - name: i686-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: i686-pc-windows-msvc
-          buildtool: cargo
-        - name: aarch64-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: aarch64-pc-windows-msvc
           buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -403,7 +398,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
@@ -425,7 +420,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: stable
@@ -555,18 +550,18 @@ jobs:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
     - name: Install podman
-      if: ${{ matrix.buildtool == 'cross' }}
+      if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
       run: |-
         sudo apt-get update
         sudo apt-get install -y podman
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       if: ${{ matrix.buildtool != 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
         targets: ${{ matrix.target }}
-    - name: Setup rustup
+    - name: Setup rustup for cross
       if: ${{ matrix.buildtool == 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -669,28 +664,28 @@ jobs:
           target: i686-unknown-linux-gnu
           buildtool: cross
         - name: aarch64-linux-musl-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: aarch64-unknown-linux-musl
           buildtool: cross
         - name: armv7-linux-gnueabi-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabi
           buildtool: cross
         - name: armv7-linux-musleabi-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-musleabi
           buildtool: cross
         - name: armv7-linux-gnueabihf-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-gnueabihf
           buildtool: cross
         - name: armv7-linux-musleabihf-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: armv7-unknown-linux-musleabihf
           buildtool: cross
         - name: powerpc-linux-gnu-stable
@@ -719,8 +714,8 @@ jobs:
           target: s390x-unknown-linux-gnu
           buildtool: cross
         - name: aarch64-linux-android-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: aarch64-linux-android
           buildtool: cross
         - name: x86_64-linux-android-stable
@@ -739,19 +734,14 @@ jobs:
           target: x86_64-unknown-netbsd
           buildtool: cross
         - name: i686-windows-gnu-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-gnu
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
           target: i686-pc-windows-gnu
           buildtool: cross
         - name: i686-windows-msvc-stable
           os: windows-2025
           toolchain: stable-x86_64-pc-windows-msvc
           target: i686-pc-windows-msvc
-          buildtool: cargo
-        - name: aarch64-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: aarch64-pc-windows-msvc
           buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -771,18 +761,18 @@ jobs:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
         key: ${{ github.job }}-${{ matrix.os }}-${{ matrix.rust }}-${{ matrix.name }}
     - name: Install podman
-      if: ${{ matrix.buildtool == 'cross' }}
+      if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
       run: |-
         sudo apt-get update
         sudo apt-get install -y podman
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       if: ${{ matrix.buildtool != 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: ${{ matrix.toolchain }}
         targets: ${{ matrix.target }}
-    - name: Setup rustup
+    - name: Setup rustup for cross
       if: ${{ matrix.buildtool == 'cross' }}
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -825,7 +815,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}
-    - name: Setup rustup
+    - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
         toolchain: stable

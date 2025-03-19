@@ -28,26 +28,26 @@ const function build() = new gha.Job {
   env = (EnvVars.rustEnvFull) {}
   steps {
     Steps.checkout(null)
-    Steps.installPodmanAptIf("${{ matrix.build == 'cross' }}")
+    Steps.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(Matrices.x86_64_LinuxRunner)' || matrix.os == '\(Matrices.aarch64_LinuxRunner)')) }}")
     new {
-      `if` = "${{ matrix.build != 'cross' }}"
-      ...Common.setupRustToolchainCommon()
+      `if` = "${{ matrix.buildtool != 'cross' }}"
+      ...Common.setupRustToolchainCommon("cargo")
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
         ["targets"] = "${{ matrix.target }}"
       }
     }
     new {
-      `if` = "${{ matrix.build == 'cross' }}"
-      ...Common.setupRustToolchainCommon()
+      `if` = "${{ matrix.buildtool == 'cross' }}"
+      ...Common.setupRustToolchainCommon("cross")
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
       }
     }
-    Steps.installActionIf("cross", "${{ matrix.build == 'cross' }}")
+    Steps.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
     new {
       name = "Build release binary"
-      run = "${{ matrix.build }} build --release --locked --workspace"
+      run = "${{ matrix.buildtool }} build --release --locked --workspace"
       shell = "bash"
     }
     new {

@@ -18,7 +18,7 @@ const function rustfmt() = new gha.Job {
   steps {
     Steps.checkout(null)
     new {
-      ...Common.setupRustToolchainCommon()
+      ...Common.setupRustToolchainCommon("cargo")
       with {
         ["toolchain"] = "stable"
         ["components"] = "rustfmt"
@@ -45,7 +45,7 @@ const function clippyMinimal() = new gha.Job {
     Steps.checkout(null)
     Steps.setupRustCache()
     new {
-      ...Common.setupRustToolchainCommon()
+      ...Common.setupRustToolchainCommon("cargo")
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
         ["targets"] = "${{ matrix.target }}"
@@ -73,7 +73,7 @@ const function clippyFull() = new gha.Job {
     Steps.checkout(null)
     Steps.setupRustCache()
     new {
-      ...Common.setupRustToolchainCommon()
+      ...Common.setupRustToolchainCommon("cargo")
       with {
         ["toolchain"] = "${{ matrix.toolchain }}"
         ["targets"] = "${{ matrix.target }}"

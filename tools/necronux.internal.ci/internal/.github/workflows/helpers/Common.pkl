@@ -10,8 +10,8 @@ const function standardJobConfig(machine: String?, timeout: Int?) = new Mixin {
   `timeout-minutes` = timeout ?? 30
 }
 
-const function setupRustToolchainCommon() = new {
-  name = "Setup rustup"
+const function setupRustToolchainCommon(buildtool: String) = new {
+  name = "Setup rustup for \(buildtool)"
   uses = Actions.rustToolchain
 }
 
