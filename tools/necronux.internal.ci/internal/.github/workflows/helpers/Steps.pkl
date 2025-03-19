@@ -75,12 +75,12 @@ const function setupRustToolchainFull(toolchain: String, component: String, targ
   }
 }
 
-const function setupRustCache() = new gha.Step {
+const function setupRustCache(key: String) = new gha.Step {
   name = "Setup rust cache"
   uses = Actions.rustCache
   with {
     ["prefix-key"] = "rust"
     ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}"
-    ["key"] = "${{ github.job }}"
+    ["key"] = "-[\(key)]"
   }
 }

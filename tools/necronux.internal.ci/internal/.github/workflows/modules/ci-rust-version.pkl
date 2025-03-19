@@ -16,7 +16,7 @@ const function lockfile() = new gha.Job {
   name = "Cargo Lockfile"
   steps {
     Steps.checkout(null)
-    Steps.setupRustCache()
+    Steps.setupRustCache(outer.name)
     Steps.setupRustToolchain("stable")
     new {
       name = "Ensure Cargo.lock is up-to-date"
@@ -34,7 +34,7 @@ const function checkVersionBump() = new gha.Job {
   }
   steps {
     Steps.checkout(0)
-    Steps.setupRustCache()
+    Steps.setupRustCache(outer.name)
     Steps.installAction("cargo-semver-checks")
     new {
       name = "Run cargo semver-checks"
@@ -60,7 +60,7 @@ const function msrv() = new gha.Job {
   name = "MSRV"
   steps {
     Steps.checkout(null)
-    Steps.setupRustCache()
+    Steps.setupRustCache(outer.name)
     Steps.installAction("cargo-hack")
     new {
       name = "Run cargo hack check"

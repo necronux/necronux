@@ -212,7 +212,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Minimal Clippy (${{ matrix.name }})]
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -401,7 +401,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Full Clippy (${{ matrix.name }})]
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -425,7 +425,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Cargo Lockfile]
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -450,7 +450,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Check Version Bump]
     - name: Install cargo-semver-checks
       uses: taiki-e/install-action@v2
       with:
@@ -557,7 +557,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Minimal Tests (${{ matrix.name }})]
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
@@ -744,7 +744,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Full Tests (${{ matrix.name }})]
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
@@ -801,7 +801,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[Docs]
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -828,7 +828,7 @@ jobs:
       with:
         prefix-key: rust
         save-if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}
-        key: ${{ github.job }}
+        key: -[MSRV]
     - name: Install cargo-hack
       uses: taiki-e/install-action@v2
       with:

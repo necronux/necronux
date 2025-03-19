@@ -20,7 +20,7 @@ const function docs() = new gha.Job {
   }
   steps {
     Steps.checkout(null)
-    Steps.setupRustCache()
+    Steps.setupRustCache(outer.name)
     Steps.setupRustToolchain("stable")
     new {
       name = "Run cargo doc"

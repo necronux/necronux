@@ -43,7 +43,7 @@ const function clippyMinimal() = new gha.Job {
   }
   steps {
     Steps.checkout(null)
-    Steps.setupRustCache()
+    Steps.setupRustCache(outer.name)
     new {
       ...Common.setupRustToolchainCommon("cargo")
       with {
@@ -71,7 +71,7 @@ const function clippyFull() = new gha.Job {
   }
   steps {
     Steps.checkout(null)
-    Steps.setupRustCache()
+    Steps.setupRustCache(outer.name)
     new {
       ...Common.setupRustToolchainCommon("cargo")
       with {
