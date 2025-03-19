@@ -17,7 +17,7 @@ import "modules/release-necronux-stdschema.pkl" as Stdschema
 import "modules/release-validate-and-publish.pkl" as ValPub
 
 headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
-name = "Necronux Release Draft"
+name = "Release-Draft"
 permissions = (Common.contentPermissions("read")) {}
 
 on {

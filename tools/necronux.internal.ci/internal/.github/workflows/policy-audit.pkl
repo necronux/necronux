@@ -14,7 +14,7 @@ import "helpers/Common.pkl"
 import "modules/policy-audit-jobs.pkl" as PolicyAuditJobs
 
 headercomment = Common.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
-name = "Audit"
+name = "Policy-Audit"
 permissions = (Common.contentPermissions("read")) {}
 
 on {

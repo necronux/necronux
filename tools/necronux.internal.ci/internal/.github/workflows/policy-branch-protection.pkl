@@ -14,7 +14,7 @@ import "helpers/Common.pkl"
 import "modules/policy-branch-protection-jobs.pkl" as PolicyBranchProtJobs
 
 headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
-name = "Branch Protection"
+name = "Policy-Branch-Protection"
 permissions = (Common.contentPermissions("read")) {}
 
 on {
