@@ -81,6 +81,6 @@ const function setupRustCache() = new gha.Step {
   with {
     ["prefix-key"] = "rust"
     ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') }}"
-    ["key"] = "${{ runner.os }}-${{ github.job.name }}"
+    ["key"] = "${{ github.job }}"
   }
 }
