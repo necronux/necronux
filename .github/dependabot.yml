@@ -15,6 +15,9 @@ updates:
       - "A-dependencies"
       - "C-enhancement"
       - "S-needs-triage"
+    groups:
+      rust-updates:
+        update-types: [minor, patch]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -24,6 +27,9 @@ updates:
       - "A-dependencies"
       - "C-enhancement"
       - "S-needs-triage"
+    groups:
+      actions-updates:
+        update-types: [minor, patch]
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
@@ -33,3 +39,6 @@ updates:
       - "A-dependencies"
       - "C-enhancement"
       - "S-needs-triage"
+    groups:
+      pkl-updates:
+        update-types: [minor, patch]
