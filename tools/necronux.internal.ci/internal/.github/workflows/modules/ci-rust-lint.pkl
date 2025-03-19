@@ -38,7 +38,7 @@ const function clippyMinimal() = new gha.Job {
   strategy {
     `fail-fast` = false
     matrix {
-      ["include"] = (Matrices.rustMatrixTestMinimal()) {}
+      ["include"] = (Matrices.rustMatrixClippyMinimal()) {}
     }
   }
   steps {
@@ -66,7 +66,7 @@ const function clippyFull() = new gha.Job {
   strategy {
     `fail-fast` = false
     matrix {
-      ["include"] = (Matrices.rustMatrixTestFull()) {}
+      ["include"] = (Matrices.rustMatrixClippyFull()) {}
     }
   }
   steps {

@@ -129,6 +129,36 @@ jobs:
     strategy:
       matrix:
         include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
         - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
@@ -168,36 +198,6 @@ jobs:
           os: windows-2025
           toolchain: beta-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x86_64-linux-gnu-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-linux-gnu
-          buildtool: cargo
-        - name: aarch64-linux-gnu-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
-          target: aarch64-unknown-linux-gnu
-          buildtool: cargo
-        - name: x86_64-macos-stable
-          os: macos-13
-          toolchain: stable-x86_64-apple-darwin
-          target: x86_64-apple-darwin
-          buildtool: cargo
-        - name: aarch64-macos-stable
-          os: macos-15
-          toolchain: stable-aarch64-apple-darwin
-          target: aarch64-apple-darwin
-          buildtool: cargo
-        - name: x84_64-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x84_64-windows-gnu-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-gnu
-          target: x86_64-pc-windows-gnu
           buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -226,6 +226,36 @@ jobs:
     strategy:
       matrix:
         include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
         - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
@@ -265,36 +295,6 @@ jobs:
           os: windows-2025
           toolchain: beta-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x86_64-linux-gnu-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-linux-gnu
-          buildtool: cargo
-        - name: aarch64-linux-gnu-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
-          target: aarch64-unknown-linux-gnu
-          buildtool: cargo
-        - name: x86_64-macos-stable
-          os: macos-13
-          toolchain: stable-x86_64-apple-darwin
-          target: x86_64-apple-darwin
-          buildtool: cargo
-        - name: aarch64-macos-stable
-          os: macos-15
-          toolchain: stable-aarch64-apple-darwin
-          target: aarch64-apple-darwin
-          buildtool: cargo
-        - name: x84_64-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x84_64-windows-gnu-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-gnu
-          target: x86_64-pc-windows-gnu
           buildtool: cargo
         - name: x86_64-linux-musl-stable
           os: ubuntu-24.04
@@ -356,6 +356,16 @@ jobs:
           toolchain: stable-x86_64-unknown-linux-gnu
           target: s390x-unknown-linux-gnu
           buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+        - name: i686-windows-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-pc-windows-gnu
+          buildtool: cross
         - name: aarch64-linux-android-stable
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
@@ -376,16 +386,6 @@ jobs:
           toolchain: stable-x86_64-unknown-linux-gnu
           target: x86_64-unknown-netbsd
           buildtool: cross
-        - name: i686-windows-gnu-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: i686-pc-windows-gnu
-          buildtool: cross
-        - name: i686-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: i686-pc-windows-msvc
-          buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
@@ -462,6 +462,36 @@ jobs:
     strategy:
       matrix:
         include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
         - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
@@ -501,36 +531,6 @@ jobs:
           os: windows-2025
           toolchain: beta-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x86_64-linux-gnu-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-linux-gnu
-          buildtool: cargo
-        - name: aarch64-linux-gnu-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
-          target: aarch64-unknown-linux-gnu
-          buildtool: cargo
-        - name: x86_64-macos-stable
-          os: macos-13
-          toolchain: stable-x86_64-apple-darwin
-          target: x86_64-apple-darwin
-          buildtool: cargo
-        - name: aarch64-macos-stable
-          os: macos-15
-          toolchain: stable-aarch64-apple-darwin
-          target: aarch64-apple-darwin
-          buildtool: cargo
-        - name: x84_64-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x84_64-windows-gnu-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-gnu
-          target: x86_64-pc-windows-gnu
           buildtool: cargo
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -583,6 +583,36 @@ jobs:
     strategy:
       matrix:
         include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
         - name: x86_64-linux-gnu-nightly
           os: ubuntu-24.04
           toolchain: nightly-x86_64-unknown-linux-gnu
@@ -622,36 +652,6 @@ jobs:
           os: windows-2025
           toolchain: beta-x86_64-pc-windows-msvc
           target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x86_64-linux-gnu-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-linux-gnu
-          buildtool: cargo
-        - name: aarch64-linux-gnu-stable
-          os: ubuntu-24.04-arm
-          toolchain: stable-aarch64-unknown-linux-gnu
-          target: aarch64-unknown-linux-gnu
-          buildtool: cargo
-        - name: x86_64-macos-stable
-          os: macos-13
-          toolchain: stable-x86_64-apple-darwin
-          target: x86_64-apple-darwin
-          buildtool: cargo
-        - name: aarch64-macos-stable
-          os: macos-15
-          toolchain: stable-aarch64-apple-darwin
-          target: aarch64-apple-darwin
-          buildtool: cargo
-        - name: x84_64-windows-msvc-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-msvc
-          target: x86_64-pc-windows-msvc
-          buildtool: cargo
-        - name: x84_64-windows-gnu-stable
-          os: windows-2025
-          toolchain: stable-x86_64-pc-windows-gnu
-          target: x86_64-pc-windows-gnu
           buildtool: cargo
         - name: x86_64-linux-musl-stable
           os: ubuntu-24.04
@@ -712,31 +712,6 @@ jobs:
           os: ubuntu-24.04
           toolchain: stable-x86_64-unknown-linux-gnu
           target: s390x-unknown-linux-gnu
-          buildtool: cross
-        - name: aarch64-linux-android-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: aarch64-linux-android
-          buildtool: cross
-        - name: x86_64-linux-android-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-linux-android
-          buildtool: cross
-        - name: x86_64-freebsd-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-freebsd
-          buildtool: cross
-        - name: x86_64-netbsd-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: x86_64-unknown-netbsd
-          buildtool: cross
-        - name: i686-windows-gnu-stable
-          os: ubuntu-24.04
-          toolchain: stable-x86_64-unknown-linux-gnu
-          target: i686-pc-windows-gnu
           buildtool: cross
         - name: i686-windows-msvc-stable
           os: windows-2025
