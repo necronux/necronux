@@ -14,7 +14,7 @@ import "helpers/Common.pkl"
 import "modules/workflow-self-approve-jobs.pkl" as WorkflowSelfApproveJobs
 
 headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
-name = "Workflow-LGTM-Self-Approve"
+name = "Workflow-Self-Approve"
 permissions = (Common.contentPermissions("read")) {}
 
 on {
