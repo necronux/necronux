@@ -80,7 +80,7 @@ const function setupRustCache(key: String) = new gha.Step {
   uses = Actions.rustCache
   with {
     ["prefix-key"] = "rs"
-    ["save-if"] = "${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release/v') }}"
+    ["save-if"] = "${{ github.ref == 'refs/heads/develop' }}"
     ["key"] = "[\(key)]"
   }
 }
