@@ -50,7 +50,7 @@ const function necronux_cli() = new gha.Job {
     new {
       name = "Build release binary"
       run = """
-      ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli"
+      ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli
       if [[ ${{ matrix.os }} == '\(MatricesRust.x86_64_WindowsRunner)' ]]; then
         bin="target/${{ matrix.target }}/release/necronux.exe"
       else
@@ -74,7 +74,7 @@ const function necronux_cli() = new gha.Job {
       shell = "bash"
     }
     new {
-      name = "Creating directory for archive"
+      name = "Create directory for archive"
       run = """
       mkdir -p "$ARCHIVE"/{doc}
       cp "$BIN" "$ARCHIVE"/

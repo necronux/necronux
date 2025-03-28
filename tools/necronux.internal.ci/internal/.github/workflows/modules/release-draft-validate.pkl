@@ -30,8 +30,8 @@ const function checkReleaseTagMatchesProjectVer() = new gha.Job {
       ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
       echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
       if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
-      echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
-      exit 1
+        echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
+        exit 1
       fi
       """
       shell = "bash"
@@ -43,8 +43,8 @@ const function checkReleaseTagMatchesProjectVer() = new gha.Job {
       PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
       echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
       if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-      echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
-      exit 1
+        echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
+        exit 1
       fi
       """
       shell = "bash"

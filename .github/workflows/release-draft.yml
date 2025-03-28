@@ -47,8 +47,8 @@ jobs:
         ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
         echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
         if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
-        echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
-        exit 1
+          echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
+          exit 1
         fi
     - name: Check that tag version and Stdschema PklProject version are the same
       shell: bash
@@ -57,8 +57,8 @@ jobs:
         PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
         echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
         if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-        echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
-        exit 1
+          echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
+          exit 1
         fi
   validate-release-type:
     name: Check Release Type Matches Release Tag
@@ -256,7 +256,7 @@ jobs:
     - name: Build release binary
       shell: bash
       run: |-
-        ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli"
+        ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli
         if [[ ${{ matrix.os }} == 'windows-2025' ]]; then
           bin="target/${{ matrix.target }}/release/necronux.exe"
         else
@@ -270,7 +270,7 @@ jobs:
     - name: Determine archive name
       shell: bash
       run: echo "ARCHIVE=necronux-${{ inputs.release_tag }}-${{ matrix.target }}" >> $GITHUB_ENV
-    - name: Creating directory for archive
+    - name: Create directory for archive
       shell: bash
       run: |-
         mkdir -p "$ARCHIVE"/{doc}
