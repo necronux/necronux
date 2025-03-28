@@ -27,8 +27,8 @@ name: Release-Draft
 permissions:
   contents: read
 jobs:
-  validate-release:
-    name: Validate release
+  validate-release-tag:
+    name: Check Release Tag Matches Project Version
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -43,27 +43,55 @@ jobs:
     - name: Check that tag version and Cargo.toml version are the same
       shell: bash
       run: |-
-        TAG_VERSION=${{ inputs.release_tag }}
+        TAG_VERSION="${{ inputs.release_tag }}"
         ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
         echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
         if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
-        echo "Error: Tag version ($TAG_VERSION) does not match root Cargo.toml version ($ROOT_CARGO_PKG_VERSION)"
+        echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
         exit 1
         fi
     - name: Check that tag version and Stdschema PklProject version are the same
       shell: bash
       run: |-
-        TAG_VERSION=${{ inputs.release_tag }}
+        TAG_VERSION="${{ inputs.release_tag }}"
         PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
         echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
         if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-        echo "Error: Tag version ($TAG_VERSION) does not match Stdschema PklProject version ($PKL_PROJECT_VERSION)"
+        echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
         exit 1
         fi
+  validate-release-type:
+    name: Check Release Type Matches Release Tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Check if selected release type matches release tag
+      shell: bash
+      run: |-
+        release_type="${{ inputs.release_type }}"
+        release_tag="${{ inputs.release_tag }}"
+
+        if [[ "$release_type" == "stable-release" ]]; then
+          if [[ "$release_tag" =~ -[a-zA-Z0-9]+ ]]; then
+            echo "Error: Stable release tags should not contain pre-release identifiers."
+            exit 1
+          fi
+        elif [[ "$release_type" == "pre-release" ]]; then
+          if [[ ! "$release_tag" =~ -[a-zA-Z0-9]+ ]]; then
+            echo "Error: Pre-release tags must contain a pre-release identifier."
+            exit 1
+          fi
+        else
+          echo "Error: Invalid release type."
+          exit 1
+        fi
+
+        echo "Release type and tag format are correctly matched."
   build-necronux-cli:
     name: Build Necronux CLI App
     needs:
-    - validate-release
+    - validate-release-tag
+    - validate-release-type
     strategy:
       matrix:
         include:
@@ -227,163 +255,48 @@ jobs:
         tool: cross
     - name: Build release binary
       shell: bash
-      run: ${{ matrix.buildtool }} build --release --locked --workspace
-    - name: Rename necronux binary
+      run: |-
+        ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli"
+        if [[ ${{ matrix.os }} == 'windows-2025' ]]; then
+          bin="target/${{ matrix.target }}/release/necronux.exe"
+        else
+          bin="target/${{ matrix.target }}/release/necronux"
+        fi
+        echo "BIN=$bin" >> $GITHUB_ENV
+    - name: Make binaries executable (Non-Windows)
+      if: ${{ matrix.os != 'windows-2025' }}
+      shell: bash
+      run: chmod +x ${{ env.BIN }}
+    - name: Determine archive name
+      shell: bash
+      run: echo "ARCHIVE=necronux-${{ inputs.release_tag }}-${{ matrix.target }}" >> $GITHUB_ENV
+    - name: Creating directory for archive
       shell: bash
       run: |-
-        binary_name="necronux"
-
-        extension=""
-        # windows binaries have ".exe" extension
-        if [[ "${{ matrix.os }}" == "windows-2025" ]]; then
-        extension=".exe"
-        fi
-
-        mkdir bin
-        cp "target/${{ matrix.name }}/release/${binary_name}" "bin/${binary_name}-${{ matrix.name }}${extension}"
-    - name: Make binaries executable (Non-Windows)
-      if: '! contains(matrix.build.os, ''windows-latest'')'
-      run: chmod +x bin/*
-    - name: Tar the binaries
+        mkdir -p "$ARCHIVE"/{doc}
+        cp "$BIN" "$ARCHIVE"/
+        cp {README.md,LICENSES/,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
+        cp INSTALL.md "$ARCHIVE"/doc/
+    - name: Build archive (Unix)
+      if: ${{ matrix.os != 'windows-2025' }}
       shell: bash
-      run: tar -czvf built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}.tar.gz -C bin .
-    - name: Upload binary tar
+      run: |-
+        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+        shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+        echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+    - name: Build archive (Windows)
+      if: ${{ matrix.os == 'windows-2025' }}
+      shell: bash
+      run: |-
+        7z a "$ARCHIVE.zip" "$ARCHIVE"
+        certutil -hashfile "$ARCHIVE.zip" SHA256 > "$ARCHIVE.zip.sha256"
+        echo "ASSET=$ARCHIVE.zip" >> $GITHUB_ENV
+        echo "ASSET_SUM=$ARCHIVE.zip.sha256" >> $GITHUB_ENV
+    - name: Upload binaries' tars, zips and sums
       uses: actions/upload-artifact@v4
       with:
-        name: built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}
-        path: built-binaries-${{ github.run_id }}-${{ matrix.build.NAME }}.tar.gz
-  stable-release:
-    name: Release
-    if: startsWith(github.ref_name, 'v') && !contains(github.ref_name, '-')
-    needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-    - name: Download binaries
-      uses: actions/download-artifact@v4
-      with:
-        path: '.'
-        merge-multiple: true
-    - name: Extract binaries
-      shell: bash
-      run: |-
-        mkdir -p bin
-        for tar_file in built-binaries-*.tar.gz; do
-        echo "Extracting $tar_file"
-        tar -xzvf $tar_file -C bin
-        done
-    - name: Publish release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: softprops/action-gh-release@v2
-      with:
-        files: bin/*
-        tag_name: ${{ env.RELEASE_VERSION }}
-        fail_on_unmatched_files: true
-        generate_release_notes: true
-  pre-release:
-    name: Pre-Release
-    if: startsWith(github.ref_name, 'v') && contains(github.ref_name, '-')
-    needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-    - name: Download binaries
-      uses: actions/download-artifact@v4
-      with:
-        path: '.'
-        merge-multiple: true
-    - name: Extract binaries
-      shell: bash
-      run: |-
-        mkdir -p bin
-        for tar_file in built-binaries-*.tar.gz; do
-        echo "Extracting $tar_file"
-        tar -xzvf $tar_file -C bin
-        done
-    - name: Publish release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: softprops/action-gh-release@v2
-      with:
-        files: bin/*
-        tag_name: ${{ env.PRE_RELEASE_VERSION }}
-        fail_on_unmatched_files: true
-        generate_release_notes: true
-        prerelease: true
-  pklstable-release:
-    name: Release Necronux Standard Schema
-    if: startsWith(github.ref_name, 'necronux.std.schema') && !contains(github.ref_name, '-')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Install just
-      uses: taiki-e/install-action@v2
-      with:
-        tool: just
-    - name: ''
-      env:
-        VERSION: ${{ github.ref_name }}
-      shell: bash
-      run: just make-stdschemapklpkg
-    - name: Extract version number from tag
-      shell: bash
-      run: |-
-        VERSION_NUMBER=${{ github.ref_name }}
-        VERSION_NUMBER=${VERSION_NUMBER#*@}
-        echo "VERSION_NUMBER=$VERSION_NUMBER" >> $GITHUB_ENV
-    - name: Publish release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: softprops/action-gh-release@v2
-      with:
-        files: .out/necronux.stdschema${{ env.VERSION_NUMBER }}/*
-        tag_name: ${{ env.RELEASE_VERSION }}
-        fail_on_unmatched_files: true
-        generate_release_notes: true
-  pklpre-release:
-    name: Pre-Release
-    if: startsWith(github.ref_name, 'necronux.std.schema') && contains(github.ref_name, '-')
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Install just
-      uses: taiki-e/install-action@v2
-      with:
-        tool: just
-    - name: ''
-      env:
-        VERSION: ${{ github.ref_name }}
-      shell: bash
-      run: just make-stdschemapklpkg
-    - name: Extract version number from tag
-      shell: bash
-      run: |-
-        VERSION_NUMBER=${{ github.ref_name }}
-        VERSION_NUMBER=${VERSION_NUMBER#*@}
-        echo "VERSION_NUMBER=$VERSION_NUMBER" >> $GITHUB_ENV
-    - env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      uses: softprops/action-gh-release@v2
-      with:
-        files: .out/necronux.stdlib${{ env.VERSION_NUMBER }}/*
-        tag_name: ${{ env.PRE_RELEASE_VERSION }}
-        fail_on_unmatched_files: true
-        generate_release_notes: true
-        prerelease: true
+        name: necronux_cli-binaries-${{ inputs.tag }}
+        path: |-
+          "${{ env.ASSET }}"
+          "${{ env.ASSET_SUM }}"

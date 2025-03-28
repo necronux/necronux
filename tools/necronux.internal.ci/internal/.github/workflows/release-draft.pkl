@@ -12,9 +12,9 @@ amends "../../../../commons/GitHubAction.pkl"
 import "helpers/Common.pkl"
 import "helpers/Triggers.pkl"
 
-import "modules/release-necronux-cli.pkl" as Cli
+import "modules/release-draft-validate.pkl" as Validate
+import "modules/release-draft-build.pkl" as Build
 import "modules/release-necronux-stdschema.pkl" as Stdschema
-import "modules/release-validate-and-publish.pkl" as ValPub
 
 headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "Release-Draft"
@@ -29,10 +29,10 @@ on {
   }
 }
 jobs {
-  ["validate-release"] = (ValPub.validate()) {}
-  ["build-necronux-cli"] = (Cli.build()) {}
-  ["stable-release"] = (Cli.stableRelease()) {}
-  ["pre-release"] = (Cli.preRelease()) {}
-  ["pklstable-release"] = (Stdschema.stableRelease()) {}
-  ["pklpre-release"] = (Stdschema.preRelease()) {}
+  ["validate-release-tag"] = (Validate.checkReleaseTagMatchesProjectVer()) {}
+  ["validate-release-type"] = (Validate.checkReleaseTypeMatchesReleaseTag()) {}
+  ["build-necronux-cli"] = (Build.necronux_cli()) {}
+  // ["build-necronux-stdschema"] = (Build.necronux_stdschema()) {}
+  // ["dryrun-necronux-cli-cargo"] = (DryRun.necronux_stdschema()) {}
+  // ["create-release-draft"] = (PublishDraft.necronux()) {}
 }
