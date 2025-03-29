@@ -255,18 +255,27 @@ jobs:
         tool: cross
     - name: Build release binary
       shell: bash
+      run: ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli
+    - name: Determine binary path (${{ matrix.buildtool }})
+      if: ${{ matrix.buildtool == 'cargo' }}
+      shell: bash
       run: |-
-        ${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli
+        if [[ ${{ matrix.os }} == 'windows-2025' ]]; then
+          bin="target/release/necronux.exe"
+        else
+          bin="target/release/necronux"
+        fi
+        echo "CARGO_BIN=$bin" >> $GITHUB_ENV
+    - name: Determine binary path (${{ matrix.buildtool }})
+      if: ${{ matrix.buildtool == 'cross' }}
+      shell: bash
+      run: |-
         if [[ ${{ matrix.os }} == 'windows-2025' ]]; then
           bin="target/${{ matrix.target }}/release/necronux.exe"
         else
           bin="target/${{ matrix.target }}/release/necronux"
         fi
-        echo "BIN=$bin" >> $GITHUB_ENV
-    - name: Make binaries executable (Non-Windows)
-      if: ${{ matrix.os != 'windows-2025' }}
-      shell: bash
-      run: chmod +x ${{ env.BIN }}
+        echo "CROSS_BIN=$bin" >> $GITHUB_ENV
     - name: Determine archive name
       shell: bash
       run: echo "ARCHIVE=necronux-${{ inputs.release_tag }}-${{ matrix.target }}" >> $GITHUB_ENV
@@ -274,8 +283,9 @@ jobs:
       shell: bash
       run: |-
         mkdir -p "$ARCHIVE"/{doc}
-        cp "$BIN" "$ARCHIVE"/
-        cp {README.md,LICENSES/,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
+        cp {$CARGO_BIN,$CROSS_BIN} "$ARCHIVE"/
+        cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
+        cp -r LICENSES/ "$ARCHIVE"/
         cp INSTALL.md "$ARCHIVE"/doc/
     - name: Build archive (Unix)
       if: ${{ matrix.os != 'windows-2025' }}
