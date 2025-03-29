@@ -275,7 +275,7 @@ jobs:
         cp "$BIN" "$ARCHIVE"/
         cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
         cp -r LICENSES/ "$ARCHIVE"/
-        cp INSTALL.md "$ARCHIVE"/doc/
+        cp docs/INSTALL.md "$ARCHIVE"/doc/
     - name: Build archive (Unix)
       if: ${{ matrix.os != 'windows-2025' }}
       shell: bash

@@ -78,7 +78,7 @@ const function necronux_cli() = new gha.Job {
       cp "$BIN" "$ARCHIVE"/
       cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
       cp -r LICENSES/ "$ARCHIVE"/
-      cp INSTALL.md "$ARCHIVE"/doc/
+      cp docs/INSTALL.md "$ARCHIVE"/doc/
       """
       shell = "bash"
     }
