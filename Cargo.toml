@@ -30,7 +30,7 @@ exclude = [
   "justfile",
 ]
 publish = true
-default-run = "necronux_cli"
+default-run = "necronux"
 
 [workspace]
 resolver = "2"

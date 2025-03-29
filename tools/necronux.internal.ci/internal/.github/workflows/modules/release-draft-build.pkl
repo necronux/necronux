@@ -49,32 +49,18 @@ const function necronux_cli() = new gha.Job {
     Steps.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
     new {
       name = "Build release binary"
-      run = "${{ matrix.buildtool }} build --release --locked --workspace --verbose --bin necronux_cli"
+      run = "${{ matrix.buildtool }} build --bin necronux --release --locked --workspace --verbose --target-dir ./target/${{ matrix.target }}/"
       shell = "bash"
     }
     new {
-      `if` = "${{ matrix.buildtool == 'cargo' }}"
-      name =  "Determine binary path (${{ matrix.buildtool }})"
-      run = """
-      if [[ ${{ matrix.os }} == '\(MatricesRust.x86_64_WindowsRunner)' ]]; then
-        bin="target/release/necronux.exe"
-      else
-        bin="target/release/necronux"
-      fi
-      echo "CARGO_BIN=$bin" >> $GITHUB_ENV
-      """
-      shell = "bash"
-    }
-    new {
-      `if` = "${{ matrix.buildtool == 'cross' }}"
-      name =  "Determine binary path (${{ matrix.buildtool }})"
+      name =  "Determine binary path"
       run = """
       if [[ ${{ matrix.os }} == '\(MatricesRust.x86_64_WindowsRunner)' ]]; then
         bin="target/${{ matrix.target }}/release/necronux.exe"
       else
         bin="target/${{ matrix.target }}/release/necronux"
       fi
-      echo "CROSS_BIN=$bin" >> $GITHUB_ENV
+      echo "BIN=$bin" >> $GITHUB_ENV
       """
       shell = "bash"
     }
@@ -89,7 +75,7 @@ const function necronux_cli() = new gha.Job {
       name = "Create directory for archive"
       run = """
       mkdir -p "$ARCHIVE"/{doc}
-      cp {$CARGO_BIN,$CROSS_BIN} "$ARCHIVE"/
+      cp "$BIN" "$ARCHIVE"/
       cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
       cp -r LICENSES/ "$ARCHIVE"/
       cp INSTALL.md "$ARCHIVE"/doc/
