@@ -82,11 +82,18 @@ const function necronux_cli() = new gha.Job {
       shell = "bash"
     }
     new {
-      name = "REUSE SPDX SBOM"
+      `if` = "${{ matrix.os != '\(MatricesRust.x86_64_WindowsRunner)' }}"
+      name = "REUSE SPDX SBOM (Non-Windows)"
       uses = Actions.reuseAction
       with {
         ["args"] = "spdx -o reuse.spdx"
       }
+    }
+    new {
+      `if` = "${{ matrix.os == '\(MatricesRust.x86_64_WindowsRunner)' }}"
+      name = "REUSE SPDX SBOM (Windows)"
+      run = "pipx run reuse spdx -o reuse.spdx"
+      shell = "powershell"
     }
     new {
       name =  "Determine binary path and archive name"

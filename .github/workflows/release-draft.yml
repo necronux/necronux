@@ -265,10 +265,15 @@ jobs:
     - name: Build release binary
       shell: bash
       run: ${{ matrix.buildtool }} build --bin necronux --release --locked --workspace --verbose --target-dir ./target/${{ matrix.target }}/
-    - name: REUSE SPDX SBOM
+    - name: REUSE SPDX SBOM (Non-Windows)
+      if: ${{ matrix.os != 'windows-2025' }}
       uses: fsfe/reuse-action@v5
       with:
         args: spdx -o reuse.spdx
+    - name: REUSE SPDX SBOM (Windows)
+      if: ${{ matrix.os == 'windows-2025' }}
+      shell: powershell
+      run: pipx run reuse spdx -o reuse.spdx
     - name: Determine binary path and archive name
       shell: bash
       run: |-
