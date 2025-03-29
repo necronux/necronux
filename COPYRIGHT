@@ -38,7 +38,7 @@ Nayan Patil <nayantsg@proton.me>
 We track licenses in two ways:
 
 - For in-tree source files, we use [REUSE](https://reuse.software) to track licensing details via `REUSE.toml` and individual file headers.
-  This information is used to generate SPDX bill of materials (SBOM) in the file `docs/reuse.spdx`, which is shipped at each release.
+  This information is used to generate SPDX bill of materials (SBOM) in the file `reuse.spdx`, which is shipped at each release.
 - For out-of-tree dependencies, we use `crates.io` and manually track licensing details in `THIRD-PARTY-NOTICES.txt`.
 
 Both `reuse.spdx` and `THIRD-PARTY-NOTICES.txt` are shipped with each binary release of Necronux.
