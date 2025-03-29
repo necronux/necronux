@@ -20,7 +20,7 @@ const function cratesioNecronuxCli() = new gha.Job {
     "generate-sbom"
   }
   steps {
-    Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
+    Steps.checkout(null)
     new {
       name = "Run publish crates.io script with --dry-run"
       run = "tools/scripts/ci/publish-crates-io.sh"
