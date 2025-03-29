@@ -74,7 +74,7 @@ const function necronux_cli() = new gha.Job {
     new {
       name = "Create directory for archive"
       run = """
-      mkdir -p "$ARCHIVE"/{doc}
+      mkdir -p "$ARCHIVE"/doc
       cp "$BIN" "$ARCHIVE"/
       cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
       cp -r LICENSES/ "$ARCHIVE"/

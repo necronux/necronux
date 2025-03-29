@@ -29,8 +29,8 @@ on {
   }
 }
 jobs {
-  ["validate-release-tag"] = (Validate.checkReleaseTagMatchesProjectVer()) {}
-  ["validate-release-type"] = (Validate.checkReleaseTypeMatchesReleaseTag()) {}
+  ["validate-release-tag"] = (Validate.releaseTag()) {}
+  ["validate-release-type"] = (Validate.releaseType()) {}
   ["build-necronux-cli"] = (Build.necronux_cli()) {}
   // ["build-necronux-stdschema"] = (Build.necronux_stdschema()) {}
   // ["dryrun-necronux-cli-cargo"] = (DryRun.necronux_stdschema()) {}

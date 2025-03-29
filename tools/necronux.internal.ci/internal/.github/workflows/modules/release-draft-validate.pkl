@@ -12,14 +12,14 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
-const function checkReleaseTagMatchesProjectVer() = new gha.Job {
-  name = "Check Release Tag Matches Project Version"
+const function releaseTag() = new gha.Job {
+  name = "Validate Release Tag"
   steps {
     Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
     new {
-      name = "Display release version"
+      name = "Display release tag"
       run = """
-      echo "Release version: ${{ inputs.release_tag }}"
+      echo "Release tag: ${{ inputs.release_tag }}"
       """
       shell = "bash"
     }
@@ -52,9 +52,16 @@ const function checkReleaseTagMatchesProjectVer() = new gha.Job {
   }
 } |> Common.standardJobConfig(null, null)
 
-const function checkReleaseTypeMatchesReleaseTag() = new gha.Job {
-  name = "Check Release Type Matches Release Tag"
+const function releaseType() = new gha.Job {
+  name = "Validate Release Type"
   steps {
+    new {
+      name = "Display release type"
+      run = """
+      echo "Release type: ${{ inputs.release_type }}"
+      """
+      shell = "bash"
+    }
     new {
       name = "Check if selected release type matches release tag"
       run = """

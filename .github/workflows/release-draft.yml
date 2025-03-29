@@ -28,7 +28,7 @@ permissions:
   contents: read
 jobs:
   validate-release-tag:
-    name: Check Release Tag Matches Project Version
+    name: Validate Release Tag
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -37,9 +37,9 @@ jobs:
       with:
         fetch-depth: 1
         ref: ${{ inputs.release_tag }}
-    - name: Display release version
+    - name: Display release tag
       shell: bash
-      run: 'echo "Release version: ${{ inputs.release_tag }}"'
+      run: 'echo "Release tag: ${{ inputs.release_tag }}"'
     - name: Check that tag version and Cargo.toml version are the same
       shell: bash
       run: |-
@@ -61,10 +61,13 @@ jobs:
           exit 1
         fi
   validate-release-type:
-    name: Check Release Type Matches Release Tag
+    name: Validate Release Type
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+    - name: Display release type
+      shell: bash
+      run: 'echo "Release type: ${{ inputs.release_type }}"'
     - name: Check if selected release type matches release tag
       shell: bash
       run: |-
@@ -271,7 +274,7 @@ jobs:
     - name: Create directory for archive
       shell: bash
       run: |-
-        mkdir -p "$ARCHIVE"/{doc}
+        mkdir -p "$ARCHIVE"/doc
         cp "$BIN" "$ARCHIVE"/
         cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
         cp -r LICENSES/ "$ARCHIVE"/
