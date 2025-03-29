@@ -295,10 +295,15 @@ jobs:
         certutil -hashfile "$ARCHIVE.zip" SHA256 > "$ARCHIVE.zip.sha256"
         echo "ASSET=$ARCHIVE.zip" >> $GITHUB_ENV
         echo "ASSET_SUM=$ARCHIVE.zip.sha256" >> $GITHUB_ENV
+    - name: Verify and display asset path
+      shell: bash
+      run: |-
+        ls -lh "$ASSET"
+        ls -lh "$ASSET_SUM"
     - name: Upload binaries' tars, zips and sums
       uses: actions/upload-artifact@v4
       with:
-        name: necronux_cli-binaries-${{ inputs.tag }}
+        name: necronux_cli-artifacts-${{ inputs.tag }}
         path: |-
-          "${{ env.ASSET }}"
-          "${{ env.ASSET_SUM }}"
+          "$ASSET"
+          "$ASSET_SUM"
