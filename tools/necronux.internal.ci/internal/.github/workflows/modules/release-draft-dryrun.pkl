@@ -12,3 +12,19 @@ import "../../../../../commons/GitHubAction.pkl" as gha
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
+const function cratesioNecronuxCli() = new gha.Job {
+  name = "Dry Run: Publish Necronux Cli On Crates.io"
+  needs {
+    "build-necronux-cli"
+    "build-necronux-stdschema"
+    "generate-sbom"
+  }
+  steps {
+    Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
+    new {
+      name = "Run publish crates.io script with --dry-run"
+      run = "tools/scripts/ci/publish-crates-io.sh"
+      shell = "bash"
+    }
+  }
+} |> Common.standardJobConfig(null, null)

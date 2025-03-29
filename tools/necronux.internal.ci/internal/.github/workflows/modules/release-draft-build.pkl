@@ -44,7 +44,7 @@ const function reuseSPDXSBOM() = new gha.Job {
   }
 } |> Common.standardJobConfig(null, null)
 
-const function necronux_cli() = new gha.Job {
+const function necronuxCli() = new gha.Job {
   name = "Build Necronux CLI App"
   needs {
     "validate-release-tag"
@@ -120,7 +120,7 @@ const function necronux_cli() = new gha.Job {
       shell = "bash"
     }
     new {
-      name = "Build archive (Unix)"
+      name = "Build archive (Non-Windows)"
       `if` = "${{ matrix.os != '\(MatricesRust.x86_64_WindowsRunner)' }}"
       run = """
       tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
@@ -157,7 +157,7 @@ const function necronux_cli() = new gha.Job {
   }
 } |> Common.standardJobConfig("${{ matrix.os }}", null)
 
-const function necronux_stdschema() = new gha.Job {
+const function necronuxStdschema() = new gha.Job {
   name = "Build Necronux Stdschema"
   needs {
     "validate-release-tag"

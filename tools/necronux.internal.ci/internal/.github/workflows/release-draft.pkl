@@ -12,9 +12,9 @@ amends "../../../../commons/GitHubAction.pkl"
 import "helpers/Common.pkl"
 import "helpers/Triggers.pkl"
 
-import "modules/release-draft-validate.pkl" as Validate
 import "modules/release-draft-build.pkl" as Build
-import "modules/release-necronux-stdschema.pkl" as Stdschema
+import "modules/release-draft-dryrun.pkl" as DryRun
+import "modules/release-draft-validate.pkl" as Validate
 
 headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "Release-Draft"
@@ -31,9 +31,9 @@ on {
 jobs {
   ["validate-release-tag"] = (Validate.releaseTag()) {}
   ["validate-release-type"] = (Validate.releaseType()) {}
-  ["build-necronux-cli"] = (Build.necronux_cli()) {}
-  ["build-necronux-stdschema"] = (Build.necronux_stdschema()) {}
+  ["build-necronux-cli"] = (Build.necronuxCli()) {}
+  ["build-necronux-stdschema"] = (Build.necronuxStdschema()) {}
   ["generate-sbom"] = (Build.reuseSPDXSBOM()) {}
-  // ["dryrun-necronux-cli-cargo"] = (DryRun.necronux_stdschema()) {}
+  ["dryrun-cratesio-necronux-cli"] = (DryRun.cratesioNecronuxCli()) {}
   // ["create-release-draft"] = (PublishDraft.necronux()) {}
 }

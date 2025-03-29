@@ -292,7 +292,7 @@ jobs:
         cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml,reuse.spdx} "$ARCHIVE"/
         cp -r LICENSES/ "$ARCHIVE"/
         cp docs/INSTALL.md "$ARCHIVE"/docs/
-    - name: Build archive (Unix)
+    - name: Build archive (Non-Windows)
       if: ${{ matrix.os != 'windows-2025' }}
       shell: bash
       run: |-
@@ -386,3 +386,20 @@ jobs:
         overwrite: true
         compression-level: 9
         path: reuse.spdx
+  dryrun-cratesio-necronux-cli:
+    name: 'Dry Run: Publish Necronux Cli On Crates.io'
+    needs:
+    - build-necronux-cli
+    - build-necronux-stdschema
+    - generate-sbom
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
+    - name: Run publish crates.io script with --dry-run
+      shell: bash
+      run: tools/scripts/ci/publish-crates-io.sh
