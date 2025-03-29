@@ -105,21 +105,13 @@ const function necronux_cli() = new gha.Job {
       shell = "bash"
     }
     new {
-      name = "Verify and display asset path"
-      run = """
-      ls -lh "$ASSET"
-      ls -lh "$ASSET_SUM"
-      """
-      shell = "bash"
-    }
-    new {
       name = "Upload binaries' tars, zips and sums"
       uses = "actions/upload-artifact@v4"
       with {
         ["name"] = "necronux_cli-artifacts-${{ inputs.tag }}"
         ["path"] = """
-        "$ASSET"
-        "$ASSET_SUM"
+        ${{ env.ASSET }}
+        ${{ env.ASSET_SUM }}
         """
       }
     }
