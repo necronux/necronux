@@ -20,24 +20,18 @@ lint:
 
 sbom:
     reuse lint
-    reuse spdx -o docs/reuse.spdx
+    reuse spdx -o reuse.spdx
 
 runpkl:
-    just resolve-internalpkl
-    just resolve-stdschemapkl
-    just eval-internalpkl
-    just eval-stdschemapkl
-    just test-stdschemapkl
+    just resolve-internalci
+    just resolve-stdschema
+    just eval-internalci
+    just eval-stdschema
+    just test-stdschema
 
 # Following subcommands are used in ci
 
 # internal tools
-
-resolve-internalpkl:
-    just resolve-internalci
-
-eval-internalpkl:
-    just eval-internalci
 
 resolve-internalci:
     ./gradlew resolveInternalCI
@@ -49,14 +43,14 @@ eval-internalci:
 
 # stdschema
 
-resolve-stdschemapkl:
-    ./gradlew resolveStdSchemaPkl
+resolve-stdschema:
+    ./gradlew resolveStdSchema
 
-eval-stdschemapkl:
-    ./gradlew evalStdSchemaPkl
+eval-stdschema:
+    ./gradlew evalStdSchema
 
-test-stdschemapkl:
-    ./gradlew testStdSchemaPkl
+test-stdschema:
+    ./gradlew testStdSchema
 
-make-stdschemapklpkg:
-    ./gradlew makeStdSchemaPklPkg
+make-stdschemapkg:
+    ./gradlew makeStdSchemaPkg

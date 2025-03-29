@@ -10,7 +10,7 @@ plugins {
 
 pkl {
   evaluators {
-    register("evalStdSchemaPkl") {
+    register("evalStdSchema") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("*.pkl") })
       outputFile.set(file("${layout.buildDirectory.get()}/%{moduleName}.%{outputFormat}"))
@@ -18,7 +18,7 @@ pkl {
   }
 
   tests {
-    register("testStdSchemaPkl") {
+    register("testStdSchema") {
       projectDir.set(file("."))
       sourceModules.set(fileTree(projectDir) { include("tests/*.pkl") })
       overwrite.set(false)
@@ -27,13 +27,13 @@ pkl {
 
   project {
     resolvers {
-      register("resolveStdSchemaPkl") {
+      register("resolveStdSchema") {
         projectDirectories.from(file("."))
       }
     }
 
     packagers {
-      register("makeStdSchemaPklPkg") {
+      register("makeStdSchemaPkg") {
         projectDirectories.from(file("."))
       }
     }

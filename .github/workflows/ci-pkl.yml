@@ -79,10 +79,10 @@ jobs:
         tool: just
     - name: Check if necronux.std.schema pkl project can be resolved
       shell: bash
-      run: just resolve-stdschemapkl
-    - name: Check if necronux internal pkl projects can be resolved
+      run: just resolve-stdschema
+    - name: Check if necronux.internal.ci pkl project can be resolved
       shell: bash
-      run: just resolve-internalpkl
+      run: just resolve-internalci
   evalcheck:
     name: Eval Check
     runs-on: ubuntu-latest
@@ -98,11 +98,11 @@ jobs:
         tool: just
     - name: Check if necronux.std.schema pkl modules can be evaluated
       shell: bash
-      run: just eval-stdschemapkl
-    - name: Check if necronux internal pkl modules can be evaluated
+      run: just eval-stdschema
+    - name: Check if necronux.internal.ci pkl modules can be evaluated
       shell: bash
-      run: just eval-internalpkl
-    - name: Verify necronux internal pkl modules evaluation reflects the latest changes
+      run: just eval-internalci
+    - name: Verify pkl modules evaluation reflects the latest changes
       shell: bash
       run: git diff --exit-code
   test:
@@ -120,4 +120,4 @@ jobs:
         tool: just
     - name: Test necronux.std.schema pkl modules
       shell: bash
-      run: just test-stdschemapkl
+      run: just test-stdschema
