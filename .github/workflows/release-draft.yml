@@ -65,6 +65,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
     - name: Display release type
       shell: bash
       run: 'echo "Release type: ${{ inputs.release_type }}"'
@@ -234,6 +239,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
@@ -259,7 +265,11 @@ jobs:
     - name: Build release binary
       shell: bash
       run: ${{ matrix.buildtool }} build --bin necronux --release --locked --workspace --verbose --target-dir ./target/${{ matrix.target }}/
-    - name: Determine binary path
+    - name: REUSE SPDX SBOM
+      uses: fsfe/reuse-action@v5
+      with:
+        args: spdx -o reuse.spdx
+    - name: Determine binary path and archive name
       shell: bash
       run: |-
         if [[ ${{ matrix.os }} == 'windows-2025' ]]; then
@@ -268,17 +278,15 @@ jobs:
           bin="target/${{ matrix.target }}/release/necronux"
         fi
         echo "BIN=$bin" >> $GITHUB_ENV
-    - name: Determine archive name
-      shell: bash
-      run: echo "ARCHIVE=necronux-${{ inputs.release_tag }}-${{ matrix.target }}" >> $GITHUB_ENV
-    - name: Create directory for archive
+        echo "ARCHIVE=necronux-${{ inputs.release_tag }}-${{ matrix.target }}" >> $GITHUB_ENV
+    - name: Create directory for archive and transfer files
       shell: bash
       run: |-
-        mkdir -p "$ARCHIVE"/doc
+        mkdir -p "$ARCHIVE"/docs
         cp "$BIN" "$ARCHIVE"/
-        cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml} "$ARCHIVE"/
+        cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml,reuse.spdx} "$ARCHIVE"/
         cp -r LICENSES/ "$ARCHIVE"/
-        cp docs/INSTALL.md "$ARCHIVE"/doc/
+        cp docs/INSTALL.md "$ARCHIVE"/docs/
     - name: Build archive (Unix)
       if: ${{ matrix.os != 'windows-2025' }}
       shell: bash
@@ -295,10 +303,81 @@ jobs:
         certutil -hashfile "$ARCHIVE.zip" SHA256 > "$ARCHIVE.zip.sha256"
         echo "ASSET=$ARCHIVE.zip" >> $GITHUB_ENV
         echo "ASSET_SUM=$ARCHIVE.zip.sha256" >> $GITHUB_ENV
-    - name: Upload binaries' tars, zips and sums
+    - name: Upload tars, zips and sums
       uses: actions/upload-artifact@v4
       with:
-        name: necronux_cli-artifacts-${{ inputs.tag }}
+        name: necronux_cli-${{ inputs.release_tag }}-${{ matrix.target }}
+        overwrite: true
+        compression-level: 9
         path: |-
           ${{ env.ASSET }}
           ${{ env.ASSET_SUM }}
+  build-necronux-stdschema:
+    name: Build Necronux Stdschema
+    needs:
+    - validate-release-tag
+    - validate-release-type
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
+    - name: Install just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just
+    - name: Build release package
+      shell: bash
+      run: just make-stdschemapkg
+    - name: Determine package dir path and archive name
+      shell: bash
+      run: |-
+        pkgdir="stdschema/build/generated/pkl/packages"
+        echo "PKGDIR=$pkgdir" >> $GITHUB_ENV
+        echo "ARCHIVE=necronux-stdschema-${{ inputs.release_tag }}" >> $GITHUB_ENV
+    - name: Create directory for archive and transfer files
+      shell: bash
+      run: |-
+        mkdir -p "$ARCHIVE"
+        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }} "$ARCHIVE"/
+        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.sha256 "$ARCHIVE"/
+        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.zip "$ARCHIVE"/
+        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.zip.sha256 "$ARCHIVE"/
+    - name: Upload pkgs, zips and sums
+      uses: actions/upload-artifact@v4
+      with:
+        name: necronux_stdschema-${{ inputs.release_tag }}
+        overwrite: true
+        compression-level: 9
+        path: |-
+          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}
+          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}sha256
+          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}.zip
+          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}.zip.sha256
+  generate-sbom:
+    name: Generate REUSE SPDX SBOM
+    needs:
+    - validate-release-tag
+    - validate-release-type
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
+    - name: REUSE SPDX SBOM
+      uses: fsfe/reuse-action@v5
+      with:
+        args: spdx -o reuse.spdx
+    - name: Upload SBOM
+      uses: actions/upload-artifact@v4
+      with:
+        name: sbom-${{ inputs.release_tag }}
+        overwrite: true
+        compression-level: 9
+        path: reuse.spdx

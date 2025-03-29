@@ -55,6 +55,7 @@ const function releaseTag() = new gha.Job {
 const function releaseType() = new gha.Job {
   name = "Validate Release Type"
   steps {
+    Steps.checkoutWithRef(null, "${{ inputs.release_tag }}")
     new {
       name = "Display release type"
       run = """

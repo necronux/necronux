@@ -32,7 +32,8 @@ jobs {
   ["validate-release-tag"] = (Validate.releaseTag()) {}
   ["validate-release-type"] = (Validate.releaseType()) {}
   ["build-necronux-cli"] = (Build.necronux_cli()) {}
-  // ["build-necronux-stdschema"] = (Build.necronux_stdschema()) {}
+  ["build-necronux-stdschema"] = (Build.necronux_stdschema()) {}
+  ["generate-sbom"] = (Build.reuseSPDXSBOM()) {}
   // ["dryrun-necronux-cli-cargo"] = (DryRun.necronux_stdschema()) {}
   // ["create-release-draft"] = (PublishDraft.necronux()) {}
 }
