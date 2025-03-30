@@ -32,16 +32,6 @@ const function reuseSPDXSBOM() = new gha.Job {
       }
     }
     new {
-      name = "Upload SBOM"
-      uses = Actions.uploadArtifact
-      with {
-        ["name"] = "sbom-${{ inputs.release_tag }}"
-        ["overwrite"] = true
-        ["compression-level"] = 9
-        ["path"] = "reuse.spdx"
-      }
-    }
-    new {
       name =  "Determine archive name"
       run = """
       echo "ARCHIVE=necronux-sbom-${{ inputs.release_tag }}" >> $GITHUB_ENV

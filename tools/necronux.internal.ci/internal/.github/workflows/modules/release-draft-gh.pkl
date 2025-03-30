@@ -20,7 +20,6 @@ const function createPreReleaseDraft() = new gha.Job {
     "build-necronux-cli"
     "build-necronux-stdschema"
     "generate-sbom"
-    "dryrun-cratesio-necronux-cli"
   }
   permissions {
     contents = "write"
@@ -52,7 +51,6 @@ const function createStableReleaseDraft() = new gha.Job {
     "build-necronux-cli"
     "build-necronux-stdschema"
     "generate-sbom"
-    "dryrun-cratesio-necronux-cli"
   }
   permissions {
     contents = "write"
