@@ -427,7 +427,7 @@ jobs:
         args: spdx -o reuse.spdx
     - name: Run publish crates.io script with --dry-run
       shell: bash
-      run: tools/scripts/ci/publish-crates-io.sh
+      run: tools/scripts/ci/publish-crates-io.sh --dry-run
   create-pre-release-draft:
     name: Create GitHub Pre-Release Draft
     if: ${{ inputs.release_type == 'pre-release' }}
