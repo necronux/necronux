@@ -88,7 +88,7 @@ const function commonDraftSteps() = new Listing<gha.Step> {
     name = "Download stdschema tars, zips and sums"
     uses = Actions.downloadArtifact
     with {
-      ["pattern"] = "necronux_stdchema-${{ inputs.release_tag }}-*"
+      ["pattern"] = "necronux_stdschema-${{ inputs.release_tag }}-*"
       ["path"] = "extract_these"
       ["merge-multiple"] = true
     }
@@ -97,7 +97,7 @@ const function commonDraftSteps() = new Listing<gha.Step> {
     name = "Download SBOM tars, zips and sums"
     uses = Actions.downloadArtifact
     with {
-      ["pattern"] = "necronux-sbom-${{ inputs.release_tag }}-*"
+      ["pattern"] = "necronux_sbom-${{ inputs.release_tag }}-*"
       ["path"] = "extract_these"
       ["merge-multiple"] = true
     }
@@ -106,7 +106,7 @@ const function commonDraftSteps() = new Listing<gha.Step> {
     name = "Extract required files"
     run = """
       mkdir -p extracted/
-      cd extract_these/
+      cd extract_these
 
       for tar_file in necronux_stdchema-*.tar.gz necronux-sbom-*.tar.gz; do
         if [ -f "$tar_file" ]; then

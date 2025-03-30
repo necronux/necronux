@@ -449,20 +449,20 @@ jobs:
     - name: Download stdschema tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux_stdchema-${{ inputs.release_tag }}-*
+        pattern: necronux_stdschema-${{ inputs.release_tag }}-*
         path: extract_these
         merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux-sbom-${{ inputs.release_tag }}-*
+        pattern: necronux_sbom-${{ inputs.release_tag }}-*
         path: extract_these
         merge-multiple: true
     - name: Extract required files
       shell: bash
       run: |-
         mkdir -p extracted/
-        cd extract_these/
+        cd extract_these
 
         for tar_file in necronux_stdchema-*.tar.gz necronux-sbom-*.tar.gz; do
           if [ -f "$tar_file" ]; then
@@ -510,20 +510,20 @@ jobs:
     - name: Download stdschema tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux_stdchema-${{ inputs.release_tag }}-*
+        pattern: necronux_stdschema-${{ inputs.release_tag }}-*
         path: extract_these
         merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux-sbom-${{ inputs.release_tag }}-*
+        pattern: necronux_sbom-${{ inputs.release_tag }}-*
         path: extract_these
         merge-multiple: true
     - name: Extract required files
       shell: bash
       run: |-
         mkdir -p extracted/
-        cd extract_these/
+        cd extract_these
 
         for tar_file in necronux_stdchema-*.tar.gz necronux-sbom-*.tar.gz; do
           if [ -f "$tar_file" ]; then
