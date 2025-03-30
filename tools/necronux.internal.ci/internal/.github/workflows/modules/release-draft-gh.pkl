@@ -108,7 +108,7 @@ const function commonDraftSteps() = new Listing<gha.Step> {
       mkdir -p extracted/
       cd extract_these
 
-      for tar_file in necronux_stdchema-*.tar.gz necronux-sbom-*.tar.gz; do
+      for tar_file in necronux_stdschema-*.tar.gz necronux_sbom-*.tar.gz; do
         if [ -f "$tar_file" ]; then
           echo "Extracting $tar_file"
           tar -xzvf "$tar_file" -C ../extracted
@@ -124,7 +124,8 @@ const function commonDraftSteps() = new Listing<gha.Step> {
     run = """
       mkdir -p rel_artifacts/
       cp -r downloaded_artifacts/* rel_artifacts/
-      cp -r extracted/* rel_artifacts/
+      cp -r extracted/necronux_stdschema-${{ inputs.release_tag }}/* rel_artifacts/
+      cp -r extracted/necronux_sbom-${{ inputs.release_tag }}/* rel_artifacts/
       """
     shell = "bash"
   }

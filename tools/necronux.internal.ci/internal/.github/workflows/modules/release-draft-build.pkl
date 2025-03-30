@@ -34,7 +34,7 @@ const function reuseSPDXSBOM() = new gha.Job {
     new {
       name =  "Determine archive name"
       run = """
-      echo "ARCHIVE=necronux-sbom-${{ inputs.release_tag }}" >> $GITHUB_ENV
+      echo "ARCHIVE=necronux_sbom-${{ inputs.release_tag }}" >> $GITHUB_ENV
       """
       shell = "bash"
     }
@@ -204,7 +204,7 @@ const function necronuxStdschema() = new gha.Job {
       run = """
       pkgdir="stdschema/build/generated/pkl/packages"
       echo "PKGDIR=$pkgdir" >> $GITHUB_ENV
-      echo "ARCHIVE=necronux-stdschema-${{ inputs.release_tag }}" >> $GITHUB_ENV
+      echo "ARCHIVE=necronux_stdschema-${{ inputs.release_tag }}" >> $GITHUB_ENV
       """
       shell = "bash"
     }
