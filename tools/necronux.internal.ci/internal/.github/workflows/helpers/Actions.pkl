@@ -7,8 +7,10 @@
 @ModuleInfo { minPklVersion = "0.27.0" }
 module Actions
 
+const actionGhRelease = "softprops/action-gh-release@v2"
 const cargoDenyAction = "EmbarkStudios/cargo-deny-action@v2"
 const checkout = "actions/checkout@v4"
+const downloadArtifact = "actions/download-artifact@v4"
 const githubScript = "actions/github-script@v7"
 const installAction = "taiki-e/install-action@v2"
 const reuseAction = "fsfe/reuse-action@v5"

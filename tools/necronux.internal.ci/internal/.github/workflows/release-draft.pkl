@@ -12,9 +12,10 @@ amends "../../../../commons/GitHubAction.pkl"
 import "helpers/Common.pkl"
 import "helpers/Triggers.pkl"
 
+import "modules/release-draft-validate.pkl" as Validate
 import "modules/release-draft-build.pkl" as Build
 import "modules/release-draft-dryrun.pkl" as DryRun
-import "modules/release-draft-validate.pkl" as Validate
+import "modules/release-draft-gh.pkl" as Gh
 
 headercomment = Common.headerComment("2024-2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
 name = "Release-Draft"
@@ -35,5 +36,6 @@ jobs {
   ["build-necronux-stdschema"] = (Build.necronuxStdschema()) {}
   ["generate-sbom"] = (Build.reuseSPDXSBOM()) {}
   ["dryrun-cratesio-necronux-cli"] = (DryRun.cratesioNecronuxCli()) {}
-  // ["create-release-draft"] = (PublishDraft.necronux()) {}
+  ["create-pre-release-draft"] = (Gh.createPreReleaseDraft()) {}
+  ["create-stable-release-draft"] = (Gh.createStableReleaseDraft()) {}
 }

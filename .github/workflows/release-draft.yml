@@ -351,6 +351,13 @@ jobs:
         cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.sha256 "$ARCHIVE"/
         cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.zip "$ARCHIVE"/
         cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.zip.sha256 "$ARCHIVE"/
+    - name: Build archive
+      shell: bash
+      run: |-
+        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+        shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+        echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
     - name: Upload pkgs, zips and sums
       uses: actions/upload-artifact@v4
       with:
@@ -358,10 +365,8 @@ jobs:
         overwrite: true
         compression-level: 9
         path: |-
-          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}
-          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}sha256
-          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}.zip
-          ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}.zip.sha256
+          ${{ env.ASSET }}
+          ${{ env.ASSET_SUM }}
   generate-sbom:
     name: Generate REUSE SPDX SBOM
     needs:
@@ -386,6 +391,30 @@ jobs:
         overwrite: true
         compression-level: 9
         path: reuse.spdx
+    - name: Determine archive name
+      shell: bash
+      run: echo "ARCHIVE=necronux-sbom-${{ inputs.release_tag }}" >> $GITHUB_ENV
+    - name: Create directory for archive and transfer files
+      shell: bash
+      run: |-
+        mkdir -p "$ARCHIVE"
+        cp reuse.spdx "$ARCHIVE"/
+    - name: Build archive
+      shell: bash
+      run: |-
+        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+        shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+        echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+    - name: Upload tars and sums
+      uses: actions/upload-artifact@v4
+      with:
+        name: necronux_sbom-${{ inputs.release_tag }}
+        overwrite: true
+        compression-level: 9
+        path: |-
+          ${{ env.ASSET }}
+          ${{ env.ASSET_SUM }}
   dryrun-cratesio-necronux-cli:
     name: 'Dry Run: Publish Necronux Cli On Crates.io'
     needs:
@@ -402,3 +431,126 @@ jobs:
     - name: Run publish crates.io script with --dry-run
       shell: bash
       run: tools/scripts/ci/publish-crates-io.sh
+  create-pre-release-draft:
+    name: Create GitHub Pre-Release Draft
+    if: ${{ inputs.release_type == 'pre-release' }}
+    needs:
+    - build-necronux-cli
+    - build-necronux-stdschema
+    - generate-sbom
+    - dryrun-cratesio-necronux-cli
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Download cli binaries tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        pattern: necronux_cli-${{ inputs.release_tag }}-*
+        path: downloaded_artifacts
+        merge-multiple: true
+    - name: Download stdschema tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        pattern: necronux_stdchema-${{ inputs.release_tag }}-*
+        path: extract_these
+        merge-multiple: true
+    - name: Download SBOM tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        pattern: necronux-sbom-${{ inputs.release_tag }}-*
+        path: extract_these
+        merge-multiple: true
+    - name: Extract required files
+      shell: bash
+      run: |-
+        mkdir -p extracted/
+        cd extract_these/
+
+        for tar_file in necronux_stdchema-*.tar.gz necronux-sbom-*.tar.gz; do
+          if [ -f "$tar_file" ]; then
+            echo "Extracting $tar_file"
+            tar -xzvf "$tar_file" -C ../extracted
+          else
+            echo "No matching tar files found for pattern: $tar_file"
+          fi
+        done
+    - name: Create directory for release and transfer files
+      shell: bash
+      run: |-
+        mkdir -p rel_artifacts/
+        cp -r downloaded_artifacts/* rel_artifacts/
+        cp -r extracted/* rel_artifacts/
+    - name: Publish github pre-release draft
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ inputs.release_tag }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        prerelease: true
+        draft: true
+        files: rel_artifacts/*
+  create-stable-release-draft:
+    name: Create GitHub Stable Release Draft
+    if: ${{ inputs.release_type == 'stable-release' }}
+    needs:
+    - build-necronux-cli
+    - build-necronux-stdschema
+    - generate-sbom
+    - dryrun-cratesio-necronux-cli
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Download cli binaries tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        pattern: necronux_cli-${{ inputs.release_tag }}-*
+        path: downloaded_artifacts
+        merge-multiple: true
+    - name: Download stdschema tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        pattern: necronux_stdchema-${{ inputs.release_tag }}-*
+        path: extract_these
+        merge-multiple: true
+    - name: Download SBOM tars, zips and sums
+      uses: actions/download-artifact@v4
+      with:
+        pattern: necronux-sbom-${{ inputs.release_tag }}-*
+        path: extract_these
+        merge-multiple: true
+    - name: Extract required files
+      shell: bash
+      run: |-
+        mkdir -p extracted/
+        cd extract_these/
+
+        for tar_file in necronux_stdchema-*.tar.gz necronux-sbom-*.tar.gz; do
+          if [ -f "$tar_file" ]; then
+            echo "Extracting $tar_file"
+            tar -xzvf "$tar_file" -C ../extracted
+          else
+            echo "No matching tar files found for pattern: $tar_file"
+          fi
+        done
+    - name: Create directory for release and transfer files
+      shell: bash
+      run: |-
+        mkdir -p rel_artifacts/
+        cp -r downloaded_artifacts/* rel_artifacts/
+        cp -r extracted/* rel_artifacts/
+    - name: Publish github stable release draft
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ inputs.release_tag }}
+        fail_on_unmatched_files: true
+        generate_release_notes: true
+        draft: true
+        files: rel_artifacts/*

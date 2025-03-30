@@ -41,6 +41,44 @@ const function reuseSPDXSBOM() = new gha.Job {
         ["path"] = "reuse.spdx"
       }
     }
+    new {
+      name =  "Determine archive name"
+      run = """
+      echo "ARCHIVE=necronux-sbom-${{ inputs.release_tag }}" >> $GITHUB_ENV
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Create directory for archive and transfer files"
+      run = """
+      mkdir -p "$ARCHIVE"
+      cp reuse.spdx "$ARCHIVE"/
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Build archive"
+      run = """
+      tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+      shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+      echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+      echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Upload tars and sums"
+      uses = Actions.uploadArtifact
+      with {
+        ["name"] = "necronux_sbom-${{ inputs.release_tag }}"
+        ["overwrite"] = true
+        ["compression-level"] = 9
+        ["path"] = """
+        ${{ env.ASSET }}
+        ${{ env.ASSET_SUM }}
+        """
+      }
+    }
   }
 } |> Common.standardJobConfig(null, null)
 
@@ -192,6 +230,16 @@ const function necronuxStdschema() = new gha.Job {
       shell = "bash"
     }
     new {
+      name = "Build archive"
+      run = """
+      tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+      shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+      echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+      echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+      """
+      shell = "bash"
+    }
+    new {
       name = "Upload pkgs, zips and sums"
       uses = Actions.uploadArtifact
       with {
@@ -199,10 +247,8 @@ const function necronuxStdschema() = new gha.Job {
         ["overwrite"] = true
         ["compression-level"] = 9
         ["path"] = """
-        ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}
-        ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}sha256
-        ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}.zip
-        ${{ env.ARCHIVE }}/necronux.std.schema@${{ inputs.release_tag }}.zip.sha256
+        ${{ env.ASSET }}
+        ${{ env.ASSET_SUM }}
         """
       }
     }
