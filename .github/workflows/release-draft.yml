@@ -408,8 +408,8 @@ jobs:
         path: |-
           ${{ env.ASSET }}
           ${{ env.ASSET_SUM }}
-  dryrun-cratesio-necronux-cli:
-    name: 'Dry Run: Publish Necronux Cli On Crates.io'
+  dryrun-cratesio-necronux:
+    name: 'Dry Run: Publish Necronux Crates On Crates.io'
     needs:
     - build-necronux-cli
     - build-necronux-stdschema

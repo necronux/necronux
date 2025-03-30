@@ -12,7 +12,7 @@ amends "../../../../commons/GitHubAction.pkl"
 import "helpers/Common.pkl"
 import "helpers/Triggers.pkl"
 
-import "modules/release-draft-validate.pkl" as Validate
+import "modules/release-validate.pkl" as Validate
 import "modules/release-draft-build.pkl" as Build
 import "modules/release-draft-dryrun.pkl" as DryRun
 import "modules/release-draft-gh.pkl" as Gh
@@ -35,7 +35,7 @@ jobs {
   ["build-necronux-cli"] = (Build.necronuxCli()) {}
   ["build-necronux-stdschema"] = (Build.necronuxStdschema()) {}
   ["generate-sbom"] = (Build.reuseSPDXSBOM()) {}
-  ["dryrun-cratesio-necronux-cli"] = (DryRun.cratesioNecronuxCli()) {}
+  ["dryrun-cratesio-necronux"] = (DryRun.cratesioNecronux()) {}
   ["create-pre-release-draft"] = (Gh.createPreReleaseDraft()) {}
   ["create-stable-release-draft"] = (Gh.createStableReleaseDraft()) {}
 }

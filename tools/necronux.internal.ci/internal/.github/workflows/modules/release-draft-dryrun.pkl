@@ -13,8 +13,8 @@ import "../helpers/Actions.pkl"
 import "../helpers/Common.pkl"
 import "../helpers/Steps.pkl"
 
-const function cratesioNecronuxCli() = new gha.Job {
-  name = "Dry Run: Publish Necronux Cli On Crates.io"
+const function cratesioNecronux() = new gha.Job {
+  name = "Dry Run: Publish Necronux Crates On Crates.io"
   needs {
     "build-necronux-cli"
     "build-necronux-stdschema"
