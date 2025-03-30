@@ -55,9 +55,9 @@ When making a release, the Maintainers follow these checklists:
 
 1. Check appropriate milestone.
 2. Create appropriate release branch (if not already) from latest `develop` branch as `release/vX.Y.x` where X and Y are Major and Minor versions respectively.
-3. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/release/scripts/bump.sh`.
-4. In release branch, bump version number of all components to next minor version with `-rc.N` suffix using `bash tools/release/scripts/bump.sh`.
-  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
+3. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/scripts/bump.sh`.
+4. In release branch, bump version number of all components to next minor version with `-rc.N` suffix using `bash tools/scripts/bump.sh`.
+- Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
 5. Create a tag on GitHub.
 
 For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
@@ -65,11 +65,11 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Minor Release
 
 1. Create release draft using `Release-Draft` workflow.
-  - Select release type as `pre-release`.
-  - Enter appropriate tag.
+- Select release type as `pre-release`.
+- Enter appropriate tag.
 2. Edit and Publish GitHub Release.
 3. Release on other platforms using `Release-Publish` workflow.
-  - Enter the same tag as used in step 1.
+- Enter the same tag as used in step 1.
 
 #### Minor Post-release
 
@@ -82,19 +82,19 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 1. Check regressions label.
 2. Check appropriate milestone.
 3. Close the milestone, open the next one if anything remains and transfer them.
-4. In release branch, bump version number of all components to next minor version using `bash tools/release/scripts/bump.sh`.
-  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
+4. In release branch, bump version number of all components to next minor version using `bash tools/scripts/bump.sh`.
+- Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
 5. Create a tag on GitHub.
 6. Bump `latest` tag to most recent stable release.
 
 #### Minor Release
 
 1. Create release draft using `Release-Draft` workflow.
-  - Select release type as `stable-release`.
-  - Enter appropriate tag.
+- Select release type as `stable-release`.
+- Enter appropriate tag.
 2. Edit and Publish GitHub Release.
 3. Release on other platforms using `Release-Publish` workflow.
-  - Enter the same tag as used in step 1.
+- Enter the same tag as used in step 1.
 
 #### Minor Post-release
 
@@ -107,19 +107,19 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 1. Check appropriate milestone.
 2. Create appropriate release branch (if not already) from latest `develop` branch as `release/vX.Y.x` where X and Y are Major and Minor versions respectively.
 3. Close the milestone, open the next one if anything remains and transfer them.
-4. In release branch, bump version number of all components to next patch version using `bash tools/release/scripts/bump.sh`.
-  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
+4. In release branch, bump version number of all components to next patch version using `bash tools/scripts/bump.sh`.
+- Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
 5. Create a tag on GitHub.
 6. Bump `latest` tag to most recent stable release.
 
 #### Patch Release
 
 1. Create release draft using `Release-Draft` workflow.
-  - Select release type as `stable-release`.
-  - Enter appropriate tag.
+- Select release type as `stable-release`.
+- Enter appropriate tag.
 2. Edit and Publish GitHub Release.
 3. Release on other platforms using `Release-Publish` workflow.
-  - Enter the same tag as used in step 1.
+- Enter the same tag as used in step 1.
 
 #### Patch Post-release
 
@@ -131,9 +131,9 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 1. Check appropriate milestone.
 2. Create appropriate release branch (if not already) from latest `develop` branch as `release/vX.Y.x` where X and Y are Major and Minor versions respectively.
-3. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/release/scripts/bump.sh`.
-4. In release branch, bump version number of all components to next major version with `-rc.N` suffix using `bash tools/release/scripts/bump.sh`.
-  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
+3. In develop branch, bump version number of all components to next planned version with `-dev` suffix using `bash tools/scripts/bump.sh`.
+4. In release branch, bump version number of all components to next major version with `-rc.N` suffix using `bash tools/scripts/bump.sh`.
+- Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z-rc.N"
 5. Create a tag on GitHub.
 
 For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
@@ -141,11 +141,11 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 #### Major Release
 
 1. Create release draft using `Release-Draft` workflow.
-  - Select release type as `pre-release`.
-  - Enter appropriate tag.
+- Select release type as `pre-release`.
+- Enter appropriate tag.
 2. Edit and Publish GitHub Release.
 3. Release on other platforms using `Release-Publish` workflow.
-  - Enter the same tag as used in step 1.
+- Enter the same tag as used in step 1.
 
 #### Major Post-release
 
@@ -158,19 +158,19 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 1. Check regressions label.
 2. Check appropriate milestone.
 3. Close the milestone, open the next one if anything remains and transfer them.
-4. In release branch, bump version number of all components to next major version using `bash tools/release/scripts/bump.sh`.
-  - Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
+4. In release branch, bump version number of all components to next major version using `bash tools/scripts/bump.sh`.
+- Change the commit message to be nicer: git commit --amend -m "Release X.Y.Z"
 5. Create a tag on GitHub.
 6. Bump `latest` tag to most recent stable release.
 
 #### Major Release
 
 1. Create release draft using `Release-Draft` workflow.
-  - Select release type as `stable-release`.
-  - Enter appropriate tag.
+- Select release type as `stable-release`.
+- Enter appropriate tag.
 2. Edit and Publish GitHub Release.
 3. Release on other platforms using `Release-Publish` workflow.
-  - Enter the same tag as used in step 1.
+- Enter the same tag as used in step 1.
 
 #### Major Post-release
 

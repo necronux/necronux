@@ -40,8 +40,7 @@ fi
 
 PKL_FILES=(
     "stdschema/PklProject"
-    "tools/ci/necronux.internal.ci.apache/PklProject"
-    "tools/ci/necronux.internal.ci.gpl/PklProject"
+    "tools/necronux.internal.ci/PklProject"
 )
 
 for PKL_FILE in "${PKL_FILES[@]}"; do
