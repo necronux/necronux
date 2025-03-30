@@ -449,13 +449,13 @@ jobs:
     - name: Download stdschema tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux_stdschema-${{ inputs.release_tag }}-*
+        name: necronux_stdschema-${{ inputs.release_tag }}
         path: extract_these
         merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux_sbom-${{ inputs.release_tag }}-*
+        name: necronux_sbom-${{ inputs.release_tag }}
         path: extract_these
         merge-multiple: true
     - name: Extract required files
@@ -510,13 +510,13 @@ jobs:
     - name: Download stdschema tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux_stdschema-${{ inputs.release_tag }}-*
+        name: necronux_stdschema-${{ inputs.release_tag }}
         path: extract_these
         merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        pattern: necronux_sbom-${{ inputs.release_tag }}-*
+        name: necronux_sbom-${{ inputs.release_tag }}
         path: extract_these
         merge-multiple: true
     - name: Extract required files

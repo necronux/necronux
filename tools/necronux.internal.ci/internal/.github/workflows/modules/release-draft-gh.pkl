@@ -88,7 +88,7 @@ const function commonDraftSteps() = new Listing<gha.Step> {
     name = "Download stdschema tars, zips and sums"
     uses = Actions.downloadArtifact
     with {
-      ["pattern"] = "necronux_stdschema-${{ inputs.release_tag }}-*"
+      ["name"] = "necronux_stdschema-${{ inputs.release_tag }}"
       ["path"] = "extract_these"
       ["merge-multiple"] = true
     }
@@ -97,7 +97,7 @@ const function commonDraftSteps() = new Listing<gha.Step> {
     name = "Download SBOM tars, zips and sums"
     uses = Actions.downloadArtifact
     with {
-      ["pattern"] = "necronux_sbom-${{ inputs.release_tag }}-*"
+      ["name"] = "necronux_sbom-${{ inputs.release_tag }}"
       ["path"] = "extract_these"
       ["merge-multiple"] = true
     }
