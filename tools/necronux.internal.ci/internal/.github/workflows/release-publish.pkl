@@ -1,0 +1,32 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePublish
+
+amends "../../../../commons/GitHubAction.pkl"
+
+import "helpers/Common.pkl"
+import "helpers/Triggers.pkl"
+
+import "modules/release-validate.pkl" as Validate
+import "modules/release-publish-crates.pkl" as Crates
+
+headercomment = Common.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "GPL-3.0-or-later")
+name = "Release-Publish"
+permissions = (Common.contentPermissions("read")) {}
+
+on {
+  workflow_dispatch {
+    inputs {
+      ["release_tag"] = (Triggers.wDispatchReleaseTag()) {}
+    }
+  }
+}
+jobs {
+  ["validate-release-tag"] = (Validate.releaseTag()) {}
+  ["publish-cratesio-necronux"] = (Crates.cratesioNecronux()) {}
+}

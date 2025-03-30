@@ -1,0 +1,74 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using the necronux internal pkl package.
+# Any changes should be made to the template, not this file.
+
+name: Release-Publish
+'on':
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Provide the existing tag to be used for the release
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  validate-release-tag:
+    name: Validate Release Tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+        ref: ${{ inputs.release_tag }}
+    - name: Display release tag
+      shell: bash
+      run: 'echo "Release tag: ${{ inputs.release_tag }}"'
+    - name: Check that tag version and Cargo.toml version are the same
+      shell: bash
+      run: |-
+        TAG_VERSION="${{ inputs.release_tag }}"
+        ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
+        echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
+        if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
+          echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
+          exit 1
+        fi
+    - name: Check that tag version and Stdschema PklProject version are the same
+      shell: bash
+      run: |-
+        TAG_VERSION="${{ inputs.release_tag }}"
+        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
+        echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
+        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
+          echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
+          exit 1
+        fi
+  publish-cratesio-necronux:
+    name: Publish Necronux Crates On Crates.io
+    needs:
+    - validate-release-tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: REUSE SPDX SBOM
+      uses: fsfe/reuse-action@v5
+      with:
+        args: spdx -o reuse.spdx
+    - name: Run publish crates.io script
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      shell: bash
+      run: tools/scripts/ci/publish-crates-io.sh

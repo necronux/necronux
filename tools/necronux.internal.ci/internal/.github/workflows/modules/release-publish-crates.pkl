@@ -1,0 +1,39 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePublishCrates
+
+import "../../../../../commons/GitHubAction.pkl" as gha
+
+import "../helpers/Actions.pkl"
+import "../helpers/Common.pkl"
+import "../helpers/Steps.pkl"
+
+const function cratesioNecronux() = new gha.Job {
+  name = "Publish Necronux Crates On Crates.io"
+  needs {
+    "validate-release-tag"
+  }
+  steps {
+    Steps.checkout(null)
+    new {
+      name = "REUSE SPDX SBOM"
+      uses = Actions.reuseAction
+      with {
+        ["args"] = "spdx -o reuse.spdx"
+      }
+    }
+    new {
+      name = "Run publish crates.io script"
+      run = "tools/scripts/ci/publish-crates-io.sh"
+      shell = "bash"
+      env {
+        ["CARGO_REGISTRY_TOKEN"] = "${{ secrets.CARGO_REGISTRY_TOKEN }}"
+      }
+    }
+  }
+} |> Common.standardJobConfig(null, null)
