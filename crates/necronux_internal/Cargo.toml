@@ -7,7 +7,7 @@
 [package]
 name = "necronux_internal"
 description = "An internal Necronux crate."
-version.workspace = true
+version = "0.4.0-dev"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -25,10 +25,10 @@ workspace = true
 
 [dependencies]
 # necronux
-necronux_utils = { path = "../necronux_utils", version = "0.3.0-dev" }
+necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev" }
 # necronux (optional)
-necronux_cli_app = { path = "../necronux_cli_app", version = "0.3.0-dev", optional = true }
-necronux_core = { path = "../necronux_core", version = "0.3.0-dev", optional = true }
+necronux_cli_app = { path = "../necronux_cli_app", version = "0.4.0-dev", optional = true }
+necronux_core = { path = "../necronux_core", version = "0.4.0-dev", optional = true }
 
 [features]
 necronux_cli_app = ["dep:necronux_cli_app"]

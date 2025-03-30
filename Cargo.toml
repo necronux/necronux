@@ -6,7 +6,7 @@
 
 [package]
 name = "necronux"
-version = "0.3.0-dev"
+version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
@@ -81,7 +81,7 @@ incremental = false
 
 [dependencies]
 # necronux
-necronux_internal = { path = "crates/necronux_internal", version = "0.3.0-dev", default-features = false }
+necronux_internal = { path = "crates/necronux_internal", version = "0.4.0-dev", default-features = false }
 # necronux (optional)
 color-eyre = { version = "0.6.3", default-features = false, optional = true }
 

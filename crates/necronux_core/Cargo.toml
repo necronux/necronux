@@ -7,7 +7,7 @@
 [package]
 name = "necronux_core"
 description = "Provides core business logic for Necronux."
-version.workspace = true
+version = "0.4.0-dev"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
