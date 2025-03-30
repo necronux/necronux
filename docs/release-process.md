@@ -64,9 +64,12 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Minor Release
 
-1. Create release using release workflow.
-2. Edit GitHub Release.
-3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+1. Create release draft using `Release-Draft` workflow.
+  - Select release type as `pre-release`.
+  - Enter appropriate tag.
+2. Edit and Publish GitHub Release.
+3. Release on other platforms using `Release-Publish` workflow.
+  - Enter the same tag as used in step 1.
 
 #### Minor Post-release
 
@@ -86,9 +89,12 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Minor Release
 
-1. Create release using release workflow.
-2. Edit GitHub Release.
-3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+1. Create release draft using `Release-Draft` workflow.
+  - Select release type as `stable-release`.
+  - Enter appropriate tag.
+2. Edit and Publish GitHub Release.
+3. Release on other platforms using `Release-Publish` workflow.
+  - Enter the same tag as used in step 1.
 
 #### Minor Post-release
 
@@ -108,9 +114,12 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Patch Release
 
-1. Create release using release workflow.
-2. Edit GitHub Release.
-3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+1. Create release draft using `Release-Draft` workflow.
+  - Select release type as `stable-release`.
+  - Enter appropriate tag.
+2. Edit and Publish GitHub Release.
+3. Release on other platforms using `Release-Publish` workflow.
+  - Enter the same tag as used in step 1.
 
 #### Patch Post-release
 
@@ -131,9 +140,12 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Major Release
 
-1. Create release using release workflow.
-2. Edit GitHub Release.
-3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+1. Create release draft using `Release-Draft` workflow.
+  - Select release type as `pre-release`.
+  - Enter appropriate tag.
+2. Edit and Publish GitHub Release.
+3. Release on other platforms using `Release-Publish` workflow.
+  - Enter the same tag as used in step 1.
 
 #### Major Post-release
 
@@ -153,9 +165,12 @@ For subsuquent release candidates, follow the order: `1. -> 4. -> 5.`
 
 #### Major Release
 
-1. Create release using release workflow.
-2. Edit GitHub Release.
-3. Release on crates.io using `bash tools/release/scripts/publish-crates-io.sh`
+1. Create release draft using `Release-Draft` workflow.
+  - Select release type as `stable-release`.
+  - Enter appropriate tag.
+2. Edit and Publish GitHub Release.
+3. Release on other platforms using `Release-Publish` workflow.
+  - Enter the same tag as used in step 1.
 
 #### Major Post-release
 
