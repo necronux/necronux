@@ -6,22 +6,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # ==-----------------------------------------------------------== #
 
-if ! command -v reuse >/dev/null 2>&1; then
-    echo "Error: 'reuse' is not installed. Please install it first."
-    echo "More info: https://github.com/fsfe/reuse-tool"
-    exit 1
-fi
-
-OUTPUT_FILE="reuse.spdx"
-echo "Generating SBOM at: $OUTPUT_FILE..."
-
-if reuse spdx --output "$OUTPUT_FILE"; then
-    echo "SBOM generated successfully: $OUTPUT_FILE"
-else
-    echo "Error: Failed to generate SBOM."
-    exit 1
-fi
-
 pushd crates || { echo "Error: Failed to navigate to crates directory."; exit 1; }
 
 for crate in $(cargo package --workspace 2>&1 | grep Packaging | sed 's_.*crates/\(.*\))_\1_' | grep -v Packaging); do

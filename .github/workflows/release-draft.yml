@@ -421,6 +421,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
+    - name: REUSE SPDX SBOM
+      uses: fsfe/reuse-action@v5
+      with:
+        args: spdx -o reuse.spdx
     - name: Run publish crates.io script with --dry-run
       shell: bash
       run: tools/scripts/ci/publish-crates-io.sh
