@@ -7,7 +7,7 @@
 [package]
 name = "necronux_cli_app"
 description = "Provides the CLI implementation for Necronux."
-version = "0.3.0-rc.1"
+version = "0.3.0-rc.2"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -30,5 +30,5 @@ color-eyre.workspace = true
 flexi_logger.workspace = true
 log.workspace = true
 
-necronux_core = { path = "../necronux_core", version = "0.3.0-rc.1" }
-necronux_utils = { path = "../necronux_utils", version = "0.3.0-rc.1" }
+necronux_core = { path = "../necronux_core", version = "0.3.0-rc.2" }
+necronux_utils = { path = "../necronux_utils", version = "0.3.0-rc.2" }
