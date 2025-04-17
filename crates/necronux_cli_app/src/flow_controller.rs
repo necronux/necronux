@@ -28,7 +28,7 @@ pub fn init_flow_controller() -> Result<()> {
     debug!("Parsed CLI arguments: {:?}", cli);
 
     // Loads the necronux bundle file.
-    necronux_core::bundle::loader::load_bundle_file()
+    let bundle_loaded = necronux_core::bundle::loader::load_bundle_file()
         .context("Failed to load the necronux bundle file.")?;
 
     // Overrides the logger with merged log level setting from various sources.
@@ -39,6 +39,16 @@ pub fn init_flow_controller() -> Result<()> {
     init_handlers(&cli)?;
 
     debug!("CLI controller initialization completed");
+
+    if let Some(bundle) = bundle_loaded {
+        println!("Found a Necronux Bundle!");
+        println!("Name: {}", bundle.bundle.name);
+        println!("Description: {}", bundle.bundle.description);
+        println!("Apps:");
+        for app in &bundle.bundle.apps {
+            println!("- {}", app);
+        }
+    }
 
     necronux_utils::logger::flush_logger()?;
 
