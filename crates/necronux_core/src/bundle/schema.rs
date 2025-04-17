@@ -6,14 +6,14 @@
 
 use serde::Deserialize;
 
-#[allow(dead_code)]
 #[derive(Deserialize)]
 pub struct Bundle {
-    config: BundleConfig,
+    pub bundle: BundleClass,
 }
 
-#[allow(dead_code)]
 #[derive(Deserialize)]
-struct BundleConfig {
-    loglevel: String,
+pub struct BundleClass {
+    pub name: String,
+    pub description: String,
+    pub apps: Vec<String>,
 }

@@ -9,78 +9,8 @@ module necronux.std.schema.Base
 
 bundle: Bundle?
 
-component: Listing<Component>
-
 class Bundle {
   name: String
-  description: String
-  version: String
-
-  minNecronuxVersion: String = "0.2.0"
-  necronuxLogLevel: LogLevel?
-
-  officialComponentsDisable: Boolean = false
-  unofficialComponentsEnable: Boolean = false
+  description: String?
+  apps: Listing<String>
 }
-
-typealias LogLevel = "OFF"|"ERROR"|"WARN"|"INFO"|"DEBUG"|"TRACE"
-
-abstract class BaseComponent {
-  name: String
-  description: String
-  const authors: String
-  const repo: String
-  const license: String
-}
-
-typealias Component =
-  PackageManagerComponent
-  |AppComponent
-  |SystemComponent
-  |InfraComponent
-
-class PackageManagerComponent extends BaseComponent {
-  installWith: InstallMethod
-  uninstallWith: UninstallMethod
-  managedPackages: Listing<String>
-}
-
-class AppComponent extends BaseComponent {
-  tool: Tool
-  installWith: InstallMethod
-  uninstallWith: UninstallMethod
-  execPath: String
-}
-
-class SystemComponent extends BaseComponent {
-  installWith: InstallMethod
-  uninstallWith: UninstallMethod
-  requiresReboot: Boolean = false
-}
-
-class InfraComponent extends BaseComponent {
-  dependencies: Listing<String>
-}
-
-class Tool {
-  name: String
-  installMethods: Listing<InstallMethod>
-  uninstallMethods: Listing<UninstallMethod>
-  version: String? = null
-}
-
-class InstallMethod {
-  description: String
-  pkgmanager: PackageManager
-  packageName: String
-  flags: Listing<String>
-}
-
-class UninstallMethod {
-  description: String
-  pkgmanager: PackageManager
-  packageName: String
-  flags: Listing<String>
-}
-
-typealias PackageManager = String

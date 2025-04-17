@@ -11,10 +11,8 @@ amends "../Base.pkl"
 bundle {
   name = "Test Bundle"
   description = "A test bundle."
-  version = "0.1.0"
-
-  minNecronuxVersion = "0.2.0"
-
-  officialComponentsDisable = false
-  unofficialComponentsEnable = false
+  apps {
+    "ansible"
+    "terraform"
+  }
 }
