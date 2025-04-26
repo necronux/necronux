@@ -19,7 +19,7 @@ A cross-platform robust meta-orchestrator for automation tools, scripts, and con
 [Getting Started]: https://necronux.nayanpatil.space/learn/get-started
 [Learn]: https://necronux.nayanpatil.space/learn
 [Documentation]: https://necronux.nayanpatil.space/docs
-[Contributing]: .github/CONTRIBUTING.md
+[Contributing]: https://github.com/necronux/.github/blob/main/CONTRIBUTING.md
 
 ## Why Necronux?
 
@@ -45,7 +45,9 @@ See https://necronux.nayanpatil.space/community for a list of chat platforms and
 ## Contributing
 
 We welcome contributions to Necronux!
-Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for guidelines on how to contribute to the project.
+Please see [CONTRIBUTING.md] for guidelines on how to contribute to the project.
+
+[CONTRIBUTING.md]: https://github.com/necronux/.github/blob/main/CONTRIBUTING.md
 
 ## Maintainer
 
@@ -77,8 +79,8 @@ See [GPL-3.0-or-later.txt], [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT
 
 ## Statuses
 [![License](https://img.shields.io/badge/license-GPLv3.0%2B-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0.html)
-[![Version](https://img.shields.io/github/v/release/NayanTheSpaceGuy/necronux?color=blue&label=Latest%20Release&style=for-the-badge)](https://github.com/NayanTheSpaceGuy/necronux/releases/latest)
+[![Version](https://img.shields.io/github/v/release/necronux/necronux?color=blue&label=Latest%20Release&style=for-the-badge)](https://github.com/necronux/necronux/releases/latest)
 [![Crates.io](https://img.shields.io/crates/v/necronux.svg?style=for-the-badge)](https://crates.io/crates/necronux)
 [![Downloads](https://img.shields.io/crates/d/necronux.svg?style=for-the-badge)](https://crates.io/crates/necronux)
-![Last Commit](https://img.shields.io/github/last-commit/NayanTheSpaceGuy/necronux?style=for-the-badge)
-![Repo Size](https://img.shields.io/github/repo-size/NayanTheSpaceGuy/necronux?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/necronux/necronux?style=for-the-badge)
+![Repo Size](https://img.shields.io/github/repo-size/necronux/necronux?style=for-the-badge)

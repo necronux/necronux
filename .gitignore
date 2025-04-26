@@ -17,4 +17,4 @@
 /tools/**/build/
 
 # SBOM
-/docs/reuse.spdx
+/reuse.spdx
