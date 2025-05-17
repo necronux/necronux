@@ -1,0 +1,27 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module PolicyAudit
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsPolicyAudit.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "Policy-Audit"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+
+on {
+  pull_request {}
+  push {}
+  workflow_dispatch {}
+}
+jobs {
+  ["reuse-compliance-check"] = (JobsPolicyAudit.reuseCompliance()) {}
+  ["cargo-deny"] = (JobsPolicyAudit.cargoDeny()) {}
+}

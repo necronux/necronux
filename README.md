@@ -64,12 +64,12 @@ Please see [CONTRIBUTING.md] for guidelines on how to contribute to the project.
 Necronux is primarily distributed under the terms of `GPL-3.0-or-later` license.
 However, certain portions of the repository are covered by different licenses.
 
-See [GPL-3.0-or-later.txt], [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT.txt] for full licensing details.
+See [GPL-3.0-or-later.txt], [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT] for full licensing details.
 
 [GPL-3.0-or-later.txt]: LICENSES/GPL-3.0-or-later.txt
 [Apache-2.0.txt]: LICENSES/Apache-2.0.txt
 [CC-BY-SA-4.0.txt]: LICENSES/CC-BY-SA-4.0.txt
-[COPYRIGHT.txt]: COPYRIGHT.txt
+[COPYRIGHT]: COPYRIGHT
 
 ## Connect & Support
 

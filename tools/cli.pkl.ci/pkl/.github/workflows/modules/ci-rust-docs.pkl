@@ -1,0 +1,41 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustDocs
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/StepsRust.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "EnvVarsRust.pkl"
+
+const function docs() = new gha.Job {
+  name = "Docs All"
+  env = (EnvVarsRust.rustEnvFull) {
+    ["RUSTFLAGS"] = "-C debuginfo=0 -D warnings"
+  }
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustToolchain("stable")
+    new {
+      name = "Run cargo doc"
+      run = "cargo doc --workspace --all-features --no-deps --document-private-items --keep-going"
+      shell = "bash"
+      env {
+        ["RUSTDOCFLAGS"] = "-D warnings"
+      }
+    }
+    new {
+      name = "Run cargo test with all features in debug mode"
+      run = "cargo test --doc --workspace --all-features"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

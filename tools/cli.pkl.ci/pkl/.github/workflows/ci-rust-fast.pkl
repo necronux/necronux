@@ -1,0 +1,56 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustFast
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsConcl.pkl"
+import "@internal/gha/TriggersRust.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "modules/EnvVarsRust.pkl"
+import "modules/ci-rust-lint.pkl" as Lint
+import "modules/ci-rust-test.pkl" as Test
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Rust-Fast"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+concurrency = (UtilsCommon.concurrencyPROrRef()) {}
+env = (EnvVarsRust.rustEnvFull) {}
+
+on {
+  pull_request {
+    paths = (TriggersRust.rustPaths()) {}
+    branches {
+      "feature/"
+      "bugfix/"
+      "hotfix/"
+      "refactor/"
+      "chore/"
+      "bump/"
+    }
+  }
+  push {
+    paths = (TriggersRust.rustPaths()) {}
+    branches = (outer.pull_request.branches) {}
+  }
+  workflow_dispatch {}
+}
+jobs {
+  ["conclusion"] = (JobsConcl.conclusion()) {
+    needs {
+      "rustfmt"
+      "clippy-all-minimal"
+      "test-all-minimal"
+    }
+  }
+
+  ["rustfmt"] = (Lint.rustfmt()) {}
+  ["clippy-all-minimal"] = (Lint.clippyAllMinimal()) {}
+  ["test-all-minimal"] = (Test.testAllMinimal()) {}
+}

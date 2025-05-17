@@ -24,7 +24,6 @@ exclude = [
   "gradle/",
   "gradlew",
   "gradlew.bat",
-  "stdschema/",
   "tools/",
   "*.gradle.kts",
   "justfile",
@@ -86,9 +85,9 @@ necronux_internal = { path = "crates/necronux_internal", version = "0.4.0-dev", 
 color-eyre = { version = "0.6.3", default-features = false, optional = true }
 
 [workspace.dependencies]
-clap = { version = "4.5.34", features = ["derive", "cargo"] }
+clap = { version = "4.5.37", features = ["derive", "cargo"] }
 clap-verbosity-flag = "3.0.2"
-color-eyre = { version = "0.6.3", default-features = false }
+color-eyre = { version = "0.6.4", default-features = false }
 config = "0.15.4"
 flexi_logger = "0.29.8"
 log = "0.4.27"

@@ -1,11 +1,11 @@
 # ==-----------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0
 # ==-----------------------------------------------------------== #
 
 # Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
+# This file was generated from a template using necronux.internal.pkl project.
 # Any changes should be made to the template, not this file.
 
 name: CI-Common
@@ -45,7 +45,7 @@ jobs:
       with:
         fetch-depth: 1
     - name: Check for typos
-      uses: crate-ci/typos@v1.30.2
+      uses: crate-ci/typos@v1.32.0
   taplo:
     name: Taplofmt
     runs-on: ubuntu-latest

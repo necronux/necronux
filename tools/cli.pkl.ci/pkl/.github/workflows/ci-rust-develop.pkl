@@ -1,0 +1,61 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustDevelop
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsConcl.pkl"
+import "@internal/gha/TriggersRust.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "modules/EnvVarsRust.pkl"
+import "modules/ci-rust-docs.pkl" as Docs
+import "modules/ci-rust-lint.pkl" as Lint
+import "modules/ci-rust-test.pkl" as Test
+import "modules/ci-rust-version.pkl" as Version
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Rust-Develop"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+concurrency = (UtilsCommon.concurrencyPROrRef()) {}
+env = (EnvVarsRust.rustEnvFull) {}
+
+on {
+  pull_request {
+    paths = (TriggersRust.rustPaths()) {}
+    branches {
+      "develop"
+    }
+  }
+  push {
+    paths = (TriggersRust.rustPaths()) {}
+    branches = (outer.pull_request.branches) {}
+  }
+  workflow_dispatch {}
+}
+jobs {
+  ["conclusion"] = (JobsConcl.conclusion()) {
+    needs {
+      "rustfmt"
+      "clippy-all-medium"
+      "lockfile"
+      "check-version-bump"
+      "msrv"
+      "docs"
+      "test-all-medium"
+    }
+  }
+
+  ["rustfmt"] = (Lint.rustfmt()) {}
+  ["clippy-all-medium"] = (Lint.clippyAllMedium()) {}
+  ["lockfile"] = (Version.lockfile()) {}
+  ["check-version-bump"] = (Version.checkVersionBump()) {}
+  ["msrv"] = (Version.msrv()) {}
+  ["docs"] = (Docs.docs()) {}
+  ["test-all-medium"] = (Test.testAllMedium()) {}
+}

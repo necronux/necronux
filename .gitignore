@@ -12,9 +12,8 @@
 /build/
 
 # Pkl
-/stdschema/build/
-/stdschema/.out/
 /tools/**/build/
+/tools/**/.out/
 
 # SBOM
 /reuse.spdx

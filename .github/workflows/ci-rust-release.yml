@@ -1,0 +1,1069 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
+
+# Do not modify!
+# This file was generated from a template using necronux.internal.pkl project.
+# Any changes should be made to the template, not this file.
+
+name: CI-Rust-Release
+'on':
+  pull_request:
+    branches:
+    - release/
+    - stable/
+  push:
+    branches:
+    - release/
+    - stable/
+  workflow_dispatch: {}
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
+  CARGO_HACK_DENY_WARNINGS: 1
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  conclusion:
+    name: Conclusion
+    if: ${{ !cancelled() }}
+    needs:
+    - rustfmt
+    - clippy-nodef-build
+    - clippy-def-build
+    - clippy-all-build
+    - lockfile
+    - check-version-bump
+    - msrv
+    - docs
+    - test-nodef-build
+    - test-def-build
+    - test-all-build
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Conclusion
+      shell: bash
+      run: |-
+        jq -C <<< '${{ toJson(needs) }}'
+        jq --exit-status 'all(.result == "success")' <<< '${{ toJson(needs) }}'
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rustup for cargo
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: stable
+        components: rustfmt
+    - name: Run cargo fmt
+      shell: bash
+      run: cargo fmt --all --check
+  clippy-nodef-build:
+    name: Clippy NoDef Build (${{ matrix.name }})
+    strategy:
+      matrix:
+        include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+        - name: i686-windows-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-pc-windows-gnu
+          buildtool: cross
+        - name: aarch64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-linux-android
+          buildtool: cross
+        - name: x86_64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-linux-android
+          buildtool: cross
+        - name: x86_64-freebsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          buildtool: cross
+        - name: x86_64-netbsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-netbsd
+          buildtool: cross
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Clippy NoDef Build (${{ matrix.name }})]'
+    - name: Setup rustup for cargo
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        components: clippy
+        targets: ${{ matrix.target }}
+    - name: Run cargo clippy
+      shell: bash
+      run: cargo clippy --workspace --all-targets --no-default-features --no-deps --target ${{ matrix.target }} -- -D clippy::all
+  clippy-def-build:
+    name: Clippy Def Build (${{ matrix.name }})
+    strategy:
+      matrix:
+        include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+        - name: i686-windows-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-pc-windows-gnu
+          buildtool: cross
+        - name: aarch64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-linux-android
+          buildtool: cross
+        - name: x86_64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-linux-android
+          buildtool: cross
+        - name: x86_64-freebsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          buildtool: cross
+        - name: x86_64-netbsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-netbsd
+          buildtool: cross
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Clippy Def Build (${{ matrix.name }})]'
+    - name: Setup rustup for cargo
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        components: clippy
+        targets: ${{ matrix.target }}
+    - name: Run cargo clippy
+      shell: bash
+      run: cargo clippy --workspace --all-targets --no-deps --target ${{ matrix.target }} -- -D clippy::all
+  clippy-all-build:
+    name: Clippy All Build (${{ matrix.name }})
+    strategy:
+      matrix:
+        include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+        - name: i686-windows-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-pc-windows-gnu
+          buildtool: cross
+        - name: aarch64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-linux-android
+          buildtool: cross
+        - name: x86_64-linux-android-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-linux-android
+          buildtool: cross
+        - name: x86_64-freebsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-freebsd
+          buildtool: cross
+        - name: x86_64-netbsd-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-netbsd
+          buildtool: cross
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Clippy All Build (${{ matrix.name }})]'
+    - name: Setup rustup for cargo
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        components: clippy
+        targets: ${{ matrix.target }}
+    - name: Run cargo clippy
+      shell: bash
+      run: cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all
+  lockfile:
+    name: Cargo Lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Cargo Lockfile]'
+    - name: Setup rustup for cargo
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: stable
+    - name: Ensure Cargo.lock is up-to-date
+      shell: bash
+      run: cargo update -p necronux --locked
+  check-version-bump:
+    name: Check Version Bump
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Check Version Bump]'
+    - name: Install cargo-semver-checks
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-semver-checks
+    - name: Run cargo semver-checks
+      shell: bash
+      run: |-
+        set -euo pipefail
+        base_sha=$(git rev-parse "${BASE_SHA:-HEAD~1}")
+        head_sha=$(git rev-parse "${HEAD_SHA:-HEAD}")
+        echo "Base revision is $base_sha"
+        echo "Head revision is $head_sha"
+        cargo semver-checks --baseline-rev "$base_sha" --workspace
+  msrv:
+    name: MSRV
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[MSRV]'
+    - name: Install cargo-hack
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-hack
+    - name: Run cargo hack check
+      shell: bash
+      run: cargo hack check --all-targets --rust-version --locked
+  docs:
+    name: Docs All
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CARGO_INCREMENTAL: 0
+      CARGO_NET_RETRY: 10
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: 1
+      RUSTFLAGS: -C debuginfo=0 -D warnings
+      RUSTUP_MAX_RETRIES: 10
+      CARGO_HACK_DENY_WARNINGS: 1
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Docs All]'
+    - name: Setup rustup for cargo
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: stable
+    - name: Run cargo doc
+      env:
+        RUSTDOCFLAGS: -D warnings
+      shell: bash
+      run: cargo doc --workspace --all-features --no-deps --document-private-items --keep-going
+    - name: Run cargo test with all features in debug mode
+      shell: bash
+      run: cargo test --doc --workspace --all-features
+  test-nodef-build:
+    name: Tests NoDef Build (${{ matrix.name }})
+    strategy:
+      matrix:
+        include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      CARGO_PROFILE_DEV_DEBUG: 1
+      CARGO_PROFILE_TEST_DEBUG: 1
+      RUSTUP_WINDOWS_PATH_ADD_BIN: 0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Tests NoDef Build (${{ matrix.name }})]'
+    - name: Install podman
+      if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
+      shell: bash
+      run: |-
+        sudo apt-get update
+        sudo apt-get install -y podman
+    - name: Setup rustup for cargo
+      if: ${{ matrix.buildtool != 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+    - name: Setup rustup for cross
+      if: ${{ matrix.buildtool == 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+    - name: Install cross
+      if: ${{ matrix.buildtool == 'cross' }}
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cross
+    - name: Run cargo test in debug mode
+      shell: bash
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --no-default-features --target ${{ matrix.target }}
+    - name: Run cargo test in release mode
+      shell: bash
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --no-default-features --release --target ${{ matrix.target }}
+  test-def-build:
+    name: Tests Def Build (${{ matrix.name }})
+    strategy:
+      matrix:
+        include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      CARGO_PROFILE_DEV_DEBUG: 1
+      CARGO_PROFILE_TEST_DEBUG: 1
+      RUSTUP_WINDOWS_PATH_ADD_BIN: 0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Tests Def Build (${{ matrix.name }})]'
+    - name: Install podman
+      if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
+      shell: bash
+      run: |-
+        sudo apt-get update
+        sudo apt-get install -y podman
+    - name: Setup rustup for cargo
+      if: ${{ matrix.buildtool != 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+    - name: Setup rustup for cross
+      if: ${{ matrix.buildtool == 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+    - name: Install cross
+      if: ${{ matrix.buildtool == 'cross' }}
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cross
+    - name: Run cargo test in debug mode
+      shell: bash
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --target ${{ matrix.target }}
+    - name: Run cargo test in release mode
+      shell: bash
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --release --target ${{ matrix.target }}
+  test-all-build:
+    name: Tests All Build (${{ matrix.name }})
+    strategy:
+      matrix:
+        include:
+        - name: x86_64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-gnu
+          buildtool: cargo
+        - name: aarch64-linux-gnu-stable
+          os: ubuntu-24.04-arm
+          toolchain: stable-aarch64-unknown-linux-gnu
+          target: aarch64-unknown-linux-gnu
+          buildtool: cargo
+        - name: x86_64-macos-stable
+          os: macos-13
+          toolchain: stable-x86_64-apple-darwin
+          target: x86_64-apple-darwin
+          buildtool: cargo
+        - name: aarch64-macos-stable
+          os: macos-15
+          toolchain: stable-aarch64-apple-darwin
+          target: aarch64-apple-darwin
+          buildtool: cargo
+        - name: x84_64-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: x86_64-pc-windows-msvc
+          buildtool: cargo
+        - name: x84_64-windows-gnu-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-gnu
+          target: x86_64-pc-windows-gnu
+          buildtool: cargo
+        - name: x86_64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: x86_64-unknown-linux-musl
+          buildtool: cross
+        - name: i686-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: i686-unknown-linux-gnu
+          buildtool: cross
+        - name: aarch64-linux-musl-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: aarch64-unknown-linux-musl
+          buildtool: cross
+        - name: armv7-linux-gnueabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabi
+          buildtool: cross
+        - name: armv7-linux-musleabi-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabi
+          buildtool: cross
+        - name: armv7-linux-gnueabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-gnueabihf
+          buildtool: cross
+        - name: armv7-linux-musleabihf-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: armv7-unknown-linux-musleabihf
+          buildtool: cross
+        - name: powerpc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64-unknown-linux-gnu
+          buildtool: cross
+        - name: powerpc64le-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: powerpc64le-unknown-linux-gnu
+          buildtool: cross
+        - name: riscv64gc-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: riscv64gc-unknown-linux-gnu
+          buildtool: cross
+        - name: s390x-linux-gnu-stable
+          os: ubuntu-24.04
+          toolchain: stable-x86_64-unknown-linux-gnu
+          target: s390x-unknown-linux-gnu
+          buildtool: cross
+        - name: i686-windows-msvc-stable
+          os: windows-2025
+          toolchain: stable-x86_64-pc-windows-msvc
+          target: i686-pc-windows-msvc
+          buildtool: cargo
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      CARGO_PROFILE_DEV_DEBUG: 1
+      CARGO_PROFILE_TEST_DEBUG: 1
+      RUSTUP_WINDOWS_PATH_ADD_BIN: 0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Setup rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        prefix-key: rs
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        key: '[Tests All Build (${{ matrix.name }})]'
+    - name: Install podman
+      if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
+      shell: bash
+      run: |-
+        sudo apt-get update
+        sudo apt-get install -y podman
+    - name: Setup rustup for cargo
+      if: ${{ matrix.buildtool != 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+        targets: ${{ matrix.target }}
+    - name: Setup rustup for cross
+      if: ${{ matrix.buildtool == 'cross' }}
+      uses: dtolnay/rust-toolchain@v1
+      with:
+        toolchain: ${{ matrix.toolchain }}
+    - name: Install cross
+      if: ${{ matrix.buildtool == 'cross' }}
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cross
+    - name: Run cargo test in debug mode
+      shell: bash
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --all-features --target ${{ matrix.target }}
+    - name: Run cargo test in release mode
+      shell: bash
+      run: ${{ matrix.buildtool }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}

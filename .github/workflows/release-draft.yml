@@ -1,11 +1,11 @@
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
 
 # Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
+# This file was generated from a template using necronux.internal.pkl project.
 # Any changes should be made to the template, not this file.
 
 name: Release-Draft
@@ -24,6 +24,14 @@ name: Release-Draft
         description: Provide the existing tag to be used for the release
         required: true
         type: string
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
+  CARGO_HACK_DENY_WARNINGS: 1
 permissions:
   contents: read
 jobs:
@@ -35,29 +43,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         ref: ${{ inputs.release_tag }}
     - name: Display release tag
       shell: bash
-      run: 'echo "Release tag: ${{ inputs.release_tag }}"'
+      run: |-
+        echo "Release tag: ${{ inputs.release_tag }}"
+        TAG="${{ inputs.release_tag }}"
+        VERSION="${TAG#*v}"
+        echo "Release Version: $VERSION"
+        echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
     - name: Check that tag version and Cargo.toml version are the same
       shell: bash
       run: |-
-        TAG_VERSION="${{ inputs.release_tag }}"
+        TAG_VERSION="${{ env.RELEASE_VERSION }}"
         ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
         echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
         if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
           echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
-          exit 1
-        fi
-    - name: Check that tag version and Stdschema PklProject version are the same
-      shell: bash
-      run: |-
-        TAG_VERSION="${{ inputs.release_tag }}"
-        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
-        echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
-        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-          echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
           exit 1
         fi
   validate-release-type:
@@ -68,7 +71,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         ref: ${{ inputs.release_tag }}
     - name: Display release type
       shell: bash
@@ -76,8 +79,9 @@ jobs:
     - name: Check if selected release type matches release tag
       shell: bash
       run: |-
+        TAG="${{ inputs.release_tag }}"
+        release_tag="${TAG#*v}"
         release_type="${{ inputs.release_type }}"
-        release_tag="${{ inputs.release_tag }}"
 
         if [[ "$release_type" == "stable-release" ]]; then
           if [[ "$release_tag" =~ -[a-zA-Z0-9]+ ]]; then
@@ -317,56 +321,6 @@ jobs:
         path: |-
           ${{ env.ASSET }}
           ${{ env.ASSET_SUM }}
-  build-necronux-stdschema:
-    name: Build Necronux Stdschema
-    needs:
-    - validate-release-tag
-    - validate-release-type
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-        ref: ${{ inputs.release_tag }}
-    - name: Install just
-      uses: taiki-e/install-action@v2
-      with:
-        tool: just
-    - name: Build release package
-      shell: bash
-      run: just make-stdschemapkg
-    - name: Determine package dir path and archive name
-      shell: bash
-      run: |-
-        pkgdir="stdschema/build/generated/pkl/packages"
-        echo "PKGDIR=$pkgdir" >> $GITHUB_ENV
-        echo "ARCHIVE=necronux_stdschema-${{ inputs.release_tag }}" >> $GITHUB_ENV
-    - name: Create directory for archive and transfer files
-      shell: bash
-      run: |-
-        mkdir -p "$ARCHIVE"
-        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }} "$ARCHIVE"/
-        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.sha256 "$ARCHIVE"/
-        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.zip "$ARCHIVE"/
-        cp "$PKGDIR"/necronux.std.schema@${{ inputs.release_tag }}.zip.sha256 "$ARCHIVE"/
-    - name: Build archive
-      shell: bash
-      run: |-
-        tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
-        shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
-        echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
-        echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
-    - name: Upload pkgs, zips and sums
-      uses: actions/upload-artifact@v4
-      with:
-        name: necronux_stdschema-${{ inputs.release_tag }}
-        overwrite: true
-        compression-level: 9
-        path: |-
-          ${{ env.ASSET }}
-          ${{ env.ASSET_SUM }}
   generate-sbom:
     name: Generate REUSE SPDX SBOM
     needs:
@@ -378,7 +332,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         ref: ${{ inputs.release_tag }}
     - name: REUSE SPDX SBOM
       uses: fsfe/reuse-action@v5
@@ -386,7 +340,7 @@ jobs:
         args: spdx -o reuse.spdx
     - name: Determine archive name
       shell: bash
-      run: echo "ARCHIVE=necronux_sbom-${{ inputs.release_tag }}" >> $GITHUB_ENV
+      run: echo "ARCHIVE=sbom_${{ inputs.release_tag }}" >> $GITHUB_ENV
     - name: Create directory for archive and transfer files
       shell: bash
       run: |-
@@ -402,7 +356,7 @@ jobs:
     - name: Upload tars and sums
       uses: actions/upload-artifact@v4
       with:
-        name: necronux_sbom-${{ inputs.release_tag }}
+        name: sbom_necronux_cli-${{ inputs.release_tag }}
         overwrite: true
         compression-level: 9
         path: |-
@@ -412,7 +366,6 @@ jobs:
     name: 'Dry Run: Publish Necronux Crates On Crates.io'
     needs:
     - build-necronux-cli
-    - build-necronux-stdschema
     - generate-sbom
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -433,29 +386,22 @@ jobs:
     if: ${{ inputs.release_type == 'pre-release' }}
     needs:
     - build-necronux-cli
-    - build-necronux-stdschema
     - generate-sbom
     permissions:
       contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - name: Download cli binaries tars, zips and sums
+    - name: Download necronux cli binaries tars, zips and sums
       uses: actions/download-artifact@v4
       with:
         pattern: necronux_cli-${{ inputs.release_tag }}-*
         path: downloaded_artifacts
         merge-multiple: true
-    - name: Download stdschema tars, zips and sums
-      uses: actions/download-artifact@v4
-      with:
-        name: necronux_stdschema-${{ inputs.release_tag }}
-        path: extract_these
-        merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        name: necronux_sbom-${{ inputs.release_tag }}
+        name: sbom_necronux_cli-${{ inputs.release_tag }}
         path: extract_these
         merge-multiple: true
     - name: Extract required files
@@ -464,7 +410,7 @@ jobs:
         mkdir -p extracted/
         cd extract_these
 
-        for tar_file in necronux_stdschema-*.tar.gz necronux_sbom-*.tar.gz; do
+        for tar_file in sbom_necronux_cli-*.tar.gz; do
           if [ -f "$tar_file" ]; then
             echo "Extracting $tar_file"
             tar -xzvf "$tar_file" -C ../extracted
@@ -477,8 +423,7 @@ jobs:
       run: |-
         mkdir -p rel_artifacts/
         cp -r downloaded_artifacts/* rel_artifacts/
-        cp -r extracted/necronux_stdschema-${{ inputs.release_tag }}/* rel_artifacts/
-        cp -r extracted/necronux_sbom-${{ inputs.release_tag }}/* rel_artifacts/
+        cp -r extracted/sbom_necronux_cli-${{ inputs.release_tag }}/* rel_artifacts/
     - name: Publish github pre-release draft
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -495,29 +440,22 @@ jobs:
     if: ${{ inputs.release_type == 'stable-release' }}
     needs:
     - build-necronux-cli
-    - build-necronux-stdschema
     - generate-sbom
     permissions:
       contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-    - name: Download cli binaries tars, zips and sums
+    - name: Download necronux cli binaries tars, zips and sums
       uses: actions/download-artifact@v4
       with:
         pattern: necronux_cli-${{ inputs.release_tag }}-*
         path: downloaded_artifacts
         merge-multiple: true
-    - name: Download stdschema tars, zips and sums
-      uses: actions/download-artifact@v4
-      with:
-        name: necronux_stdschema-${{ inputs.release_tag }}
-        path: extract_these
-        merge-multiple: true
     - name: Download SBOM tars, zips and sums
       uses: actions/download-artifact@v4
       with:
-        name: necronux_sbom-${{ inputs.release_tag }}
+        name: sbom_necronux_cli-${{ inputs.release_tag }}
         path: extract_these
         merge-multiple: true
     - name: Extract required files
@@ -526,7 +464,7 @@ jobs:
         mkdir -p extracted/
         cd extract_these
 
-        for tar_file in necronux_stdschema-*.tar.gz necronux_sbom-*.tar.gz; do
+        for tar_file in sbom_necronux_cli-*.tar.gz; do
           if [ -f "$tar_file" ]; then
             echo "Extracting $tar_file"
             tar -xzvf "$tar_file" -C ../extracted
@@ -539,8 +477,7 @@ jobs:
       run: |-
         mkdir -p rel_artifacts/
         cp -r downloaded_artifacts/* rel_artifacts/
-        cp -r extracted/necronux_stdschema-${{ inputs.release_tag }}/* rel_artifacts/
-        cp -r extracted/necronux_sbom-${{ inputs.release_tag }}/* rel_artifacts/
+        cp -r extracted/sbom_necronux_cli-${{ inputs.release_tag }}/* rel_artifacts/
     - name: Publish github stable release draft
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

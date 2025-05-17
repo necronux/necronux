@@ -6,8 +6,7 @@
 
 rootProject.name = "necronux"
 
-include("stdschema")
-include("tools:necronux.internal.ci")
+include("tools:cli.pkl.ci")
 
 pluginManagement {
     repositories {

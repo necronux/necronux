@@ -1,11 +1,11 @@
-# ==----------------------------------------------------------------== #
-# SPDX-FileCopyrightText: © 2024-2025 Nayan Patil <nayantsg@proton.me>
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
-# ==----------------------------------------------------------------== #
+# SPDX-License-Identifier: Apache-2.0
+# ==-----------------------------------------------------------== #
 
 # Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
+# This file was generated from a template using necronux.internal.pkl project.
 # Any changes should be made to the template, not this file.
 
 name: Policy-Branch-Protection
@@ -25,7 +25,40 @@ jobs:
         fetch-depth: 1
     - name: Ensure PRs to develop branch are only from allowed branches
       shell: bash
-      run: tools/scripts/ci/protect-develop-branch.sh
+      run: |-
+        # Define target branch
+        TARGET_BRANCH="develop"
+
+        # Define allowed branch prefixes as an array
+        ALLOWED_PREFIXES=("feature/"
+        "bugfix/"
+        "hotfix/"
+        "refactor/"
+        "chore/"
+        "bump/"
+        "dependabot/")
+
+        # Convert array to regex pattern
+        ALLOWED_PATTERN="^($(IFS='|'; echo "${ALLOWED_PREFIXES[*]}"))"
+
+        # Check if the pull request is targeting the branch
+        if [[ "$GITHUB_BASE_REF" == "$TARGET_BRANCH" ]]; then
+          # Check if the source branch follows the allowed naming pattern
+          if ! [[ "$GITHUB_HEAD_REF" =~ $ALLOWED_PATTERN ]]; then
+            printf "Error: Pull requests to '%s' can only be from these branches:\n" "$GITHUB_BASE_REF"
+            for branch in "${ALLOWED_PREFIXES[@]}"; do
+              printf " - %s\n" "$branch"
+            done
+            exit 1
+          else
+            echo "Pull request to '$TARGET_BRANCH' from allowed branch '$GITHUB_HEAD_REF'."
+          fi
+        else
+          # If not targeting the target branch, skip the check
+          echo "Pull request is not targeting '$TARGET_BRANCH'; skipping the check."
+        fi
+
+        exit 0
   protect-release-branches:
     name: Protect Release Branches
     runs-on: ubuntu-latest
@@ -38,3 +71,15 @@ jobs:
     - name: Ensure PRs to release branches are only from allowed branches
       shell: bash
       run: tools/scripts/ci/protect-release-branches.sh
+  protect-stable-branches:
+    name: Protect Stable Branches
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+    - name: Ensure PRs to stable branches are only from allowed branches
+      shell: bash
+      run: tools/scripts/ci/protect-stable-branches.sh

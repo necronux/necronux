@@ -1,0 +1,38 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module WorkflowApproveNTSG
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsWorkflowApproveNTSG.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "Workflow-Approve-NTSG"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+
+on {
+  issue_comment {
+    types {
+      "created"
+    }
+  }
+  pull_request_review {
+    types {
+      "edited"
+    }
+  }
+  pull_request_review_comment {
+    types {
+      "created"
+    }
+  }
+}
+jobs {
+  ["auto-approve"] = (JobsWorkflowApproveNTSG.selfApprovePRNTSG()) {}
+}

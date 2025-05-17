@@ -1,0 +1,126 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleaseBuild
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/ActionsRegistry.pkl" as ActReg
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "EnvVarsRust.pkl"
+import "MatricesRust.pkl"
+
+const function necronuxCli() = new gha.Job {
+  name = "Build Necronux CLI App"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixBuild()) {}
+    }
+  }
+  env = (EnvVarsRust.rustEnvFull) {}
+  steps {
+    StepsCommon.checkoutWithRef(null, "${{ inputs.release_tag }}")
+    StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
+    new {
+      `if` = "${{ matrix.buildtool != 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      `if` = "${{ matrix.buildtool == 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cross")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+      }
+    }
+    StepsCommon.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
+    new {
+      name = "Build release binary"
+      run = "${{ matrix.buildtool }} build --bin necronux --release --locked --workspace --verbose --target-dir ./target/${{ matrix.target }}/"
+      shell = "bash"
+    }
+    new {
+      `if` = "${{ (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)') || (matrix.os == '\(MatricesRust.aarch64_LinuxRunner)') }}"
+      name = "REUSE SPDX SBOM (Linux)"
+      uses = ActReg.reuseAction
+      with {
+        ["args"] = "spdx -o reuse.spdx"
+      }
+    }
+    new {
+      `if` = "${{ (matrix.os != '\(MatricesRust.x86_64_LinuxRunner)') && (matrix.os != '\(MatricesRust.aarch64_LinuxRunner)') }}"
+      name = "REUSE SPDX SBOM (Non-Linux)"
+      run = "pipx run reuse spdx -o reuse.spdx"
+      shell = "bash"
+    }
+    new {
+      name =  "Determine binary path and archive name"
+      run = """
+      if [[ ${{ matrix.os }} == '\(MatricesRust.x86_64_WindowsRunner)' ]]; then
+        bin="target/${{ matrix.target }}/release/necronux.exe"
+      else
+        bin="target/${{ matrix.target }}/release/necronux"
+      fi
+      echo "BIN=$bin" >> $GITHUB_ENV
+      echo "ARCHIVE=necronux-${{ inputs.release_tag }}-${{ matrix.target }}" >> $GITHUB_ENV
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Create directory for archive and transfer files"
+      run = """
+      mkdir -p "$ARCHIVE"/docs
+      cp "$BIN" "$ARCHIVE"/
+      cp {README.md,COPYRIGHT,THIRD-PARTY-NOTICES,REUSE.toml,reuse.spdx} "$ARCHIVE"/
+      cp -r LICENSES/ "$ARCHIVE"/
+      cp docs/INSTALL.md "$ARCHIVE"/docs/
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Build archive (Non-Windows)"
+      `if` = "${{ matrix.os != '\(MatricesRust.x86_64_WindowsRunner)' }}"
+      run = """
+      tar czf "$ARCHIVE.tar.gz" "$ARCHIVE"
+      shasum -a 256 "$ARCHIVE.tar.gz" > "$ARCHIVE.tar.gz.sha256"
+      echo "ASSET=$ARCHIVE.tar.gz" >> $GITHUB_ENV
+      echo "ASSET_SUM=$ARCHIVE.tar.gz.sha256" >> $GITHUB_ENV
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Build archive (Windows)"
+      `if` = "${{ matrix.os == '\(MatricesRust.x86_64_WindowsRunner)' }}"
+      run = """
+      7z a "$ARCHIVE.zip" "$ARCHIVE"
+      certutil -hashfile "$ARCHIVE.zip" SHA256 > "$ARCHIVE.zip.sha256"
+      echo "ASSET=$ARCHIVE.zip" >> $GITHUB_ENV
+      echo "ASSET_SUM=$ARCHIVE.zip.sha256" >> $GITHUB_ENV
+      """
+      shell = "bash"
+    }
+    new {
+      name = "Upload tars, zips and sums"
+      uses = ActReg.uploadArtifact
+      with {
+        ["name"] = "necronux_cli-${{ inputs.release_tag }}-${{ matrix.target }}"
+        ["overwrite"] = true
+        ["compression-level"] = 9
+        ["path"] = """
+        ${{ env.ASSET }}
+        ${{ env.ASSET_SUM }}
+        """
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)

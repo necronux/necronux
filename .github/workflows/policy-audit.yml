@@ -1,11 +1,11 @@
 # ==-----------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0
 # ==-----------------------------------------------------------== #
 
 # Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
+# This file was generated from a template using necronux.internal.pkl project.
 # Any changes should be made to the template, not this file.
 
 name: Policy-Audit
@@ -27,7 +27,7 @@ jobs:
         fetch-depth: 1
     - name: REUSE Compliance Check
       uses: fsfe/reuse-action@v5
-  cargo_deny:
+  cargo-deny:
     name: Cargo Deny
     runs-on: ubuntu-latest
     timeout-minutes: 30

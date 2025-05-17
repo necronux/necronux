@@ -1,0 +1,44 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiPklJobs
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+const function resolveCheck() = new gha.Job {
+  name = "Resolve Check"
+  steps {
+    StepsCommon.checkout(null)
+    StepsCommon.installAction("just")
+    new {
+      name = "Check if cli.pkl.ci pkl project can be resolved"
+      run = "just resolve-clipklci"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function evalCheck() = new gha.Job {
+  name = "Eval Check"
+  steps {
+    StepsCommon.checkout(null)
+    StepsCommon.installAction("just")
+    new {
+      name = "Check if cli.pkl.ci pkl modules can be evaluated"
+      run = "just eval-clipklci"
+      shell = "bash"
+    }
+    new {
+      name = "Verify pkl modules evaluation reflects the latest changes"
+      run = "git diff --exit-code"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

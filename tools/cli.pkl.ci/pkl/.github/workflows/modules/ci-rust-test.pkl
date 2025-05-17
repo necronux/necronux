@@ -1,0 +1,188 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustTest
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/StepsRust.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "EnvVarsRust.pkl"
+import "MatricesRust.pkl"
+
+const function testAllMinimal() = (testAllFull()) {
+  name = "Tests All Minimal (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestMinimal()) {}
+    }
+  }
+}
+
+const function testAllMedium() = (testAllFull()) {
+  name = "Tests All Medium (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestMedium()) {}
+    }
+  }
+}
+
+const function testAllBuild() = (testAllFull()) {
+  name = "Tests All Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
+    }
+  }
+}
+
+const function testNoDefaultBuild() = (testNoDefaultFull()) {
+  name = "Tests NoDef Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
+    }
+  }
+}
+
+const function testDefaultBuild() = (testDefaultFull()) {
+  name = "Tests Def Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
+    }
+  }
+}
+
+const function testNoDefaultFull() = new gha.Job {
+  name = "Tests NoDef Full (${{ matrix.name }})"
+  strategy {
+  `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestFull()) {}
+    }
+  }
+  env = (EnvVarsRust.rustEnvTest) {}
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
+    new {
+      `if` = "${{ matrix.buildtool != 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      `if` = "${{ matrix.buildtool == 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cross")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+      }
+    }
+    StepsCommon.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
+    new {
+      name = "Run cargo test in debug mode"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --no-default-features --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      name = "Run cargo test in release mode"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --no-default-features --release --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
+
+const function testDefaultFull() = new gha.Job {
+  name = "Tests Def Full (${{ matrix.name }})"
+  strategy {
+  `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestFull()) {}
+    }
+  }
+  env = (EnvVarsRust.rustEnvTest) {}
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
+    new {
+      `if` = "${{ matrix.buildtool != 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      `if` = "${{ matrix.buildtool == 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cross")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+      }
+    }
+    StepsCommon.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
+    new {
+      name = "Run cargo test in debug mode"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      name = "Run cargo test in release mode"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --release --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
+
+const function testAllFull() = new gha.Job {
+  name = "Tests All Full (${{ matrix.name }})"
+  strategy {
+  `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestFull()) {}
+    }
+  }
+  env = (EnvVarsRust.rustEnvTest) {}
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
+    new {
+      `if` = "${{ matrix.buildtool != 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      `if` = "${{ matrix.buildtool == 'cross' }}"
+      ...UtilsCommon.setupRustToolchainCommon("cross")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+      }
+    }
+    StepsCommon.installActionIf("cross", "${{ matrix.buildtool == 'cross' }}")
+    new {
+      name = "Run cargo test in debug mode"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --all-features --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+    new {
+      name = "Run cargo test in release mode"
+      run = "${{ matrix.buildtool }} test --all-targets --workspace --all-features --release --target ${{ matrix.target }}"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)

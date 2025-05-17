@@ -1,11 +1,11 @@
 # ==-----------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0
 # ==-----------------------------------------------------------== #
 
 # Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
+# This file was generated from a template using necronux.internal.pkl project.
 # Any changes should be made to the template, not this file.
 
 name: Release-Publish
@@ -16,6 +16,14 @@ name: Release-Publish
         description: Provide the existing tag to be used for the release
         required: true
         type: string
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
+  CARGO_HACK_DENY_WARNINGS: 1
 permissions:
   contents: read
 jobs:
@@ -27,29 +35,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         ref: ${{ inputs.release_tag }}
     - name: Display release tag
       shell: bash
-      run: 'echo "Release tag: ${{ inputs.release_tag }}"'
+      run: |-
+        echo "Release tag: ${{ inputs.release_tag }}"
+        TAG="${{ inputs.release_tag }}"
+        VERSION="${TAG#*v}"
+        echo "Release Version: $VERSION"
+        echo "RELEASE_VERSION=$VERSION" >> "$GITHUB_ENV"
     - name: Check that tag version and Cargo.toml version are the same
       shell: bash
       run: |-
-        TAG_VERSION="${{ inputs.release_tag }}"
+        TAG_VERSION="${{ env.RELEASE_VERSION }}"
         ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
         echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
         if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
           echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
-          exit 1
-        fi
-    - name: Check that tag version and Stdschema PklProject version are the same
-      shell: bash
-      run: |-
-        TAG_VERSION="${{ inputs.release_tag }}"
-        PKL_PROJECT_VERSION=$(awk -F '"' '/version *=/ {print $2; exit}' stdschema/PklProject)
-        echo "Extracted Stdschema PklProject version: '$PKL_PROJECT_VERSION'"
-        if [ "$TAG_VERSION" != "$PKL_PROJECT_VERSION" ]; then
-          echo "Error: Tag version ("$TAG_VERSION") does not match Stdschema PklProject version ("$PKL_PROJECT_VERSION")"
           exit 1
         fi
   publish-cratesio-necronux:

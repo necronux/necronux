@@ -1,0 +1,72 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustVersion
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/StepsRust.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+const function lockfile() = new gha.Job {
+  name = "Cargo Lockfile"
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustToolchain("stable")
+    new {
+      name = "Ensure Cargo.lock is up-to-date"
+      run = "cargo update -p necronux --locked"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function checkVersionBump() = new gha.Job {
+  name = "Check Version Bump"
+  env {
+    ["BASE_SHA"] = "${{ github.event.pull_request.base.sha }}"
+    ["HEAD_SHA"] = "${{ github.event.pull_request.head.sha != '' && github.event.pull_request.head.sha || github.sha }}"
+  }
+  steps {
+    StepsCommon.checkout(0)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsCommon.installAction("cargo-semver-checks")
+    new {
+      name = "Run cargo semver-checks"
+      // Inputs:
+      // BASE_SHA    The commit SHA of the branch where the PR wants to merge into.
+      // HEAD_SHA    The commit SHA that triggered the workflow.
+      // When `BASE_SHA` is missing, we assume it is from GitHub merge queue merge commit,
+      // so hope `HEAD~` to find the previous commit on master branch.
+      run = """
+        set -euo pipefail
+        base_sha=$(git rev-parse "${BASE_SHA:-HEAD~1}")
+        head_sha=$(git rev-parse "${HEAD_SHA:-HEAD}")
+        echo "Base revision is $base_sha"
+        echo "Head revision is $head_sha"
+        cargo semver-checks --baseline-rev "$base_sha" --workspace
+        """
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function msrv() = new gha.Job {
+  name = "MSRV"
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsCommon.installAction("cargo-hack")
+    new {
+      name = "Run cargo hack check"
+      run = "cargo hack check --all-targets --rust-version --locked"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

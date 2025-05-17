@@ -38,18 +38,4 @@ else
     exit 1
 fi
 
-PKL_FILES=(
-    "stdschema/PklProject"
-    "tools/necronux.internal.ci/PklProject"
-)
-
-for PKL_FILE in "${PKL_FILES[@]}"; do
-    if [ -f "$PKL_FILE" ]; then
-        sed -i "s/version = \".*\"/version = \"$NEW_VERSION\"/" "$PKL_FILE"
-        echo "Successfully updated $PKL_FILE to version: $NEW_VERSION"
-    else
-        echo "Warning: $PKL_FILE not found. Skipping."
-    fi
-done
-
 echo "Version bump complete!"

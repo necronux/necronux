@@ -57,8 +57,7 @@ fn setup_environment(part: &str) -> Result<()> {
     clone_repository(&dot_dir)?;
 
     let script_path = dot_dir.join(format!(
-        "homelab/scripts/trinity/heliolens_setup_part_{}.sh",
-        part
+        "homelab/scripts/trinity/heliolens_setup_part_{part}.sh"
     ));
     execute_script(&script_path)?;
 
@@ -70,7 +69,7 @@ fn setup_environment(part: &str) -> Result<()> {
 fn setup_directories(project_dir: &PathBuf, dot_dir: &PathBuf) -> Result<()> {
     if !project_dir.exists() {
         std::fs::create_dir_all(project_dir)?;
-        debug!("Created project directory at {:?}", project_dir);
+        debug!("Created project directory at {project_dir:?}");
     }
 
     match (
@@ -82,16 +81,13 @@ fn setup_directories(project_dir: &PathBuf, dot_dir: &PathBuf) -> Result<()> {
     ) {
         (true, true) => {
             std::fs::remove_dir_all(dot_dir)?;
-            debug!(
-                "Removed existing non-empty 'dot' directory at {:?}",
-                dot_dir
-            );
+            debug!("Removed existing non-empty 'dot' directory at {dot_dir:?}");
             std::fs::create_dir_all(dot_dir)?;
-            debug!("Created new 'dot' directory at {:?}", dot_dir);
+            debug!("Created new 'dot' directory at {dot_dir:?}");
         }
         (false, _) => {
             std::fs::create_dir_all(dot_dir)?;
-            debug!("Created 'dot' directory at {:?}", dot_dir);
+            debug!("Created 'dot' directory at {dot_dir:?}");
         }
         _ => {}
     }
@@ -107,47 +103,36 @@ fn clone_repository(dot_dir: &PathBuf) -> Result<()> {
         .arg(repo_url)
         .arg(dot_dir)
         .status()
-        .map_err(|e| eyre!("Failed to execute git command: {:?}", e))?;
+        .map_err(|e| eyre!("Failed to execute git command: {e:?}"))?;
 
     if !git_clone_status.success() {
-        return Err(eyre!(
-            "Git clone failed with status: {:?}",
-            git_clone_status
-        ));
+        return Err(eyre!("Git clone failed with status: {git_clone_status:?}"));
     }
-    debug!("Successfully cloned repository into {:?}", dot_dir);
+    debug!("Successfully cloned repository into {dot_dir:?}");
     Ok(())
 }
 
 #[cfg(unix)]
 fn execute_script(script_path: &PathBuf) -> Result<()> {
-    debug!(
-        "Attempting to change permissions of script: {:?}",
-        script_path
-    );
-    std::fs::set_permissions(script_path, Permissions::from_mode(0o755)).map_err(|e| {
-        eyre!(
-            "Failed to set permissions for script {:?}: {:?}",
-            script_path,
-            e
-        )
-    })?;
+    debug!("Attempting to change permissions of script: {script_path:?}");
+    std::fs::set_permissions(script_path, Permissions::from_mode(0o755))
+        .map_err(|e| eyre!("Failed to set permissions for script {script_path:?}: {e:?}"))?;
     debug!("Successfully changed permissions of the script");
 
     let script_str = script_path
         .to_str()
-        .ok_or_else(|| eyre!("Failed to convert script path {:?} to string", script_path))?;
+        .ok_or_else(|| eyre!("Failed to convert script path {script_path:?} to string"))?;
 
-    debug!("Executing script: {}", script_str);
+    debug!("Executing script: {script_str}");
 
     let execute = Command::new("sh")
         .arg("-c")
         .arg(script_str)
         .status()
-        .map_err(|e| eyre!("Failed to execute script {:?}: {:?}", script_str, e))?;
+        .map_err(|e| eyre!("Failed to execute script {script_str:?}: {e:?}"))?;
 
     if !execute.success() {
-        return Err(eyre!("Script execution failed with status: {:?}", execute));
+        return Err(eyre!("Script execution failed with status: {execute:?}"));
     }
 
     Ok(())

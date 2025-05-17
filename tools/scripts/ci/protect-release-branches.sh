@@ -7,30 +7,22 @@
 # ==-----------------------------------------------------------== #
 
 # Define target branch pattern
-TARGET_PATTERN="^release/v[0-9]+\.[0-9]+\.x$"
+STRICT_TARGET_PATTERN="^release/v[0-9]+\.[0-9]+\.[0-9]+$"
+LOOSE_TARGET_PATTERN="^release/v.+\..+\..+$"
 
-# Define allowed source branch prefixes
-ALLOWED_PREFIXES=("bump/" "feature/" "bugfix/" "hotfix/")
-
-# Convert array to regex pattern
-ALLOWED_PATTERN="^($(IFS='|'; echo "${ALLOWED_PREFIXES[*]}"))"
-
-# Check if the pull request is targeting the release branch
-if [[ "$GITHUB_BASE_REF" =~ $TARGET_PATTERN ]]; then
-    # Check if the source branch follows the allowed naming pattern
-    if ! [[ "$GITHUB_HEAD_REF" =~ $ALLOWED_PATTERN ]]; then
-        printf "Error: Pull requests to '%s' branches can only be from these branches:\n" "$GITHUB_BASE_REF"
-        for branch in "${ALLOWED_PREFIXES[@]}"; do
-            printf "   - %s\n" "$branch"
-        done
+# Check if the pull request is targeting the branch
+if [[ "$GITHUB_BASE_REF" =~ $LOOSE_TARGET_PATTERN ]]; then
+    if ! [[ "$GITHUB_BASE_REF" =~ $STRICT_TARGET_PATTERN ]]; then
+        printf "Error: Pull request is targeting an invalid release branch name: '%s'\n" "$GITHUB_BASE_REF"
+        printf "Branch must follow SemVer format: release/v<MAJOR>.<MINOR>.<PATCH>\n"
         exit 1
     else
-        echo "Pull request to '$GITHUB_BASE_REF' from allowed branch '$GITHUB_HEAD_REF'."
+        printf "Error: Pull requests to '%s' branches are not allowed.\n" "$GITHUB_BASE_REF"
+        exit 1
     fi
 else
-    # If not targeting a release branch, skip the check
+    # If not targeting the branch, skip the check
     echo "Pull request is not targeting a release branch; skipping the check."
 fi
 
 exit 0
-

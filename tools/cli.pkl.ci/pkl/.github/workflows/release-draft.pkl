@@ -1,0 +1,71 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleaseDraft
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsReleaseBuild.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+import "@internal/gha/TriggersCommon.pkl"
+
+import "modules/EnvVarsRust.pkl"
+import "modules/release-build.pkl" as Build
+import "modules/release-dryrun.pkl" as DryRun
+import "modules/release-gh.pkl" as Github
+import "modules/release-validate.pkl" as Validate
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "Release-Draft"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+env = (EnvVarsRust.rustEnvFull) {}
+
+on {
+  workflow_dispatch {
+    inputs {
+      ["release_type"] = (TriggersCommon.wDispatchReleaseType(new Listing{
+        "pre-release"
+        "stable-release"
+      }, "pre-release")) {}
+      ["release_tag"] = (TriggersCommon.wDispatchReleaseTag()) {}
+    }
+  }
+}
+jobs {
+  ["validate-release-tag"] = (Validate.releaseTag()) {}
+  ["validate-release-type"] = (Validate.releaseType()) {}
+  ["build-necronux-cli"] = (Build.necronuxCli()) {
+    needs {
+      "validate-release-tag"
+      "validate-release-type"
+    }
+  }
+  ["generate-sbom"] = (JobsReleaseBuild.reuseSPDXSBOM("${{ inputs.release_tag }}", "necronux_cli", "${{ inputs.release_tag }}")) {
+    needs {
+      "validate-release-tag"
+      "validate-release-type"
+    }
+  }
+  ["dryrun-cratesio-necronux"] = (DryRun.cratesioNecronux()) {
+    needs {
+      "build-necronux-cli"
+      "generate-sbom"
+    }
+  }
+  ["create-pre-release-draft"] = (Github.createPreReleaseDraft()) {
+    needs {
+      "build-necronux-cli"
+      "generate-sbom"
+    }
+  }
+  ["create-stable-release-draft"] = (Github.createStableReleaseDraft()) {
+    needs {
+      "build-necronux-cli"
+      "generate-sbom"
+    }
+  }
+}

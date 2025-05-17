@@ -37,10 +37,7 @@ pub fn init_logger(
         .write_mode(WriteMode::BufferAndFlush)
         .start()?;
 
-    debug!(
-        "Logger initialized with defaults, log level set to {}.",
-        default_log_level
-    );
+    debug!("Logger initialized with defaults, log level set to {default_log_level}.");
 
     // Set max log level.
     if cfg!(debug_assertions) {
@@ -49,10 +46,7 @@ pub fn init_logger(
         log::set_max_level(LevelFilter::Info);
     }
     let max_log_level = log::max_level();
-    debug!(
-        "Max log level set to {} for the default log config.",
-        max_log_level
-    );
+    debug!("Max log level set to {max_log_level} for the default log config.");
 
     Ok((logger_builder, logger, max_log_level))
 }

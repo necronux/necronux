@@ -1,22 +1,16 @@
 # ==-----------------------------------------------------------== #
 # SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
 #
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: Apache-2.0
 # ==-----------------------------------------------------------== #
 
 # Do not modify!
-# This file was generated from a template using the necronux internal pkl package.
+# This file was generated from a template using necronux.internal.pkl project.
 # Any changes should be made to the template, not this file.
 
 name: CI-Pkl
 'on':
   pull_request:
-    branches:
-    - develop
-    - release/**
-    - release-sync/feature/**
-    - release-sync/bugfix/**
-    - release-sync/hotfix/**
     paths:
     - '*.pkl'
     - '**/*.pkl'
@@ -53,7 +47,6 @@ jobs:
     needs:
     - resolvecheck
     - evalcheck
-    - test
     permissions:
       contents: none
     runs-on: ubuntu-latest
@@ -77,12 +70,9 @@ jobs:
       uses: taiki-e/install-action@v2
       with:
         tool: just
-    - name: Check if necronux.std.schema pkl project can be resolved
+    - name: Check if cli.pkl.ci pkl project can be resolved
       shell: bash
-      run: just resolve-stdschema
-    - name: Check if necronux.internal.ci pkl project can be resolved
-      shell: bash
-      run: just resolve-internalci
+      run: just resolve-clipklci
   evalcheck:
     name: Eval Check
     runs-on: ubuntu-latest
@@ -96,28 +86,9 @@ jobs:
       uses: taiki-e/install-action@v2
       with:
         tool: just
-    - name: Check if necronux.std.schema pkl modules can be evaluated
+    - name: Check if cli.pkl.ci pkl modules can be evaluated
       shell: bash
-      run: just eval-stdschema
-    - name: Check if necronux.internal.ci pkl modules can be evaluated
-      shell: bash
-      run: just eval-internalci
+      run: just eval-clipklci
     - name: Verify pkl modules evaluation reflects the latest changes
       shell: bash
       run: git diff --exit-code
-  test:
-    name: Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-    - name: Install just
-      uses: taiki-e/install-action@v2
-      with:
-        tool: just
-    - name: Test necronux.std.schema pkl modules
-      shell: bash
-      run: just test-stdschema

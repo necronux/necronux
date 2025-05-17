@@ -1,0 +1,111 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleaseDraftGh
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/ActionsRegistry.pkl" as ActReg
+import "@internal/gha/UtilsCommon.pkl"
+
+const function createPreReleaseDraft() = new gha.Job {
+  `if` = "${{ inputs.release_type == 'pre-release' }}"
+  name = "Create GitHub Pre-Release Draft"
+  permissions {
+    contents = "write"
+  }
+  steps {
+    ...commonDraftSteps()
+    new {
+      name = "Publish github pre-release draft"
+      uses = ActReg.actionGhRelease
+      with {
+        ["tag_name"] = "${{ inputs.release_tag }}"
+        ["fail_on_unmatched_files"] = true
+        ["generate_release_notes"] = true
+        ["prerelease"] = true
+        ["draft"] = true
+        ["files"] = "rel_artifacts/*"
+      }
+      env {
+        ["GITHUB_TOKEN"] = "${{ secrets.GITHUB_TOKEN }}"
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function createStableReleaseDraft() = new gha.Job {
+  `if` = "${{ inputs.release_type == 'stable-release' }}"
+  name = "Create GitHub Stable Release Draft"
+  permissions {
+    contents = "write"
+  }
+  steps {
+    ...commonDraftSteps()
+    new {
+      name = "Publish github stable release draft"
+      uses = ActReg.actionGhRelease
+      with {
+        ["tag_name"] = "${{ inputs.release_tag }}"
+        ["fail_on_unmatched_files"] = true
+        ["generate_release_notes"] = true
+        ["draft"] = true
+        ["files"] = "rel_artifacts/*"
+      }
+      env {
+        ["GITHUB_TOKEN"] = "${{ secrets.GITHUB_TOKEN }}"
+      }
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function commonDraftSteps() = new Listing<gha.Step> {
+  new {
+    name = "Download necronux cli binaries tars, zips and sums"
+    uses = ActReg.downloadArtifact
+    with {
+      ["pattern"] = "necronux_cli-${{ inputs.release_tag }}-*"
+      ["path"] = "downloaded_artifacts"
+      ["merge-multiple"] = true
+    }
+  }
+  new {
+    name = "Download SBOM tars, zips and sums"
+    uses = ActReg.downloadArtifact
+    with {
+      ["name"] = "sbom_necronux_cli-${{ inputs.release_tag }}"
+      ["path"] = "extract_these"
+      ["merge-multiple"] = true
+    }
+  }
+  new {
+    name = "Extract required files"
+    run = """
+      mkdir -p extracted/
+      cd extract_these
+
+      for tar_file in sbom_necronux_cli-*.tar.gz; do
+        if [ -f "$tar_file" ]; then
+          echo "Extracting $tar_file"
+          tar -xzvf "$tar_file" -C ../extracted
+        else
+          echo "No matching tar files found for pattern: $tar_file"
+        fi
+      done
+      """
+    shell = "bash"
+  }
+  new {
+    name = "Create directory for release and transfer files"
+    run = """
+      mkdir -p rel_artifacts/
+      cp -r downloaded_artifacts/* rel_artifacts/
+      cp -r extracted/sbom_necronux_cli-${{ inputs.release_tag }}/* rel_artifacts/
+      """
+    shell = "bash"
+  }
+}

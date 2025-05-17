@@ -40,16 +40,10 @@ pub fn override_logger(
         }
         .map_or_else(
             || {
-                debug!(
-                    "Invalid log level {} in NECRONUX_LOG_LEVEL. Ignoring...",
-                    env_log_level_str
-                );
+                debug!("Invalid log level {env_log_level_str} in NECRONUX_LOG_LEVEL. Ignoring...");
             },
             |env_log_level| {
-                debug!(
-                    "Overriding log level to {} from environment variable.",
-                    env_log_level
-                );
+                debug!("Overriding log level to {env_log_level} from environment variable.");
                 logger_builder.default(env_log_level);
                 log_level_updated = true;
             },
@@ -59,10 +53,7 @@ pub fn override_logger(
     // Override log level from the cli verbosity flag.
     if cli.verbose.is_present() {
         let cli_log_level = cli.verbose.log_level_filter();
-        debug!(
-            "Overriding log level to {} from cli verbosity flag.",
-            cli_log_level
-        );
+        debug!("Overriding log level to {cli_log_level} from cli verbosity flag.");
         logger_builder.default(cli_log_level);
         log_level_updated = true;
     }
@@ -73,15 +64,12 @@ pub fn override_logger(
         logger.set_new_spec(new_log_level.clone());
 
         let new_log_level_str = new_log_level.to_string().to_uppercase();
-        debug!("Log level updated to {}.", new_log_level_str);
+        debug!("Log level updated to {new_log_level_str}.");
 
         // Set max log level again.
         log::set_max_level(max_log_level);
         let overridden_max_log_level = log::max_level();
-        debug!(
-            "Max log level set to {} for the overridden log config.",
-            overridden_max_log_level
-        );
+        debug!("Max log level set to {overridden_max_log_level} for the overridden log config.");
 
         debug!("Log level setting loaded from various sources and merged.");
     } else {

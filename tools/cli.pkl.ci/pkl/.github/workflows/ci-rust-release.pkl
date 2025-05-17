@@ -1,0 +1,67 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustRelease
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsConcl.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "modules/EnvVarsRust.pkl"
+import "modules/ci-rust-docs.pkl" as Docs
+import "modules/ci-rust-lint.pkl" as Lint
+import "modules/ci-rust-test.pkl" as Test
+import "modules/ci-rust-version.pkl" as Version
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Rust-Release"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+concurrency = (UtilsCommon.concurrencyPROrRef()) {}
+env = (EnvVarsRust.rustEnvFull) {}
+
+on {
+  pull_request {
+    branches {
+      "release/"
+      "stable/"
+    }
+  }
+  push {
+    branches = (outer.pull_request.branches) {}
+  }
+  workflow_dispatch {}
+}
+jobs {
+  ["conclusion"] = (JobsConcl.conclusion()) {
+    needs {
+      "rustfmt"
+      "clippy-nodef-build"
+      "clippy-def-build"
+      "clippy-all-build"
+      "lockfile"
+      "check-version-bump"
+      "msrv"
+      "docs"
+      "test-nodef-build"
+      "test-def-build"
+      "test-all-build"
+    }
+  }
+
+  ["rustfmt"] = (Lint.rustfmt()) {}
+  ["clippy-nodef-build"] = (Lint.clippyNoDefaultBuild()) {}
+  ["clippy-def-build"] = (Lint.clippyDefaultBuild()) {}
+  ["clippy-all-build"] = (Lint.clippyAllBuild()) {}
+  ["lockfile"] = (Version.lockfile()) {}
+  ["check-version-bump"] = (Version.checkVersionBump()) {}
+  ["msrv"] = (Version.msrv()) {}
+  ["docs"] = (Docs.docs()) {}
+  ["test-nodef-build"] = (Test.testNoDefaultBuild()) {}
+  ["test-def-build"] = (Test.testDefaultBuild()) {}
+  ["test-all-build"] = (Test.testAllBuild()) {}
+}

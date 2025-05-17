@@ -31,16 +31,13 @@ pub fn load_bundle_file() -> Result<Option<Bundle>> {
     })?;
 
     if !bundle_file_path.exists() {
-        debug!(
-            "Necronux bundle file not found at: {}",
-            bundle_file_path_str
-        );
+        debug!("Necronux bundle file not found at: {bundle_file_path_str}");
         return Ok(None);
     }
 
-    debug!("Found the necronux bundle file at {}", bundle_file_path_str);
+    debug!("Found the necronux bundle file at {bundle_file_path_str}");
     let bundle: Bundle = rpkl::from_config(bundle_file_path_str)
-        .with_context(|| eyre!("Failed to parse file as PKL: {}", bundle_file_path_str))?;
+        .with_context(|| eyre!("Failed to parse file as PKL: {bundle_file_path_str}"))?;
     debug!("Necronux bundle file successfully loaded.");
 
     Ok(Some(bundle))

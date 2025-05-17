@@ -1,0 +1,30 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+amends "pkl:Project"
+
+local const gitRepo = "github.com/necronux/necronux"
+
+package {
+  name = "cli.pkl.ci"
+  baseUri = "package://pkg.pkl-lang.org/\(gitRepo)/\(name)"
+  version = "0.0.0"
+  packageZipUrl = "https://\(gitRepo)/releases/download/\(name)@\(version)/\(name)@\(version).zip"
+  description = "CI tool for internal use."
+  authors {
+    "Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"
+  }
+  license = "Apache-2.0"
+  exclude {
+    "build.gradle.kts"
+  }
+}
+
+dependencies {
+  ["internal"] {
+    uri = "package://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0.7.1"
+  }
+}

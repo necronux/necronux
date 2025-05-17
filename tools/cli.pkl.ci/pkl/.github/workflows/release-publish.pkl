@@ -1,0 +1,39 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleasePublish
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsReleaseBuild.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+import "@internal/gha/TriggersCommon.pkl"
+
+import "modules/EnvVarsRust.pkl"
+import "modules/release-validate.pkl" as Validate
+import "modules/release-publish-crates.pkl" as Crates
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "Release-Publish"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+env = (EnvVarsRust.rustEnvFull) {}
+
+on {
+  workflow_dispatch {
+    inputs {
+      ["release_tag"] = (TriggersCommon.wDispatchReleaseTag()) {}
+    }
+  }
+}
+jobs {
+  ["validate-release-tag"] = (Validate.releaseTag()) {}
+  ["publish-cratesio-necronux"] = (Crates.cratesioNecronux()) {
+    needs {
+      "validate-release-tag"
+    }
+  }
+}

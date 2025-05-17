@@ -1,0 +1,33 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module ReleaseDryrun
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/ActionsRegistry.pkl" as ActReg
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+const function cratesioNecronux() = new gha.Job {
+  name = "Dry Run: Publish Necronux Crates On Crates.io"
+  steps {
+    StepsCommon.checkout(null)
+    new {
+      name = "REUSE SPDX SBOM"
+      uses = ActReg.reuseAction
+      with {
+        ["args"] = "spdx -o reuse.spdx"
+      }
+    }
+    new {
+      name = "Run publish crates.io script with --dry-run"
+      run = "tools/scripts/ci/publish-crates-io.sh --dry-run"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)

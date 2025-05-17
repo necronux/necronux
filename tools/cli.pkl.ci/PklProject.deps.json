@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "resolvedDependencies": {
+    "package://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0": {
+      "type": "remote",
+      "uri": "projectpackage://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0.7.1",
+      "checksums": {
+        "sha256": "78d99363371dd265b1a5b1add03607ab73fa99356003335be6df7caaf21b8268"
+      }
+    }
+  }
+}

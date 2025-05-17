@@ -1,0 +1,155 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiRustLint
+
+import "@internal/schemas/GitHubAction.pkl" as gha
+
+import "@internal/gha/StepsCommon.pkl"
+import "@internal/gha/StepsRust.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "MatricesRust.pkl"
+
+const function rustfmt() = new gha.Job {
+  name = "Rustfmt"
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustToolchainWithComponent("stable", "rustfmt")
+    new {
+      name = "Run cargo fmt"
+      run = "cargo fmt --all --check"
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig(null, null)
+
+const function clippyAllMinimal() = (clippyAllFull()) {
+  name = "Clippy All Minimal (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyMinimal()) {}
+    }
+  }
+}
+
+const function clippyAllMedium() = (clippyAllFull()) {
+  name = "Clippy All Medium (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyMedium()) {}
+    }
+  }
+}
+
+const function clippyAllBuild() = (clippyAllFull()) {
+  name = "Clippy All Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
+    }
+  }
+}
+
+const function clippyNoDefaultBuild() = (clippyNoDefaultFull()) {
+  name = "Clippy NoDef Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
+    }
+  }
+}
+
+const function clippyDefaultBuild() = (clippyDefaultFull()) {
+  name = "Clippy Def Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
+    }
+  }
+}
+
+const function clippyNoDefaultFull() = new gha.Job {
+  name = "Clippy NoDef Full (${{ matrix.name }})"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyFull()) {}
+    }
+  }
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    new {
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["components"] = "clippy"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      name = "Run cargo clippy"
+      run = "cargo clippy --workspace --all-targets --no-default-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
+
+const function clippyDefaultFull() = new gha.Job {
+  name = "Clippy Def Full (${{ matrix.name }})"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyFull()) {}
+    }
+  }
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    new {
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["components"] = "clippy"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      name = "Run cargo clippy"
+      run = "cargo clippy --workspace --all-targets --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
+
+const function clippyAllFull() = new gha.Job {
+  name = "Clippy All Full (${{ matrix.name }})"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyFull()) {}
+    }
+  }
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    new {
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["components"] = "clippy"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      name = "Run cargo clippy"
+      run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)

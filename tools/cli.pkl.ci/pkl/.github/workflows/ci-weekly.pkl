@@ -1,0 +1,81 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiWeekly
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsCiCommon.pkl"
+import "@internal/gha/JobsConcl.pkl"
+import "@internal/gha/JobsPolicyAudit.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "modules/EnvVarsRust.pkl"
+import "modules/ci-pkl-jobs.pkl" as CiPklJobs
+import "modules/ci-rust-docs.pkl" as Docs
+import "modules/ci-rust-lint.pkl" as Lint
+import "modules/ci-rust-test.pkl" as Test
+import "modules/ci-rust-version.pkl" as Version
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Weekly"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+concurrency = (UtilsCommon.concurrencyPROrRef()) {}
+env = (EnvVarsRust.rustEnvFull) {}
+
+on {
+  schedule {
+    cron {
+      "30 0 * * 1"
+    }
+  }
+  workflow_dispatch {}
+}
+jobs {
+  ["conclusion"] = (JobsConcl.conclusion()) {
+    needs {
+      "rustfmt"
+      "clippy-nodef-full"
+      "clippy-def-full"
+      "clippy-all-full"
+      "lockfile"
+      "check-version-bump"
+      "msrv"
+      "docs"
+      "test-nodef-full"
+      "test-def-full"
+      "test-all-full"
+      "typos"
+      "taplo"
+      "resolvecheck"
+      "evalcheck"
+      "reuse-compliance-check"
+      "cargo-deny"
+    }
+  }
+
+  ["rustfmt"] = (Lint.rustfmt()) {}
+  ["clippy-nodef-full"] = (Lint.clippyNoDefaultFull()) {}
+  ["clippy-def-full"] = (Lint.clippyDefaultFull()) {}
+  ["clippy-all-full"] = (Lint.clippyAllFull()) {}
+  ["lockfile"] = (Version.lockfile()) {}
+  ["check-version-bump"] = (Version.checkVersionBump()) {}
+  ["msrv"] = (Version.msrv()) {}
+  ["docs"] = (Docs.docs()) {}
+  ["test-nodef-full"] = (Test.testNoDefaultFull()) {}
+  ["test-def-full"] = (Test.testDefaultFull()) {}
+  ["test-all-full"] = (Test.testAllFull()) {}
+
+  ["typos"] = (JobsCiCommon.typos()) {}
+  ["taplo"] = (JobsCiCommon.taplo()) {}
+
+  ["resolvecheck"] = (CiPklJobs.resolveCheck()) {}
+  ["evalcheck"] = (CiPklJobs.evalCheck()) {}
+
+  ["reuse-compliance-check"] = (JobsPolicyAudit.reuseCompliance()) {}
+  ["cargo-deny"] = (JobsPolicyAudit.cargoDeny()) {}
+}

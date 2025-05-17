@@ -1,0 +1,36 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiCommon
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsCiCommon.pkl"
+import "@internal/gha/JobsConcl.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Common"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+concurrency = (UtilsCommon.concurrencyPROrRef()) {}
+
+on {
+  pull_request {}
+  push {}
+  workflow_dispatch {}
+}
+jobs {
+  ["conclusion"] = (JobsConcl.conclusion()) {
+    needs {
+      "typos"
+      "taplo"
+    }
+  }
+
+  ["typos"] = (JobsCiCommon.typos()) {}
+  ["taplo"] = (JobsCiCommon.taplo()) {}
+}

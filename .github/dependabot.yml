@@ -18,18 +18,6 @@ updates:
     groups:
       rust-updates:
         update-types: [minor, patch]
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    target-branch: "develop"
-    labels:
-      - "A-dependencies"
-      - "C-enhancement"
-      - "S-needs-triage"
-    groups:
-      actions-updates:
-        update-types: [minor, patch]
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:

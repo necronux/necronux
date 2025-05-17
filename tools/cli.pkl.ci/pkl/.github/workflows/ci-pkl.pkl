@@ -1,0 +1,42 @@
+// ==-----------------------------------------------------------== //
+// SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+//
+// SPDX-License-Identifier: Apache-2.0
+// ==-----------------------------------------------------------== //
+
+@ModuleInfo { minPklVersion = "0.27.0" }
+module CiPkl
+
+amends "@internal/schemas/GitHubAction.pkl"
+
+import "@internal/gha/JobsConcl.pkl"
+import "@internal/gha/TriggersPkl.pkl"
+import "@internal/gha/UtilsCommon.pkl"
+
+import "modules/ci-pkl-jobs.pkl" as CiPklJobs
+
+headercomment = UtilsCommon.headerComment("2025", "Nayan Patil <nayantsg@proton.me>", "Apache-2.0")
+name = "CI-Pkl"
+permissions = (UtilsCommon.contentPermissions("read")) {}
+concurrency = (UtilsCommon.concurrencyPROrRef()) {}
+
+on {
+  pull_request {
+    paths = (TriggersPkl.pklPaths()) {}
+  }
+  push {
+    paths = (TriggersPkl.pklPaths()) {}
+  }
+  workflow_dispatch {}
+}
+jobs {
+  ["conclusion"] = (JobsConcl.conclusion()) {
+    needs {
+      "resolvecheck"
+      "evalcheck"
+    }
+  }
+
+  ["resolvecheck"] = (CiPklJobs.resolveCheck()) {}
+  ["evalcheck"] = (CiPklJobs.evalCheck()) {}
+}

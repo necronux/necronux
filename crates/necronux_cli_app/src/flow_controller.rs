@@ -25,7 +25,7 @@ pub fn init_flow_controller() -> Result<()> {
 
     // Initializes the cli parser.
     let cli = Cli::parse();
-    debug!("Parsed CLI arguments: {:?}", cli);
+    debug!("Parsed CLI arguments: {cli:?}");
 
     // Loads the necronux bundle file.
     let bundle_loaded = necronux_core::bundle::loader::load_bundle_file()
@@ -46,7 +46,7 @@ pub fn init_flow_controller() -> Result<()> {
         println!("Description: {}", bundle.bundle.description);
         println!("Apps:");
         for app in &bundle.bundle.apps {
-            println!("- {}", app);
+            println!("- {app}");
         }
     }
 

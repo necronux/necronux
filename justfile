@@ -23,34 +23,14 @@ sbom:
     reuse spdx -o reuse.spdx
 
 runpkl:
-    just resolve-internalci
-    just resolve-stdschema
-    just eval-internalci
-    just eval-stdschema
-    just test-stdschema
+    just resolve-clipklci
+    just eval-clipklci
 
 # Following subcommands are used in ci
 
-# internal tools
+resolve-clipklci:
+    ./gradlew resolveCliPklCi
 
-resolve-internalci:
-    ./gradlew resolveInternalCI
-
-eval-internalci:
-    ./gradlew evalWorkflowsHelpers
-    ./gradlew evalWorkflowsModules
-    ./gradlew evalWorkflows
-
-# stdschema
-
-resolve-stdschema:
-    ./gradlew resolveStdSchema
-
-eval-stdschema:
-    ./gradlew evalStdSchema
-
-test-stdschema:
-    ./gradlew testStdSchema
-
-make-stdschemapkg:
-    ./gradlew makeStdSchemaPkg
+eval-clipklci:
+    ./gradlew evalCliPklCiModules
+    ./gradlew evalCliPklCiWorkflows
