@@ -22,7 +22,7 @@ const function docs() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "${{ github.ref == 'refs/heads/develop' }}")
+    StepsRust.setupRustCache("[\(outer.name)]", "${{ github.ref == 'refs/heads/develop' }}")
     StepsRust.setupRustToolchain("stable")
     new {
       name = "Run cargo doc"

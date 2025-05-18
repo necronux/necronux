@@ -83,7 +83,7 @@ const function clippyNoDefaultFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache("Tests All Full (${{ matrix.name }})", false)
+    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
@@ -110,7 +110,7 @@ const function clippyDefaultFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache("Tests All Full (${{ matrix.name }})", false)
+    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
@@ -137,7 +137,7 @@ const function clippyAllFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache("Tests All Full (${{ matrix.name }})", false)
+    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
