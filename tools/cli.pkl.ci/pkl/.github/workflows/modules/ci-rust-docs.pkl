@@ -22,7 +22,7 @@ const function docs() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache(outer.name, "${{ github.ref == 'refs/heads/develop' }}")
     StepsRust.setupRustToolchain("stable")
     new {
       name = "Run cargo doc"
@@ -33,8 +33,13 @@ const function docs() = new gha.Job {
       }
     }
     new {
-      name = "Run cargo test with all features in debug mode"
+      name = "Run cargo test in debug mode"
       run = "cargo test --doc --workspace --all-features"
+      shell = "bash"
+    }
+    new {
+      name = "Run cargo test in release mode"
+      run = "cargo test --doc --workspace --all-features --release"
       shell = "bash"
     }
   }

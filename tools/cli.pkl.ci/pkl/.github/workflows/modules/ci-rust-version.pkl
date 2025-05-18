@@ -17,7 +17,7 @@ const function lockfile() = new gha.Job {
   name = "Cargo Lockfile"
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache(outer.name, "${{ github.ref == 'refs/heads/develop' }}")
     StepsRust.setupRustToolchain("stable")
     new {
       name = "Ensure Cargo.lock is up-to-date"
@@ -35,7 +35,7 @@ const function checkVersionBump() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(0)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache(outer.name, "${{ github.ref == 'refs/heads/develop' }}")
     StepsCommon.installAction("cargo-semver-checks")
     new {
       name = "Run cargo semver-checks"
@@ -61,7 +61,7 @@ const function msrv() = new gha.Job {
   name = "MSRV"
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache(outer.name, "${{ github.ref == 'refs/heads/develop' }}")
     StepsCommon.installAction("cargo-hack")
     new {
       name = "Run cargo hack check"

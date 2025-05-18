@@ -25,6 +25,6 @@ package {
 
 dependencies {
   ["internal"] {
-    uri = "package://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0.7.1"
+    uri = "package://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0.7.2"
   }
 }

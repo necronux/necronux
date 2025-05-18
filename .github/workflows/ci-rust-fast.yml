@@ -144,8 +144,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
-        key: '[Clippy All Minimal (${{ matrix.name }})]'
+        save-if: false
+        key: '[Tests All Full (${{ matrix.name }})]'
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:

@@ -252,8 +252,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
-        key: '[Clippy NoDef Full (${{ matrix.name }})]'
+        save-if: false
+        key: '[Tests All Full (${{ matrix.name }})]'
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -440,8 +440,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
-        key: '[Clippy Def Full (${{ matrix.name }})]'
+        save-if: false
+        key: '[Tests All Full (${{ matrix.name }})]'
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -628,8 +628,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
-        key: '[Clippy All Full (${{ matrix.name }})]'
+        save-if: false
+        key: '[Tests All Full (${{ matrix.name }})]'
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
       with:
@@ -746,9 +746,12 @@ jobs:
         RUSTDOCFLAGS: -D warnings
       shell: bash
       run: cargo doc --workspace --all-features --no-deps --document-private-items --keep-going
-    - name: Run cargo test with all features in debug mode
+    - name: Run cargo test in debug mode
       shell: bash
       run: cargo test --doc --workspace --all-features
+    - name: Run cargo test in release mode
+      shell: bash
+      run: cargo test --doc --workspace --all-features --release
   test-nodef-full:
     name: Tests NoDef Full (${{ matrix.name }})
     strategy:
@@ -905,8 +908,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
-        key: '[Tests NoDef Full (${{ matrix.name }})]'
+        save-if: false
+        key: '[Tests All Full (${{ matrix.name }})]'
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
@@ -1091,8 +1094,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
-        key: '[Tests Def Full (${{ matrix.name }})]'
+        save-if: false
+        key: '[Tests All Full (${{ matrix.name }})]'
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash

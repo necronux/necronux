@@ -72,7 +72,7 @@ const function testNoDefaultFull() = new gha.Job {
   env = (EnvVarsRust.rustEnvTest) {}
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache("Tests All Full (${{ matrix.name }})", false)
     StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
     new {
       `if` = "${{ matrix.buildtool != 'cross' }}"
@@ -114,7 +114,7 @@ const function testDefaultFull() = new gha.Job {
   env = (EnvVarsRust.rustEnvTest) {}
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache("Tests All Full (${{ matrix.name }})", false)
     StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
     new {
       `if` = "${{ matrix.buildtool != 'cross' }}"
@@ -156,7 +156,7 @@ const function testAllFull() = new gha.Job {
   env = (EnvVarsRust.rustEnvTest) {}
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCache(outer.name, "refs/heads/develop")
+    StepsRust.setupRustCache(outer.name, "${{ github.ref == 'refs/heads/develop' }}")
     StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
     new {
       `if` = "${{ matrix.buildtool != 'cross' }}"
