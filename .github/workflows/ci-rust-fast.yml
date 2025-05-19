@@ -12,12 +12,12 @@ name: CI-Rust-Fast
 'on':
   pull_request:
     branches:
-    - feature/
-    - bugfix/
-    - hotfix/
-    - refactor/
-    - chore/
-    - bump/
+    - feature/**
+    - bugfix/**
+    - hotfix/**
+    - refactor/**
+    - chore/**
+    - bump/**
     paths:
     - '*.rs'
     - '**/*.rs'
@@ -31,12 +31,12 @@ name: CI-Rust-Fast
     - deny.toml
   push:
     branches:
-    - feature/
-    - bugfix/
-    - hotfix/
-    - refactor/
-    - chore/
-    - bump/
+    - feature/**
+    - bugfix/**
+    - hotfix/**
+    - refactor/**
+    - chore/**
+    - bump/**
     paths:
     - '*.rs'
     - '**/*.rs'

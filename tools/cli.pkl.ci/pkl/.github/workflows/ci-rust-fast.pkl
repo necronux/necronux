@@ -27,12 +27,12 @@ on {
   pull_request {
     paths = (TriggersRust.rustPaths()) {}
     branches {
-      "feature/"
-      "bugfix/"
-      "hotfix/"
-      "refactor/"
-      "chore/"
-      "bump/"
+      "feature/**"
+      "bugfix/**"
+      "hotfix/**"
+      "refactor/**"
+      "chore/**"
+      "bump/**"
     }
   }
   push {

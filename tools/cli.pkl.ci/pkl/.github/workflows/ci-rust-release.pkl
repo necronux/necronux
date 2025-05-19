@@ -27,8 +27,8 @@ env = (EnvVarsRust.rustEnvFull) {}
 on {
   pull_request {
     branches {
-      "release/"
-      "stable/"
+      "release/**"
+      "stable/**"
     }
   }
   push {

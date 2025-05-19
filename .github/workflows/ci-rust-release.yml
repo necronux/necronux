@@ -12,12 +12,12 @@ name: CI-Rust-Release
 'on':
   pull_request:
     branches:
-    - release/
-    - stable/
+    - release/**
+    - stable/**
   push:
     branches:
-    - release/
-    - stable/
+    - release/**
+    - stable/**
   workflow_dispatch: {}
 env:
   CARGO_INCREMENTAL: 0
