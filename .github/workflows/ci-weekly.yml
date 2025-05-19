@@ -252,7 +252,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        shared-key: '[matrix-${{ matrix.name }}]'
+        shared-key: '[clippy-${{ matrix.name }}]'
         save-if: false
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -440,7 +440,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        shared-key: '[matrix-${{ matrix.name }}]'
+        shared-key: '[clippy-${{ matrix.name }}]'
         save-if: false
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -628,7 +628,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        shared-key: '[matrix-${{ matrix.name }}]'
+        shared-key: '[clippy-${{ matrix.name }}]'
         save-if: ${{ github.ref == 'refs/heads/develop' }}
     - name: Setup rustup for cargo
       uses: dtolnay/rust-toolchain@v1
@@ -908,7 +908,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        shared-key: '[matrix-${{ matrix.name }}]'
+        shared-key: '[test-${{ matrix.name }}]'
         save-if: false
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
@@ -1094,7 +1094,7 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        shared-key: '[matrix-${{ matrix.name }}]'
+        shared-key: '[test-${{ matrix.name }}]'
         save-if: false
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
@@ -1280,8 +1280,8 @@ jobs:
       uses: Swatinem/rust-cache@v2
       with:
         prefix-key: rs
-        shared-key: '[matrix-${{ matrix.name }}]'
-        save-if: false
+        shared-key: '[test-${{ matrix.name }}]'
+        save-if: ${{ github.ref == 'refs/heads/develop' }}
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash

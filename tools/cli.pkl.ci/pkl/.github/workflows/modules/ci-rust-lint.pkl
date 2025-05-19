@@ -47,7 +47,7 @@ const function clippyNoDefaultFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
+    StepsRust.setupRustCacheWithSharedKey("[clippy-${{ matrix.name }}]", false)
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
@@ -83,7 +83,7 @@ const function clippyDefaultFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
+    StepsRust.setupRustCacheWithSharedKey("[clippy-${{ matrix.name }}]", false)
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
@@ -128,7 +128,7 @@ const function clippyAllBuild() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
+    StepsRust.setupRustCacheWithSharedKey("[clippy-${{ matrix.name }}]", false)
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
@@ -155,7 +155,7 @@ const function clippyAllFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", "${{ github.ref == 'refs/heads/develop' }}")
+    StepsRust.setupRustCacheWithSharedKey("[clippy-${{ matrix.name }}]", "${{ github.ref == 'refs/heads/develop' }}")
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {
