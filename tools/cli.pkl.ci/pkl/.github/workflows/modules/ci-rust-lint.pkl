@@ -28,44 +28,8 @@ const function rustfmt() = new gha.Job {
   }
 } |> UtilsCommon.standardJobConfig(null, null)
 
-const function clippyAllMinimal() = (clippyAllFull()) {
-  name = "Clippy All Minimal (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixClippyMinimal()) {}
-    }
-  }
-}
-
-const function clippyAllMedium() = (clippyAllFull()) {
-  name = "Clippy All Medium (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixClippyMedium()) {}
-    }
-  }
-}
-
-const function clippyAllBuild() = (clippyAllFull()) {
-  name = "Clippy All Build (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
-    }
-  }
-}
-
 const function clippyNoDefaultBuild() = (clippyNoDefaultFull()) {
   name = "Clippy NoDef Build (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
-    }
-  }
-}
-
-const function clippyDefaultBuild() = (clippyDefaultFull()) {
-  name = "Clippy Def Build (${{ matrix.name }})"
   strategy {
     matrix {
       ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
@@ -100,6 +64,15 @@ const function clippyNoDefaultFull() = new gha.Job {
   }
 } |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
 
+const function clippyDefaultBuild() = (clippyDefaultFull()) {
+  name = "Clippy Def Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
+    }
+  }
+}
+
 const function clippyDefaultFull() = new gha.Job {
   name = "Clippy Def Full (${{ matrix.name }})"
   strategy {
@@ -127,6 +100,51 @@ const function clippyDefaultFull() = new gha.Job {
   }
 } |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
 
+const function clippyAllMinimal() = (clippyAllBuild()) {
+  name = "Clippy All Minimal (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyMinimal()) {}
+    }
+  }
+}
+
+const function clippyAllMedium() = (clippyAllBuild()) {
+  name = "Clippy All Medium (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyMedium()) {}
+    }
+  }
+}
+
+const function clippyAllBuild() = new gha.Job {
+  name = "Clippy All Build (${{ matrix.name }})"
+  strategy {
+    `fail-fast` = false
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixClippyBuild()) {}
+    }
+  }
+  steps {
+    StepsCommon.checkout(null)
+    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
+    new {
+      ...UtilsCommon.setupRustToolchainCommon("cargo")
+      with {
+        ["toolchain"] = "${{ matrix.toolchain }}"
+        ["components"] = "clippy"
+        ["targets"] = "${{ matrix.target }}"
+      }
+    }
+    new {
+      name = "Run cargo clippy"
+      run = "cargo clippy --workspace --all-targets --all-features --no-deps --target ${{ matrix.target }} -- -D clippy::all" // temporarily removed -D clippy::cargo
+      shell = "bash"
+    }
+  }
+} |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
+
 const function clippyAllFull() = new gha.Job {
   name = "Clippy All Full (${{ matrix.name }})"
   strategy {
@@ -137,7 +155,7 @@ const function clippyAllFull() = new gha.Job {
   }
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
+    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", "${{ github.ref == 'refs/heads/develop' }}")
     new {
       ...UtilsCommon.setupRustToolchainCommon("cargo")
       with {

@@ -16,44 +16,8 @@ import "@internal/gha/UtilsCommon.pkl"
 import "EnvVarsRust.pkl"
 import "MatricesRust.pkl"
 
-const function testAllMinimal() = (testAllFull()) {
-  name = "Tests All Minimal (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixTestMinimal()) {}
-    }
-  }
-}
-
-const function testAllMedium() = (testAllFull()) {
-  name = "Tests All Medium (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixTestMedium()) {}
-    }
-  }
-}
-
-const function testAllBuild() = (testAllFull()) {
-  name = "Tests All Build (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
-    }
-  }
-}
-
 const function testNoDefaultBuild() = (testNoDefaultFull()) {
   name = "Tests NoDef Build (${{ matrix.name }})"
-  strategy {
-    matrix {
-      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
-    }
-  }
-}
-
-const function testDefaultBuild() = (testDefaultFull()) {
-  name = "Tests Def Build (${{ matrix.name }})"
   strategy {
     matrix {
       ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
@@ -103,6 +67,15 @@ const function testNoDefaultFull() = new gha.Job {
   }
 } |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
 
+const function testDefaultBuild() = (testDefaultFull()) {
+  name = "Tests Def Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
+    }
+  }
+}
+
 const function testDefaultFull() = new gha.Job {
   name = "Tests Def Full (${{ matrix.name }})"
   strategy {
@@ -145,6 +118,33 @@ const function testDefaultFull() = new gha.Job {
   }
 } |> UtilsCommon.standardJobConfig("${{ matrix.os }}", null)
 
+const function testAllMinimal() = (testAllFull()) {
+  name = "Tests All Minimal (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestMinimal()) {}
+    }
+  }
+}
+
+const function testAllMedium() = (testAllFull()) {
+  name = "Tests All Medium (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestMedium()) {}
+    }
+  }
+}
+
+const function testAllBuild() = (testAllFull()) {
+  name = "Tests All Build (${{ matrix.name }})"
+  strategy {
+    matrix {
+      ["include"] = (MatricesRust.rustMatrixTestBuild()) {}
+    }
+  }
+}
+
 const function testAllFull() = new gha.Job {
   name = "Tests All Full (${{ matrix.name }})"
   strategy {
@@ -156,7 +156,7 @@ const function testAllFull() = new gha.Job {
   env = (EnvVarsRust.rustEnvTest) {}
   steps {
     StepsCommon.checkout(null)
-    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", "${{ github.ref == 'refs/heads/develop' }}")
+    StepsRust.setupRustCacheWithSharedKey("[matrix-${{ matrix.name }}]", false)
     StepsCommon.installPodmanAptIf("${{ (matrix.buildtool == 'cross' && (matrix.os == '\(MatricesRust.x86_64_LinuxRunner)' || matrix.os == '\(MatricesRust.aarch64_LinuxRunner)')) }}")
     new {
       `if` = "${{ matrix.buildtool != 'cross' }}"

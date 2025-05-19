@@ -354,7 +354,7 @@ jobs:
       with:
         prefix-key: rs
         shared-key: '[matrix-${{ matrix.name }}]'
-        save-if: ${{ github.ref == 'refs/heads/develop' }}
+        save-if: false
     - name: Install podman
       if: ${{ (matrix.buildtool == 'cross' && (matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-24.04-arm')) }}
       shell: bash
