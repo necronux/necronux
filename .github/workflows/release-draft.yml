@@ -57,10 +57,16 @@ jobs:
       shell: bash
       run: |-
         TAG_VERSION="${{ env.RELEASE_VERSION }}"
-        ROOT_CARGO_PKG_VERSION=$(awk -F '"' '/^version =/ {print $2; exit}' Cargo.toml)
-        echo "Extracted root Cargo.toml version: '$ROOT_CARGO_PKG_VERSION'"
-        if [ "$TAG_VERSION" != "$ROOT_CARGO_PKG_VERSION" ]; then
-          echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_CARGO_PKG_VERSION")"
+        ROOT_PKG_VERSION=$(awk '/\[package\]/ {p=1} p && /^version =/ {gsub(/"/, "", $3); print $3; exit}' Cargo.toml)
+        WORKSPACE_PKG_VERSION=$(awk '/\[workspace\.package\]/ {p=1} p && /^version =/ {gsub(/"/, "", $3); print $3; exit}' Cargo.toml)
+        echo "Extracted [package] version: '$ROOT_PKG_VERSION'"
+        echo "Extracted [workspace.package] version: '$WORKSPACE_PKG_VERSION'"
+        if [ "$TAG_VERSION" != "$ROOT_PKG_VERSION" ]; then
+          echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$ROOT_PKG_VERSION")"
+          exit 1
+        fi
+        if [ "$TAG_VERSION" != "$WORKSPACE_PKG_VERSION" ]; then
+          echo "Error: Tag version ("$TAG_VERSION") does not match root Cargo.toml version ("$WORKSPACE_PKG_VERSION")"
           exit 1
         fi
   validate-release-type:

@@ -10,13 +10,23 @@ version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
-description = "A cross-platform robust meta-orchestrator for automation tools, scripts, and configurations through an extensible architecture."
+description = "A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture conjuring peace of mind."
 documentation = "https://necronux.nayanpatil.space/docs"
 readme = "README.md"
 homepage = "https://necronux.nayanpatil.space"
-repository = "https://github.com/NayanTheSpaceGuy/necronux"
+repository = "https://github.com/necronux/necronux"
 license = "GPL-3.0-or-later"
-keywords = ["necronux", "automation", "configurations", "infra", "homelab"]
+keywords = [
+  "necronux",
+  "automation",
+  "configurations",
+  "infra",
+  "homelab",
+  "devops",
+  "tools",
+  "gitops",
+  "dotfiles",
+]
 categories = ["command-line-utilities"]
 exclude = [
   ".github/",
@@ -36,16 +46,26 @@ resolver = "2"
 members = ["crates/*"]
 
 [workspace.package]
-version = "0.3.0-dev"
+version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
 documentation = "https://necronux.nayanpatil.space/docs"
 readme = "README.md"
 homepage = "https://necronux.nayanpatil.space"
-repository = "https://github.com/NayanTheSpaceGuy/necronux"
+repository = "https://github.com/necronux/necronux"
 license = "GPL-3.0-or-later"
-keywords = ["necronux", "automation", "configurations", "infra", "homelab"]
+keywords = [
+  "necronux",
+  "automation",
+  "configurations",
+  "infra",
+  "homelab",
+  "devops",
+  "tools",
+  "gitops",
+  "dotfiles",
+]
 categories = ["command-line-utilities"]
 publish = true
 
