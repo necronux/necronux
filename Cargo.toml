@@ -10,7 +10,7 @@ version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
-description = "A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture conjuring peace of mind."
+description = "A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture cultivating peace of mind."
 documentation = "https://necronux.nayanpatil.space/docs"
 readme = "README.md"
 homepage = "https://necronux.nayanpatil.space"
@@ -87,10 +87,6 @@ unwrap_used = "deny"
 expect_used = "deny"
 panic = "deny"
 
-[profile.dev.package.backtrace]
-# Optimizations for debug builds using color-eyre
-opt-level = 3
-
 [profile.release]
 debug = false
 lto = true
@@ -99,24 +95,61 @@ strip = true
 incremental = false
 
 [dependencies]
-# necronux
-necronux_internal = { path = "crates/necronux_internal", version = "0.4.0-dev", default-features = false }
-# necronux (optional)
-color-eyre = { version = "0.6.3", default-features = false, optional = true }
+# necronux (required)
+necronux_core = { path = "crates/necronux_core", version = "0.4.0-dev", default-features = false }
 
-[workspace.dependencies]
-clap = { version = "4.5.37", features = ["derive", "cargo"] }
-clap-verbosity-flag = "3.0.2"
-color-eyre = { version = "0.6.4", default-features = false }
-config = "0.15.4"
-flexi_logger = "0.29.8"
-log = "0.4.27"
-rpkl = "0.3.5"
-serde = { version = "1.0.219", features = ["derive"] }
+# error handling (required)
+anyhow = "1.0.98"
+
+# loggin (required)
+tracing = { version = "0.1.41", features = [
+  "max_level_trace",
+  "release_max_level_info",
+] }
+
+# cli (required)
+clap = { version = "4.5.37", features = ["derive", "cargo", "deprecated"] }
+clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
+  "tracing",
+] }
+
+# utilities
+# semver = "1.0.26"
+
+# pretty cli (optional)
+clap-help = { version = "1.4.0", optional = true }
+termimad = { version = "0.32.0", optional = true }
 
 [features]
-default = ["necronux_cli_app", "necronux_core"]
+default = ["stdschema_v1", "necronux_log", "cli_arg_log", "git"]
+full = ["default", "trace", "experimental"]
 
-necronux_cli_app = ["dep:color-eyre", "necronux_internal/necronux_cli_app"]
+# StdSchema Versioned Support
+stdschema_v1 = ["necronux_core/stdschema_v1"]
 
-necronux_core = ["necronux_internal/necronux_core"]
+# Logging support
+necronux_log = ["necronux_core/necronux_log"]
+
+# Tracing support
+trace = ["necronux_core/trace"]
+
+# VCS (Version Control System) support
+# Git support
+git = ["necronux_core/git"]
+
+# Verbosity from cli arg support
+cli_arg_log = ["necronux_core/cli_arg_log"]
+
+# Experimental
+experimental = [
+  "experimental_pretty_cli",
+  "experimental_engine",
+  "experimental_auth",
+  "experimental_discovery",
+  "experimental_history",
+]
+experimental_pretty_cli = ["dep:termimad", "dep:clap-help"]
+experimental_engine = []
+experimental_auth = []
+experimental_discovery = []
+experimental_history = []

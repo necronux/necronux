@@ -6,8 +6,8 @@
 
 [package]
 name = "necronux_core"
-description = "Provides core business logic for Necronux."
-version = "0.4.0-dev"
+description = "The Necronux Core Library."
+version.workspace = true
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -24,7 +24,25 @@ publish.workspace = true
 workspace = true
 
 [dependencies]
-color-eyre.workspace = true
-log.workspace = true
-rpkl.workspace = true
-serde.workspace = true
+# necronux (required)
+necronux_internal = { path = "../necronux_internal", version = "0.4.0-dev", default-features = false }
+
+[features]
+default = ["stdschema_v1", "necronux_log", "cli_arg_log", "git"]
+full = ["default", "trace"]
+
+# StdSchema Versioned Support
+stdschema_v1 = ["necronux_internal/stdschema_v1"]
+
+# Logging support
+necronux_log = ["necronux_internal/necronux_log"]
+
+# Tracing support
+trace = ["necronux_internal/trace"]
+
+# Verbosity from cli arg support
+cli_arg_log = ["necronux_internal/cli_arg_log"]
+
+# VCS (Version Control System) support
+# Git support
+git = ["necronux_internal/git"]

@@ -10,7 +10,7 @@
 
 # Necronux
 
-A cross-platform robust meta-orchestrator for automation tools, scripts, and configurations through an extensible architecture.
+A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture cultivating peace of mind.
 
 [Website][Necronux] | [Getting Started] | [Learn] | [Documentation] | [Contributing]
 </div>

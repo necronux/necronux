@@ -4,6 +4,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-fn main() -> anyhow::Result<()> {
-    necronux::Cli::run()
-}
+mod fetch_opts;
+
+pub use fetch_opts::*;

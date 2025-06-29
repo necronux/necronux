@@ -4,6 +4,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-fn main() -> anyhow::Result<()> {
-    necronux::Cli::run()
-}
+mod help;
+mod repo;
+#[cfg(feature = "stdschema_v1")]
+mod validate;
+
+pub use help::*;
+pub use repo::*;
+#[cfg(feature = "stdschema_v1")]
+pub use validate::*;

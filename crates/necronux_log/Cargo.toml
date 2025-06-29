@@ -5,8 +5,8 @@
 # ==-----------------------------------------------------------== #
 
 [package]
-name = "necronux_utils"
-description = "A collection of utils for Necronux."
+name = "necronux_log"
+description = "Provides logging for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -31,8 +31,16 @@ tracing = { version = "0.1.41", features = [
   "max_level_trace",
   "release_max_level_info",
 ] }
-# file system (required)
-directories = "6.0.0"
+tracing-log = "0.2.0"
+tracing-subscriber = "0.3.19"
+# indicatif
+tracing-indicatif = "0.3.9"
+indicatif = "0.17.11"
+
+# cli arg (optional)
+clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
+  "tracing",
+], optional = true }
 
 [features]
-trace = []
+cli_arg_log = ["dep:clap-verbosity-flag"]

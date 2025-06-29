@@ -4,6 +4,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-fn main() -> anyhow::Result<()> {
-    necronux::Cli::run()
-}
+mod backup;
+mod checkout;
+mod cleanup;
+mod clone;
+mod update;
+
+pub use backup::*;
+pub use checkout::*;
+pub use cleanup::*;
+pub use clone::*;
+pub use update::*;

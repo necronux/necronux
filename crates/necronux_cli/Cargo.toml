@@ -5,9 +5,9 @@
 # ==-----------------------------------------------------------== #
 
 [package]
-name = "necronux_utils"
-description = "A collection of utils for Necronux."
-version.workspace = true
+name = "necronux_cli"
+description = "Provides the CLI implementation for Necronux."
+version = "0.4.0-dev"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -22,17 +22,3 @@ publish.workspace = true
 
 [lints]
 workspace = true
-
-[dependencies]
-# error handling (required)
-anyhow = "1.0.98"
-# logging (required)
-tracing = { version = "0.1.41", features = [
-  "max_level_trace",
-  "release_max_level_info",
-] }
-# file system (required)
-directories = "6.0.0"
-
-[features]
-trace = []

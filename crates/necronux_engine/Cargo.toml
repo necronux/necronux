@@ -5,8 +5,8 @@
 # ==-----------------------------------------------------------== #
 
 [package]
-name = "necronux_internal"
-description = "An internal Necronux crate."
+name = "necronux_engine"
+description = "Provides core business logic for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -25,24 +25,20 @@ workspace = true
 
 [dependencies]
 # necronux (required)
-necronux_engine = { path = "../necronux_engine", version = "0.4.0-dev", default-features = false }
-necronux_vcs = { path = "../necronux_vcs", version = "0.4.0-dev", default-features = false }
 necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
 
-# necronux (optional)
-necronux_log = { path = "../necronux_log", version = "0.4.0-dev", default-features = false, optional = true }
+# error handling (required)
+anyhow = "1.0.98"
+# logging (required)
+tracing = { version = "0.1.41", features = [
+  "max_level_trace",
+  "release_max_level_info",
+] }
+# parsing (required)
+rpkl = "0.4.2"
+serde = { version = "1.0.219", features = ["derive"] }
 
 [features]
-necronux_log = ["dep:necronux_log"]
+stdschema_v1 = []
 
-stdschema_v1 = ["necronux_engine/stdschema_v1"]
-
-git = ["necronux_vcs/git"]
-
-trace = [
-  "necronux_engine/trace",
-  "necronux_vcs/trace",
-  "necronux_utils/trace",
-  "necronux_log",
-]
-cli_arg_log = ["necronux_log/cli_arg_log", "necronux_log"]
+trace = []
