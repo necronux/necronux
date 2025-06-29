@@ -12,9 +12,9 @@ updates:
       interval: "weekly"
     target-branch: "develop"
     labels:
-      - "A-dependencies"
-      - "C-enhancement"
-      - "S-needs-triage"
+      - "area:dependencies"
+      - "category:enhancement"
+      - "state:needs-triage"
     groups:
       rust-updates:
         update-types: [minor, patch]
@@ -24,9 +24,9 @@ updates:
       interval: "weekly"
     target-branch: "develop"
     labels:
-      - "A-dependencies"
-      - "C-enhancement"
-      - "S-needs-triage"
+      - "area:dependencies"
+      - "category:enhancement"
+      - "state:needs-triage"
     groups:
       pkl-updates:
         update-types: [minor, patch]

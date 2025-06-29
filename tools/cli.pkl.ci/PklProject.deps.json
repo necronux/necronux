@@ -3,9 +3,9 @@
   "resolvedDependencies": {
     "package://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0": {
       "type": "remote",
-      "uri": "projectpackage://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0.7.3",
+      "uri": "projectpackage://pkg.pkl-lang.org/github.com/necronux/necronux.internal.pkl/necronux.internal.pkl@0.9.0",
       "checksums": {
-        "sha256": "28835c14a8177a167b06382d6304bb4645bea8a5510ea639a1ffb778625b16d3"
+        "sha256": "0b4971d127e4a579f0602af74c433fd340d067807f62b6bbb4f7813fb545b0ba"
       }
     }
   }

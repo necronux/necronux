@@ -11,7 +11,6 @@ version.workspace = true
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-documentation.workspace = true
 readme = "README.md"
 homepage.workspace = true
 repository.workspace = true

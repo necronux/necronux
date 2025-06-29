@@ -10,6 +10,7 @@ module ReleaseDraft
 amends "@internal/schemas/GitHubAction.pkl"
 
 import "@internal/gha/JobsReleaseBuild.pkl"
+import "@internal/gha/JobsReleaseValidate.pkl" as JobsReleaseValidate
 import "@internal/gha/UtilsCommon.pkl"
 import "@internal/gha/TriggersCommon.pkl"
 
@@ -37,7 +38,7 @@ on {
 }
 jobs {
   ["validate-release-tag"] = (Validate.releaseTag()) {}
-  ["validate-release-type"] = (Validate.releaseType()) {}
+  ["validate-release-type"] = (JobsReleaseValidate.releaseType("${{ inputs.release_tag }}", "${TAG#*v}", "${{ inputs.release_type }}")) {}
   ["build-necronux-cli"] = (Build.necronuxCli()) {
     needs {
       "validate-release-tag"

@@ -15,10 +15,10 @@ A robust meta-orchestrator for elegantly managing automation tools, scripts, and
 [Website][Necronux] | [Getting Started] | [Learn] | [Documentation] | [Contributing]
 </div>
 
-[Necronux]: https://necronux.nayanpatil.space/
-[Getting Started]: https://necronux.nayanpatil.space/learn/get-started
-[Learn]: https://necronux.nayanpatil.space/learn
-[Documentation]: https://necronux.nayanpatil.space/docs
+[Necronux]: https://www.necronux.net/
+[Getting Started]: https://docs.necronux.net/learn/get-started
+[Learn]: https://docs.necronux.net/learn
+[Documentation]: https://docs.necronux.net/
 [Contributing]: https://github.com/necronux/.github/blob/main/CONTRIBUTING.md
 
 ## Why Necronux?
@@ -32,7 +32,7 @@ A robust meta-orchestrator for elegantly managing automation tools, scripts, and
 
 For installation, read ["Installation Guide"] from the docs.
 
-["Installation Guide"]: https://necronux.nayanpatil.space/docs/install
+["Installation Guide"]: https://docs.necronux.net/install
 
 ## Installing from Source
 

@@ -14,26 +14,28 @@ name: CI-Pkl
     paths:
     - '*.pkl'
     - '**/*.pkl'
-    - stdschema/**
-    - tools/**
+    - PklProject
+    - '**/PklProject'
     - '*.kts'
     - '**/*.kts'
     - gradle/**
     - gradlew
     - gradlew.bat
     - justfile
+    - tools/cli.pkl.ci/**
   push:
     paths:
     - '*.pkl'
     - '**/*.pkl'
-    - stdschema/**
-    - tools/**
+    - PklProject
+    - '**/PklProject'
     - '*.kts'
     - '**/*.kts'
     - gradle/**
     - gradlew
     - gradlew.bat
     - justfile
+    - tools/cli.pkl.ci/**
   workflow_dispatch: {}
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

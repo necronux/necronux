@@ -11,9 +11,8 @@ authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
 description = "A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture cultivating peace of mind."
-documentation = "https://necronux.nayanpatil.space/docs"
 readme = "README.md"
-homepage = "https://necronux.nayanpatil.space"
+homepage = "https://www.necronux.net"
 repository = "https://github.com/necronux/necronux"
 license = "GPL-3.0-or-later"
 keywords = [
@@ -24,7 +23,6 @@ keywords = [
   "homelab",
   "devops",
   "tools",
-  "gitops",
   "dotfiles",
 ]
 categories = ["command-line-utilities"]
@@ -50,9 +48,8 @@ version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
-documentation = "https://necronux.nayanpatil.space/docs"
 readme = "README.md"
-homepage = "https://necronux.nayanpatil.space"
+homepage = "https://www.necronux.net"
 repository = "https://github.com/necronux/necronux"
 license = "GPL-3.0-or-later"
 keywords = [
@@ -63,7 +60,6 @@ keywords = [
   "homelab",
   "devops",
   "tools",
-  "gitops",
   "dotfiles",
 ]
 categories = ["command-line-utilities"]
@@ -101,7 +97,7 @@ necronux_core = { path = "crates/necronux_core", version = "0.4.0-dev", default-
 # error handling (required)
 anyhow = "1.0.98"
 
-# loggin (required)
+# logging (required)
 tracing = { version = "0.1.41", features = [
   "max_level_trace",
   "release_max_level_info",
