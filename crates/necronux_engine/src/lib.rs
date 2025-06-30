@@ -5,7 +5,7 @@
 // ==-----------------------------------------------------------== //
 
 mod paths;
-#[cfg(feature = "stdschema_v1")]
-pub mod stdschema_v1;
+#[cfg(feature = "schema_v0")]
+pub mod schema_v0;
 
 pub use paths::*;

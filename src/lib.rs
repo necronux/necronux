@@ -4,10 +4,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==----------------------------------------------------------------== //
 
+#[path = "02_cli.rs"]
 mod cli;
+#[path = "03_dispatch.rs"]
 mod dispatch;
-mod handlers;
+#[path = "01_run.rs"]
 mod run;
+
+mod handlers;
 mod subcommands;
 
 pub use cli::*;

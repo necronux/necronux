@@ -23,25 +23,25 @@ publish.workspace = true
 workspace = true
 
 [dependencies]
-# necronux (required)
+################
+# REQUIRED DEPS
+###############
+# Necronux
 necronux_internal = { path = "../necronux_internal", version = "0.4.0-dev", default-features = false }
 
 [features]
-default = ["stdschema_v1", "necronux_log", "cli_arg_log", "git"]
+###########
+# FEATURES
+##########
+default = ["schema_v0", "necronux_log", "cli_arg_log"]
 full = ["default", "trace"]
 
-# StdSchema Versioned Support
-stdschema_v1 = ["necronux_internal/stdschema_v1"]
+# Schema versioned support
+schema_v0 = ["necronux_internal/schema_v0"]
 
 # Logging support
 necronux_log = ["necronux_internal/necronux_log"]
-
-# Tracing support
-trace = ["necronux_internal/trace"]
-
 # Verbosity from cli arg support
 cli_arg_log = ["necronux_internal/cli_arg_log"]
-
-# VCS (Version Control System) support
-# Git support
-git = ["necronux_internal/git"]
+# Tracing support
+trace = ["necronux_internal/trace"]

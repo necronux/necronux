@@ -4,6 +4,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-mod fetch_opts;
+pub struct ConnectHandler;
 
-pub use fetch_opts::*;
+impl ConnectHandler {
+    pub fn handle_connect() -> anyhow::Result<()> {
+        #[cfg(feature = "trace")]
+        let _span = tracing::info_span!("handle_connect").entered();
+
+        Ok(())
+    }
+}

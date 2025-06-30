@@ -8,4 +8,3 @@ pub use necronux_engine as engine;
 #[cfg(feature = "necronux_log")]
 pub use necronux_log as log;
 pub use necronux_utils as utils;
-pub use necronux_vcs as vcs;

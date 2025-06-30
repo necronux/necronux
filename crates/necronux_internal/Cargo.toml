@@ -23,25 +23,24 @@ publish.workspace = true
 workspace = true
 
 [dependencies]
-# necronux (required)
+################
+# REQUIRED DEPS
+###############
+# Necronux
 necronux_engine = { path = "../necronux_engine", version = "0.4.0-dev", default-features = false }
-necronux_vcs = { path = "../necronux_vcs", version = "0.4.0-dev", default-features = false }
 necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
-
-# necronux (optional)
+################
+# OPTIONAL DEPS
+###############
+# Necronux
 necronux_log = { path = "../necronux_log", version = "0.4.0-dev", default-features = false, optional = true }
 
 [features]
+###########
+# FEATURES
+##########
 necronux_log = ["dep:necronux_log"]
+cli_arg_log = ["necronux_log", "necronux_log/cli_arg_log"]
+trace = ["necronux_log", "necronux_engine/trace", "necronux_utils/trace"]
 
-stdschema_v1 = ["necronux_engine/stdschema_v1"]
-
-git = ["necronux_vcs/git"]
-
-trace = [
-  "necronux_engine/trace",
-  "necronux_vcs/trace",
-  "necronux_utils/trace",
-  "necronux_log",
-]
-cli_arg_log = ["necronux_log/cli_arg_log", "necronux_log"]
+schema_v0 = ["necronux_engine/schema_v0"]

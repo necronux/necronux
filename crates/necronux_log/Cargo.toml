@@ -23,23 +23,23 @@ publish.workspace = true
 workspace = true
 
 [dependencies]
-# error handling (required)
-anyhow = "1.0.98"
-# logging (required)
-tracing = { version = "0.1.41", features = [
-  "max_level_trace",
-  "release_max_level_info",
-] }
-tracing-log = "0.2.0"
-tracing-subscriber = "0.3.19"
-# indicatif
-tracing-indicatif = "0.3.9"
-indicatif = "0.17.11"
-
-# cli arg (optional)
-clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
-  "tracing",
-], optional = true }
+################
+# REQUIRED DEPS
+###############
+# Error handling
+anyhow = { workspace = true }
+# Logging
+tracing = { workspace = true }
+tracing-log = { workspace = true }
+tracing-subscriber = { workspace = true }
+################
+# OPTIONAL DEPS
+###############
+# Cli arg
+clap-verbosity-flag = { workspace = true, optional = true }
 
 [features]
+###########
+# FEATURES
+##########
 cli_arg_log = ["dep:clap-verbosity-flag"]

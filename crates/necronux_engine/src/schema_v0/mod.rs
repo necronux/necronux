@@ -4,14 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-mod backup;
-mod checkout;
-mod cleanup;
-mod clone;
-mod update;
+mod parse;
+pub mod schema;
 
-pub use backup::*;
-pub use checkout::*;
-pub use cleanup::*;
-pub use clone::*;
-pub use update::*;
+pub use parse::*;

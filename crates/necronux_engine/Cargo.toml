@@ -23,21 +23,23 @@ publish.workspace = true
 workspace = true
 
 [dependencies]
-# necronux (required)
+################
+# REQUIRED DEPS
+###############
+# Necronux
 necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
-
-# error handling (required)
-anyhow = "1.0.98"
-# logging (required)
-tracing = { version = "0.1.41", features = [
-  "max_level_trace",
-  "release_max_level_info",
-] }
-# parsing (required)
-rpkl = "0.4.2"
-serde = { version = "1.0.219", features = ["derive"] }
+# Error handling
+anyhow = { workspace = true }
+# Logging
+tracing = { workspace = true }
+# Parsing
+rpkl = { workspace = true }
+serde = { workspace = true }
 
 [features]
-stdschema_v1 = []
+###########
+# FEATURES
+##########
+schema_v0 = []
 
 trace = []

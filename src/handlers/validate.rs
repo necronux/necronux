@@ -13,8 +13,8 @@ impl ValidateHandler {
         #[cfg(feature = "trace")]
         let _span = tracing::info_span!("handle_validate").entered();
 
-        #[cfg(feature = "stdschema_v1")]
-        let _pkl = necronux_core::engine::stdschema_v1::parse_grimoire_file()
+        #[cfg(feature = "schema_v0")]
+        let _pkl = necronux_core::engine::schema_v0::parse_grimoire_file()
             .context("Failed to validate necronux.grimoire file")?;
 
         Ok(())

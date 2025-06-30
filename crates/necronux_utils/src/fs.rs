@@ -71,6 +71,5 @@ pub fn rename_dir(old_path: &Path, label: &str, new_path: &Path) -> anyhow::Resu
             old_path.display()
         );
     }
-
     Ok(())
 }

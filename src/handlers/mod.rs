@@ -4,12 +4,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
+mod connect;
 mod help;
-mod repo;
-#[cfg(feature = "stdschema_v1")]
 mod validate;
 
+pub use connect::*;
 pub use help::*;
-pub use repo::*;
-#[cfg(feature = "stdschema_v1")]
 pub use validate::*;

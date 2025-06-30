@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::stdschema::GrimoirePkl;
+use super::schema::GrimoirePkl;
 use anyhow::Context;
 
 pub fn parse_grimoire_file() -> anyhow::Result<GrimoirePkl> {

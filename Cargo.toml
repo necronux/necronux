@@ -42,7 +42,6 @@ default-run = "necronux"
 [workspace]
 resolver = "2"
 members = ["crates/*"]
-
 [workspace.package]
 version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
@@ -68,7 +67,6 @@ publish = true
 [lints.rust]
 unsafe_code = "deny"
 unused_must_use = "deny"
-
 [workspace.lints.rust]
 unsafe_code = "deny"
 unused_must_use = "deny"
@@ -77,7 +75,6 @@ unused_must_use = "deny"
 unwrap_used = "deny"
 expect_used = "deny"
 panic = "deny"
-
 [workspace.lints.clippy]
 unwrap_used = "deny"
 expect_used = "deny"
@@ -90,62 +87,71 @@ codegen-units = 1
 strip = true
 incremental = false
 
-[dependencies]
-# necronux (required)
-necronux_core = { path = "crates/necronux_core", version = "0.4.0-dev", default-features = false }
-
-# error handling (required)
+[workspace.dependencies]
+###################
+# DEPS (WORKSPACE)
+##################
+# Error handling
 anyhow = "1.0.98"
-
-# logging (required)
+# Logging
 tracing = { version = "0.1.41", features = [
   "max_level_trace",
   "release_max_level_info",
 ] }
-
-# cli (required)
-clap = { version = "4.5.37", features = ["derive", "cargo", "deprecated"] }
+tracing-log = "0.2.0"
+tracing-subscriber = "0.3.19"
+# Parsing
+rpkl = "0.5.0"
+serde = { version = "1.0.219", features = ["derive"] }
+# File system
+directories = "6.0.0"
+# Cli
 clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
   "tracing",
 ] }
 
-# utilities
-# semver = "1.0.26"
-
-# pretty cli (optional)
+[dependencies]
+######################
+# REQUIRED DEPS (BIN)
+#####################
+# Necronux
+necronux_core = { path = "crates/necronux_core", version = "0.4.0-dev", default-features = false }
+# Error handling
+anyhow = "1.0.98"
+# Logging
+tracing = { version = "0.1.41", features = [
+  "max_level_trace",
+  "release_max_level_info",
+] }
+# Cli
+clap = { version = "4.5.37", features = ["derive", "cargo", "deprecated"] }
+clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
+  "tracing",
+] }
+######################
+# OPTIONAL DEPS (BIN)
+#####################
+# Pretty cli
 clap-help = { version = "1.4.0", optional = true }
 termimad = { version = "0.32.0", optional = true }
 
 [features]
-default = ["stdschema_v1", "necronux_log", "cli_arg_log", "git"]
-full = ["default", "trace", "experimental"]
+###########
+# FEATURES
+##########
+default = ["schema_v0", "necronux_log", "cli_arg_log"]
+experimental = ["experimental_pretty_cli"]
+full = ["default", "experimental", "trace"]
 
-# StdSchema Versioned Support
-stdschema_v1 = ["necronux_core/stdschema_v1"]
+# Schema versioned support
+schema_v0 = ["necronux_core/schema_v0"]
 
 # Logging support
 necronux_log = ["necronux_core/necronux_log"]
-
 # Tracing support
 trace = ["necronux_core/trace"]
-
-# VCS (Version Control System) support
-# Git support
-git = ["necronux_core/git"]
-
 # Verbosity from cli arg support
 cli_arg_log = ["necronux_core/cli_arg_log"]
 
 # Experimental
-experimental = [
-  "experimental_pretty_cli",
-  "experimental_engine",
-  "experimental_auth",
-  "experimental_discovery",
-  "experimental_history",
-]
 experimental_pretty_cli = ["dep:termimad", "dep:clap-help"]
-experimental_engine = []
-experimental_auth = []
-experimental_discovery = []
-experimental_history = []

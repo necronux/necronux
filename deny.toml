@@ -18,13 +18,12 @@ feature-depth = 1
 db-path = "~/.cargo/advisory-db"
 db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "warn"
-ignore = ["RUSTSEC-2024-0436"]
+unmaintained = "workspace"
 
 [licenses]
 allow = ["GPL-3.0", "Apache-2.0", "MIT", "Unicode-3.0", "MPL-2.0"]
 confidence-threshold = 0.8
 exceptions = []
-
 
 [licenses.private]
 ignore = false
