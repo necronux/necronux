@@ -40,7 +40,7 @@ If you really want to install from source (though this is not recommended), see 
 
 ## Getting Help
 
-See https://necronux.nayanpatil.space/community for a list of chat platforms and forums.
+See https://www.necronux.net/community for a list of chat platforms and forums.
 
 ## Contributing
 
