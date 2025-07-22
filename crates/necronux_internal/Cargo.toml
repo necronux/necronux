@@ -28,6 +28,7 @@ workspace = true
 ###############
 # Necronux
 necronux_engine = { path = "../necronux_engine", version = "0.4.0-dev", default-features = false }
+necronux_pkg = { path = "../necronux_pkg", version = "0.4.0-dev", default-features = false }
 necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
 ################
 # OPTIONAL DEPS
@@ -43,4 +44,4 @@ necronux_log = ["dep:necronux_log"]
 cli_arg_log = ["necronux_log", "necronux_log/cli_arg_log"]
 trace = ["necronux_log", "necronux_engine/trace", "necronux_utils/trace"]
 
-schema_v0 = ["necronux_engine/schema_v0"]
+grimoire_schema_v0 = ["necronux_engine/grimoire_schema_v0"]

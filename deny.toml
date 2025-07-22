@@ -21,7 +21,17 @@ yanked = "warn"
 unmaintained = "workspace"
 
 [licenses]
-allow = ["GPL-3.0", "Apache-2.0", "MIT", "Unicode-3.0", "MPL-2.0"]
+allow = [
+  "GPL-3.0",
+  "Apache-2.0",
+  "MIT",
+  "BSD-3-Clause",
+  "Zlib",
+  "Unicode-3.0",
+  "MPL-2.0",
+  "bzip2-1.0.6",
+  "CC0-1.0",
+]
 confidence-threshold = 0.8
 exceptions = []
 

@@ -4,10 +4,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-mod connect;
+mod bind;
 mod help;
+mod status;
+mod unbind;
 mod validate;
 
-pub use connect::*;
+pub use bind::*;
 pub use help::*;
+pub use status::*;
+pub use unbind::*;
 pub use validate::*;

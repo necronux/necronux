@@ -13,6 +13,7 @@ mod run;
 
 mod handlers;
 mod subcommands;
+pub mod ui;
 
 pub use cli::*;
 pub use handlers::*;

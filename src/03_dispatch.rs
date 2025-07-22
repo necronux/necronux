@@ -4,22 +4,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::{Cli, HelpHandler};
+use crate::{Cli, HelpHandler, HelpType, SubCmd};
+use anyhow::Result;
 
 impl Cli {
-    pub fn dispatch_subcmd(&self) -> anyhow::Result<()> {
-        match &self.subcommand {
-            Some(crate::SubCmd::Connect(_)) => {
-                use anyhow::Context;
-                crate::ConnectHandler::handle_connect().context("Failed to connect")
+    pub fn dispatch_subcmd(&self) -> Result<()> {
+        match &self.shared.subcommand {
+            Some(SubCmd::Bind(bind)) => {
+                crate::BindHandler::new(bind, self.shared.progress).handle()
             }
 
-            Some(crate::SubCmd::Validate(_)) => {
-                use anyhow::Context;
-                crate::ValidateHandler::handle_validate().context("Failed to validate")
-            }
+            Some(SubCmd::Unbind(unbind)) => crate::UnbindHandler::new(unbind).handle(),
 
-            None => HelpHandler::new(crate::HelpType::RootHelp).handle(),
+            Some(SubCmd::Validate(_)) => crate::ValidateHandler::new().handle(),
+
+            Some(SubCmd::Status(status)) => crate::StatusHandler::new(status).handle(),
+
+            None => HelpHandler::new(HelpType::RootHelp).handle(),
         }
     }
 }

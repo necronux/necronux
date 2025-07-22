@@ -6,7 +6,7 @@
 
 [package]
 name = "necronux_engine"
-description = "Provides core business logic for Necronux."
+description = "Provides core engine functionality for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -28,18 +28,21 @@ workspace = true
 ###############
 # Necronux
 necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
+necronux_pkg = { path = "../necronux_pkg", version = "0.4.0-dev", default-features = false }
 # Error handling
-anyhow = { workspace = true }
+thiserror = { workspace = true }
 # Logging
 tracing = { workspace = true }
 # Parsing
 rpkl = { workspace = true }
 serde = { workspace = true }
+# Utils
+semver = { workspace = true }
 
 [features]
 ###########
 # FEATURES
 ##########
-schema_v0 = []
+grimoire_schema_v0 = []
 
 trace = []

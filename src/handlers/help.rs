@@ -11,7 +11,8 @@ use tracing::error;
 
 pub enum HelpType {
     RootHelp,
-    RepoHelp,
+    #[cfg(feature = "experimental_pretty_cli")]
+    SubcommandHelp,
 }
 
 pub struct HelpHandler {
@@ -24,10 +25,7 @@ impl HelpHandler {
     }
 
     pub fn handle(&self) -> ! {
-        match self
-            .display_help()
-            .context("Failed to display help message")
-        {
+        match self.show_help().context("Failed to show help message") {
             Ok(_) => std::process::exit(0),
             Err(err) => {
                 error!("{}", err);
@@ -36,7 +34,7 @@ impl HelpHandler {
         }
     }
 
-    pub fn display_help(&self) -> anyhow::Result<()> {
+    pub fn show_help(&self) -> anyhow::Result<()> {
         match &self.help {
             HelpType::RootHelp => {
                 #[cfg(feature = "experimental_pretty_cli")]
@@ -54,17 +52,15 @@ impl HelpHandler {
                 }
 
                 #[cfg(not(feature = "experimental_pretty_cli"))]
-                Cli::command()
-                    .print_help()
-                    .context("Failed to print 'root' help message")?;
+                Cli::command().print_help()?
             }
 
-            HelpType::RepoHelp => {
+            #[cfg(feature = "experimental_pretty_cli")]
+            HelpType::SubcommandHelp => {
                 let mut cmd = Cli::command();
-                cmd.find_subcommand_mut("repo")
-                    .context("Subcommand 'repo' not found")?
-                    .print_help()
-                    .context("Failed to print 'repo' help message")?;
+                cmd.find_subcommand_mut("subcmd_name")
+                    .ok_or_else(|| anyhow::anyhow!("Subcommand not found"))?
+                    .print_help()?
             }
         }
         Ok(())

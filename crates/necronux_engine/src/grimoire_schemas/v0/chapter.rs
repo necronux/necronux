@@ -4,25 +4,23 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
+use super::{GrimoireMetadata, Hex, Spell};
 use serde::Deserialize;
 use std::collections::HashMap;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Chapter {
-    pub name: String,
-    pub description: String,
-    pub spells: HashMap<String, Spell>,
-    pub hexes: HashMap<String, Hex>,
-}
+    #[serde(flatten)]
+    pub metadata: GrimoireMetadata,
 
-#[derive(Deserialize)]
-pub struct Spell {
     pub name: String,
-    pub description: String,
-}
 
-#[derive(Deserialize)]
-pub struct Hex {
-    pub name: String,
-    pub description: String,
+    pub description: Option<String>,
+
+    pub spells: Option<HashMap<String, Spell>>,
+
+    pub hexes: Option<HashMap<String, Hex>>,
+
+    #[serde(rename = "requiresConfirmation")]
+    pub requires_confirmation: bool,
 }

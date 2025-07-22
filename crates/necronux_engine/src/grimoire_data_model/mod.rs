@@ -4,13 +4,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-pub struct ConnectHandler;
+mod conversion;
+mod minimal_metadata;
+mod unified;
+#[cfg(feature = "grimoire_schema_v0")]
+mod v0;
 
-impl ConnectHandler {
-    pub fn handle_connect() -> anyhow::Result<()> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::info_span!("handle_connect").entered();
-
-        Ok(())
-    }
-}
+pub use conversion::*;
+pub use unified::*;

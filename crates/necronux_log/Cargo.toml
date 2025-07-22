@@ -6,7 +6,7 @@
 
 [package]
 name = "necronux_log"
-description = "Provides logging for Necronux."
+description = "Provides logging functionality for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -27,7 +27,7 @@ workspace = true
 # REQUIRED DEPS
 ###############
 # Error handling
-anyhow = { workspace = true }
+thiserror = { workspace = true }
 # Logging
 tracing = { workspace = true }
 tracing-log = { workspace = true }

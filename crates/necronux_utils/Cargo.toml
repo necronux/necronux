@@ -27,11 +27,12 @@ workspace = true
 # REQUIRED DEPS
 ###############
 # Error handling
-anyhow = { workspace = true }
+thiserror = { workspace = true }
 # Logging
 tracing = { workspace = true }
 # File system
 directories = { workspace = true }
+zip = { workspace = true }
 
 [features]
 ###########

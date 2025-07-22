@@ -4,8 +4,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-mod chapter;
-mod grimoire;
+mod minimal_metadata;
+#[cfg(feature = "grimoire_schema_v0")]
+mod v0;
+mod validator;
 
-pub use chapter::*;
-pub use grimoire::*;
+pub use validator::*;

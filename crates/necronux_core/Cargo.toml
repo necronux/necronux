@@ -33,11 +33,11 @@ necronux_internal = { path = "../necronux_internal", version = "0.4.0-dev", defa
 ###########
 # FEATURES
 ##########
-default = ["schema_v0", "necronux_log", "cli_arg_log"]
+default = ["grimoire_schema_v0", "necronux_log", "cli_arg_log"]
 full = ["default", "trace"]
 
 # Schema versioned support
-schema_v0 = ["necronux_internal/schema_v0"]
+grimoire_schema_v0 = ["necronux_internal/grimoire_schema_v0"]
 
 # Logging support
 necronux_log = ["necronux_internal/necronux_log"]
