@@ -96,15 +96,15 @@ incremental = false
 # DEPS (WORKSPACE)
 ##################
 # Error handling
-thiserror = { version = "2.0.12" }
-anyhow = { version = "1.0.98" }
+thiserror = { version = "2.0.16" }
+anyhow = { version = "1.0.99" }
 # Logging
 tracing = { version = "0.1.41", features = [
   "max_level_trace",
   "release_max_level_info",
 ] }
 tracing-log = { version = "0.2.0" }
-tracing-subscriber = { version = "0.3.19", features = ["json"] }
+tracing-subscriber = { version = "0.3.20", features = ["json"] }
 tracing-fancytree = { version = "0.1.0" }
 tracing-chrome = { version = "0.7.2" }
 # Serde and parsing
@@ -114,16 +114,16 @@ serde = { version = "1.0.219", features = ["derive"] }
 directories = { version = "6.0.0" }
 zip = { version = "4.2.0" }
 # Cli
-clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
+clap-verbosity-flag = { version = "3.0.4", default-features = false, features = [
   "tracing",
 ] }
 # Utils
-semver = { version = "1.0.26", features = ["serde"] }
+semver = { version = "1.0.27", features = ["serde"] }
 once_cell = { version = "1.21.3" }
 # Proc Macro
-syn = { version = "2.0.104", features = ["full"] }
+syn = { version = "2.0.106", features = ["full"] }
 quote = { version = "1.0.40" }
-proc-macro2 = { version = "1.0.95" }
+proc-macro2 = { version = "1.0.101" }
 
 [dependencies]
 ######################
@@ -161,7 +161,7 @@ chrono = { version = "0.4.41" }
 #####################
 # Pretty cli
 clap-help = { version = "1.4.0", optional = true }
-termimad = { version = "0.32.0", optional = true }
+termimad = { version = "0.34.0", optional = true }
 
 [features]
 ###########
