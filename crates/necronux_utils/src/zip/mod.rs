@@ -7,7 +7,3 @@
 mod extract;
 
 pub use extract::*;
-
-use crate::error::ZipError;
-
-pub type Result<T> = std::result::Result<T, ZipError>;

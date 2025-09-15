@@ -19,7 +19,3 @@ pub use permission::*;
 pub use transfer::*;
 pub use view::*;
 pub use write::*;
-
-use crate::error::FsError;
-
-pub type Result<T> = std::result::Result<T, FsError>;

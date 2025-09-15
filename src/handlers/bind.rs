@@ -4,33 +4,25 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::ValidateHandler;
-use crate::{BindSubCmd, ui};
+use crate::{
+    BindSubCmd, ValidateSubCmd,
+    theme::{self, ThemedUi},
+    utils,
+};
 use anyhow::{Context, Result, anyhow};
-use necronux_core::{engine::UnifiedGrimoire, pkg::StorageBackend};
-use tracing::info;
+use necronux::{core::UnifiedGrimoire, pkg::StorageBackend, utils::trace_instrument};
+use std::io::{stderr, stdout};
+use tracing::{error, info};
 
-pub struct BindHandler {
-    source: String,
-    force: bool,
-    progress: bool,
-}
+impl BindSubCmd {
+    #[trace_instrument(level = "info", name = "handle_bind", skip(self, theme), fields(source = %self.source, force = %self.force))]
+    pub fn handle(&self, theme: &ThemedUi) -> Result<()> {
+        info!("Handling bind request...");
+        let t0 = std::time::Instant::now();
 
-impl BindHandler {
-    pub fn new(subcmd: &BindSubCmd, progress: bool) -> Self {
-        Self {
-            source: subcmd.source.clone(),
-            force: subcmd.force,
-            progress,
-        }
-    }
-
-    pub fn handle(self) -> Result<()> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::debug_span!("handle_bind").entered();
-
-        let status = necronux_core::pkg::GrimoireBindingStatus::introspect()?;
+        let status = necronux::pkg::GrimoireBindingStatus::introspect()?;
         if status.is_bound && !self.force {
+            error!("A grimoire is already bound; skipping bind");
             return Err(anyhow!(
                 "A grimoire is already bound ({}@{}).\n\
                  Run `necronux unbind` to remove it, or use `--force` to override.",
@@ -40,105 +32,112 @@ impl BindHandler {
         }
 
         if self.force {
-            let current_grimoire_path = necronux_core::utils::paths::current_grimoire_path()?;
-            necronux_core::utils::fs::remove_dir_all_if_exists(
-                &current_grimoire_path,
-                "current grimoire",
-            )?;
+            info!("Forcing grimoire binding by unbinding any bound grimoire...");
+            crate::utils::remove_current_grimoire_dir()?;
         }
 
-        let pb = ui::msg::task_spinner_or_msg(
-            true,
-            self.progress,
-            format!(
-                "{} '{}'",
-                ui::style::progress_task("Binding grimoire from"),
-                console::style(&self.source).underlined()
-            ),
+        info!("Binding grimoire from '{}'...", &self.source);
+        let pb = task_msg!(
+            theme,
+            &mut stderr(),
+            wants_spinner: true,
+            has_steps: true,
+            ("Binding grimoire from ", theme::style::progress_task),
+            ("'", theme::style::regular),
+            (self.source.to_string(), theme::style::underlined),
+            ("'", theme::style::regular)
         )?;
-
-        let t0 = std::time::Instant::now();
-
-        let result = Self::bind_grimoire(&self.source, self.progress)
+        let result = Self::bind_grimoire(&self.source, theme)
             .with_context(|| format!("Failed to bind grimoire from '{}'", &self.source));
-
-        let grimoire = match result {
-            Ok(g) => g,
-            Err(e) => {
-                info!("Cleaning current grimoire directory as binding failed...");
-
-                let current_grimoire_path = necronux_core::utils::paths::current_grimoire_path()?;
-                necronux_core::utils::fs::remove_dir_all_if_exists(
-                    &current_grimoire_path,
-                    "current grimoire",
-                )?;
-                return Err(e);
-            }
-        };
-
         if let Some(pb) = pb {
             pb.finish();
         }
 
-        let fallback = ui::no("name");
+        let grimoire = match result {
+            Ok(g) => g,
+            Err(e) => {
+                error!("Cleaning current grimoire directory as binding failed...");
+                crate::utils::remove_current_grimoire_dir()?;
+                return Err(e);
+            }
+        };
+
         let name = grimoire
             .grimoire_metadata
             .as_ref()
             .and_then(|meta| meta.grimoire_name.as_deref())
-            .unwrap_or(&fallback);
+            .map(|s| s.to_string())
+            .unwrap_or(utils::missing_field_placeholder("name"));
 
-        let elapsed = t0.elapsed();
-        let elapsed_fmt = ui::format_duration(elapsed);
-
-        println!(
-            "{} {} ({}) — {} {}",
-            ui::symbol::success(),
-            ui::style::success("Grimoire bound"),
-            ui::style::elapsed_time(&elapsed_fmt),
-            console::style(name).bold(),
-            console::style("is ready for use").dim(),
-        );
-
-        Ok(())
+        {
+            let elapsed = t0.elapsed();
+            let elapsed_fmt = crate::utils::format_duration(elapsed);
+            info!(
+                elapsed_secs = elapsed.as_secs_f64(),
+                "Successfully bound grimoire '{}' from '{}'", name, &self.source
+            );
+            result_success_msg!(
+                theme,
+                &mut stdout(),
+                Some(json_obj!(
+                    "grimoire_name" => name.clone(),
+                    "bind_elapsed" => elapsed_fmt.clone(),
+                    "bind_elapsed_secs" => elapsed.as_secs_f64(),
+                )),
+                ("Grimoire bound ", theme::style::success),
+                ("(", theme::style::regular),
+                (elapsed_fmt.to_string(), theme::style::elapsed_time),
+                (") - ", theme::style::regular),
+                (name.to_string(), theme::style::bold),
+                (" is ready for use", theme::style::dim),
+            )?;
+            Ok(())
+        }
     }
 
-    fn bind_grimoire(source: &str, progress: bool) -> Result<UnifiedGrimoire> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::debug_span!("bind_grimoire", source = source).entered();
-
-        ui::msg::step_msg(
-            progress,
-            ui::style::progress_step("Resolving storage backend...").to_string(),
+    #[trace_instrument(level = "info", skip(theme), fields(source = %source))]
+    fn bind_grimoire(source: &str, theme: &ThemedUi) -> Result<UnifiedGrimoire> {
+        step_msg!(
+            theme,
+            &mut stderr(),
+            wants_spinner: false,
+            ("Resolving storage backend...", theme::style::progress_step),
         )?;
-        let storage_backend = necronux_core::pkg::resolve_storage_backend(source)?;
+        let storage_backend = necronux::pkg::resolve_storage_backend(source)?;
 
-        let pb = ui::msg::step_spinner(
-            progress,
-            ui::style::progress_step("Fetching grimoire...").to_string(),
+        let pb = step_msg!(
+            theme,
+            &mut stderr(),
+            wants_spinner: true,
+            ("Fetching grimoire...", theme::style::progress_step),
         )?;
         let fetched = storage_backend.fetch(source)?;
         if let Some(pb) = pb {
             pb.finish();
         }
 
-        ui::msg::step_msg(
-            progress,
-            ui::style::progress_step("Extracting grimoire...").to_string(),
+        step_msg!(
+            theme,
+            &mut stderr(),
+            wants_spinner: false,
+            ("Extracting grimoire...", theme::style::progress_step),
         )?;
-        let current_grimoire_path = necronux_core::utils::paths::current_grimoire_path()?;
+        let current_grimoire_path = necronux::utils::paths::current_grimoire_path()?;
         let extraction_path = current_grimoire_path.join(&fetched.package_name);
-        necronux_core::utils::zip::extract_zip_if_exists(
+        necronux::utils::zip::extract_zip(
             &fetched.fetched_package_zip_path,
             "fetched grimoire package",
             &extraction_path,
         )?;
 
-        let pb = ui::msg::step_spinner(
-            progress,
-            ui::style::progress_step("Validating grimoire...").to_string(),
+        let pb = step_msg!(
+            theme,
+            &mut stderr(),
+            wants_spinner: true,
+            ("Validating grimoire...", theme::style::progress_step),
         )?;
         let grimoire =
-            ValidateHandler::validate_grimoire().context("Failed to validate grimoire")?;
+            ValidateSubCmd::validate_grimoire().context("Failed to validate grimoire")?;
         if let Some(pb) = pb {
             pb.finish();
         }

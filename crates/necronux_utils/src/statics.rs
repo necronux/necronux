@@ -5,8 +5,6 @@
 // ==-----------------------------------------------------------== //
 
 pub static INTRO: &str = "
-A robust meta-orchestrator for elegantly managing automation tools,
-scripts, and configurations through an extensible architecture
-cultivating *peace of mind*.";
+An elegantly reliable meta-orchestrator for composable, portable, robust, and worry-free system automation.";
 
 pub static TITLE: &str = "# **${name}**";

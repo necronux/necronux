@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-pub use necronux_engine as engine;
+pub use necronux_core as core;
 #[cfg(feature = "necronux_log")]
 pub use necronux_log as log;
 pub use necronux_pkg as pkg;

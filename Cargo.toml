@@ -5,12 +5,12 @@
 # ==----------------------------------------------------------------== #
 
 [package]
-name = "necronux"
+name = "necronux_cli"
 version = "0.4.0-dev"
 authors = ["Nayan (NayanTheSpaceGuy) <nayantsg@proton.me>"]
 edition = "2024"
 rust-version = "1.85.0"
-description = "A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture cultivating peace of mind."
+description = "Provides Command-line interface for the Necronux meta-orchestration engine."
 readme = "README.md"
 homepage = "https://www.necronux.net"
 repository = "https://github.com/necronux/necronux"
@@ -38,6 +38,10 @@ exclude = [
 ]
 publish = true
 default-run = "necronux"
+
+[[bin]]
+name = "necronux"
+path = "src/bin/necronux_cli.rs"
 
 [workspace]
 resolver = "2"
@@ -92,34 +96,41 @@ incremental = false
 # DEPS (WORKSPACE)
 ##################
 # Error handling
-thiserror = "2.0.12"
-anyhow = "1.0.98"
+thiserror = { version = "2.0.12" }
+anyhow = { version = "1.0.98" }
 # Logging
 tracing = { version = "0.1.41", features = [
   "max_level_trace",
   "release_max_level_info",
 ] }
-tracing-log = "0.2.0"
-tracing-subscriber = "0.3.19"
+tracing-log = { version = "0.2.0" }
+tracing-subscriber = { version = "0.3.19", features = ["json"] }
+tracing-fancytree = { version = "0.1.0" }
+tracing-chrome = { version = "0.7.2" }
 # Serde and parsing
-rpkl = "0.5.0"
+rpkl = { version = "0.5.0" }
 serde = { version = "1.0.219", features = ["derive"] }
 # File system
-directories = "6.0.0"
-zip = "4.2.0"
+directories = { version = "6.0.0" }
+zip = { version = "4.2.0" }
 # Cli
 clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
   "tracing",
 ] }
 # Utils
 semver = { version = "1.0.26", features = ["serde"] }
+once_cell = { version = "1.21.3" }
+# Proc Macro
+syn = { version = "2.0.104", features = ["full"] }
+quote = { version = "1.0.40" }
+proc-macro2 = { version = "1.0.95" }
 
 [dependencies]
 ######################
 # REQUIRED DEPS (BIN)
 #####################
 # Necronux
-necronux_core = { path = "crates/necronux_core", version = "0.4.0-dev", default-features = false }
+necronux = { path = "crates/necronux", version = "0.4.0-dev", default-features = false }
 # Error handling
 anyhow = "1.0.98"
 # Logging
@@ -137,10 +148,14 @@ clap = { version = "4.5.37", features = [
 clap-verbosity-flag = { version = "3.0.2", default-features = false, features = [
   "tracing",
 ] }
-console = "0.16.0"
-indicatif = "0.18.0"
-# Performance
-once_cell = "1.21.3"
+console = { version = "0.16.0" }
+indicatif = { version = "0.18.0", features = ["rayon", "improved_unicode"] }
+serde_json = { version = "1.0.142" }
+# Utils
+once_cell = { version = "1.21.3" }
+sysinfo = { version = "0.36.1" }
+sys-locale = { version = "0.3.2" }
+chrono = { version = "0.4.41" }
 ######################
 # OPTIONAL DEPS (BIN)
 #####################
@@ -152,19 +167,17 @@ termimad = { version = "0.32.0", optional = true }
 ###########
 # FEATURES
 ##########
-default = ["grimoire_schema_v0", "necronux_log", "cli_arg_log"]
+default = ["grimoire_schema_v0", "necronux_log"]
 experimental = ["experimental_pretty_cli"]
 full = ["default", "experimental", "trace"]
 
 # Schema versioned support
-grimoire_schema_v0 = ["necronux_core/grimoire_schema_v0"]
+grimoire_schema_v0 = ["necronux/grimoire_schema_v0"]
 
 # Logging support
-necronux_log = ["necronux_core/necronux_log"]
+necronux_log = ["necronux/necronux_log"]
 # Tracing support
-trace = ["necronux_core/trace"]
-# Verbosity from cli arg support
-cli_arg_log = ["necronux_core/cli_arg_log"]
+trace = ["necronux/trace"]
 
 # Experimental
 experimental_pretty_cli = ["dep:termimad", "dep:clap-help"]

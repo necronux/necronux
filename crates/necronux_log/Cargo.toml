@@ -26,20 +26,15 @@ workspace = true
 ################
 # REQUIRED DEPS
 ###############
+# Necronux
+necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
 # Error handling
 thiserror = { workspace = true }
 # Logging
 tracing = { workspace = true }
 tracing-log = { workspace = true }
 tracing-subscriber = { workspace = true }
-################
-# OPTIONAL DEPS
-###############
-# Cli arg
-clap-verbosity-flag = { workspace = true, optional = true }
-
-[features]
-###########
-# FEATURES
-##########
-cli_arg_log = ["dep:clap-verbosity-flag"]
+tracing-chrome = { workspace = true }
+tracing-fancytree = { workspace = true }
+# Utils
+once_cell = { workspace = true }

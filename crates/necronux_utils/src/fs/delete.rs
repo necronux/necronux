@@ -4,44 +4,40 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::Result;
-use crate::{error::FsError, string::capitalize_first};
-use std::path::Path;
-use tracing::{debug, warn};
+use crate::error::{FsError, FsTarget};
+use necronux_macros::trace_instrument;
+use std::{path::Path, result as stdrt};
+use tracing::debug;
 
-pub fn remove_dir_all_if_exists(path: &Path, label: &str) -> Result<()> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("remove_dir_all", label = label).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display()))]
+pub fn remove_dir_all(path: &Path, label: &str) -> stdrt::Result<(), FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        "Attempting to delete directory...",
+    );
 
-    if !super::path_exists(path, label)? {
-        debug!(
-            "Nothing to delete as {label} directory does not exist at '{}'",
-            path.display()
-        );
-        return Ok(());
-    }
-
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("remove_dir_all_op", label = label).entered();
     match std::fs::remove_dir_all(path) {
         Ok(_) => {
             debug!(
-                "Successfully deleted {label} directory at '{}'",
-                path.display()
+                label = %label,
+                path = %path.display(),
+                "Successfully deleted directory",
             );
             Ok(())
         }
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
-            warn!(
-                "{} was expected to exist but not found at '{}'",
-                capitalize_first(label),
-                path.display()
+            debug!(
+                label = %label,
+                path = %path.display(),
+                "No deletion needed as directory does not exist",
             );
             Ok(())
         }
-        Err(e) => Err(FsError::RemoveDirError {
+        Err(e) => Err(FsError::RemoveError {
             label: label.to_string(),
             path: path.to_path_buf(),
+            target: FsTarget::Directory,
             source: e,
         }),
     }

@@ -5,35 +5,51 @@
 // ==-----------------------------------------------------------== //
 
 use super::{LocalBackend, StorageBackend, StorageBackendKind};
-use crate::error::{PkgError, Result};
-use tracing::{debug, info};
+use crate::error::{PkgError, ResolveStorageBackendError as ResStorBackError};
+use necronux_utils::trace_instrument;
+use std::result as stdrt;
+use tracing::debug;
 
-pub fn resolve_storage_backend(source: &str) -> Result<StorageBackendKind> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("resolve_storage_backend", source = source).entered();
+#[trace_instrument(level = "debug", fields(source = %source))]
+pub fn resolve_storage_backend(source: &str) -> stdrt::Result<StorageBackendKind, PkgError> {
+    debug!(
+        source = %source,
+        "Resolving storage backend for the grimoire package source..."
+    );
 
-    info!("Resolving storage backend...");
-
-    fn resolve_storage_backend_inner(source: &str) -> Result<StorageBackendKind> {
+    fn resolve_storage_backend_inner(
+        source: &str,
+    ) -> stdrt::Result<StorageBackendKind, ResStorBackError> {
         let backends = [StorageBackendKind::Local(LocalBackend {})];
 
         for backend in backends {
-            if backend.supports(source)? {
-                debug!(
-                    "Found supported storage backend '{}' for the grimoire package source: {source}",
-                    backend.name(),
-                );
+            if backend.supports(source).map_err(|e| {
+                ResStorBackError::SupportsStorageBackendCheckError {
+                    package_zip_source: source.to_string(),
+                    source: Box::new(e),
+                }
+            })? {
                 return Ok(backend);
             }
         }
 
-        Err(PkgError::UnsupportedGrimoirePackageSource {
+        Err(ResStorBackError::UnsupportedGrimoirePackageSourceError {
             package_zip_source: source.to_string(),
         })
     }
 
-    resolve_storage_backend_inner(source).map_err(|e| PkgError::ResolveStorageBackendError {
-        package_zip_source: source.to_string(),
-        source: Box::new(e),
-    })
+    let backend = resolve_storage_backend_inner(source).map_err(|e| {
+        PkgError::ResolveStorageBackendError {
+            package_zip_source: source.to_string(),
+            source: Box::new(e),
+        }
+    })?;
+
+    debug!(
+        backend = %backend.name(),
+        source = %source,
+        "Successfully resolved storage backend '{}' for the grimoire package source",
+        backend.name()
+    );
+    Ok(backend)
 }

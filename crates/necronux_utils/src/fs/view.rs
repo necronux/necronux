@@ -4,91 +4,116 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::Result;
-use crate::error::FsError;
-use std::{fs::File, path::Path};
+use crate::error::{FsError, FsTarget};
+use necronux_macros::trace_instrument;
+use std::{
+    fs::{File, ReadDir},
+    path::Path,
+    result as stdrt,
+};
 use tracing::debug;
 
-pub fn open_file_if_exists(path: &Path, label: &str) -> Result<File> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("open_file", label = label).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display()))]
+pub fn open_file(path: &Path, label: &str) -> stdrt::Result<File, FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        "Attempting to open file..."
+    );
 
-    if !super::path_exists(path, label)? {
-        return Err(FsError::OpenFileError {
+    match std::fs::File::open(path) {
+        Ok(file) => {
+            debug!(
+                label = %label,
+                path = %path.display(),
+                "Successfully opened file"
+            );
+            Ok(file)
+        }
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::OpenError {
             label: label.to_string(),
             path: path.to_path_buf(),
+            target: FsTarget::File,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
                 "Path does not exist when attempting to open file",
             ),
-        });
+        }),
+        Err(e) => Err(FsError::OpenError {
+            path: path.to_path_buf(),
+            label: label.to_string(),
+            target: FsTarget::File,
+            source: e,
+        }),
     }
-
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("open_file_op", label = label).entered();
-    let file = std::fs::File::open(path).map_err(|e| FsError::OpenFileError {
-        path: path.to_path_buf(),
-        label: label.to_string(),
-        source: e,
-    })?;
-    debug!("Successfully opened {label} file at '{}'", path.display());
-    Ok(file)
 }
 
-pub fn read_to_string_if_exists(path: &Path, label: &str) -> Result<String> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("read_to_string", label = label).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display()))]
+pub fn read_to_string(path: &Path, label: &str) -> stdrt::Result<String, FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        "Attempting to read contents of file...",
+    );
 
-    if !super::path_exists(path, label)? {
-        return Err(FsError::ReadToStringError {
+    match std::fs::read_to_string(path) {
+        Ok(contents) => {
+            debug!(
+                label = %label,
+                path = %path.display(),
+                "Successfully read contents of file",
+            );
+            Ok(contents)
+        }
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::ReadError {
             label: label.to_string(),
             path: path.to_path_buf(),
+            target: FsTarget::File,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                "Path does not exist when attempting to read to string",
+                "Path does not exist when attempting to read contents of file",
             ),
-        });
+        }),
+        Err(e) => Err(FsError::ReadError {
+            path: path.to_path_buf(),
+            label: label.to_string(),
+            target: FsTarget::File,
+            source: e,
+        }),
     }
-
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("read_to_string_op", label = label).entered();
-    let contents = std::fs::read_to_string(path).map_err(|e| FsError::ReadToStringError {
-        path: path.to_path_buf(),
-        label: label.to_string(),
-        source: e,
-    })?;
-    debug!(
-        "Successfully read to string {label} file at '{}'",
-        path.display()
-    );
-    Ok(contents)
 }
 
-pub fn read_dir_if_exists(path: &Path, label: &str) -> Result<std::fs::ReadDir> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("read_dir", label = label).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display()))]
+pub fn read_dir(path: &Path, label: &str) -> stdrt::Result<ReadDir, FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        "Attempting to read contents of directory...",
+    );
 
-    if !super::path_exists(path, label)? {
-        return Err(FsError::ReadDirError {
+    match std::fs::read_dir(path) {
+        Ok(iterator) => {
+            debug!(
+                label = %label,
+                path = %path.display(),
+                "Successfully read contents of directory",
+            );
+            Ok(iterator)
+        }
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::ReadError {
             label: label.to_string(),
             path: path.to_path_buf(),
+            target: FsTarget::Directory,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                "Path does not exist when attempting to read directory",
+                "Path does not exist when attempting to read contents of directory",
             ),
-        });
+        }),
+        Err(e) => Err(FsError::ReadError {
+            path: path.to_path_buf(),
+            label: label.to_string(),
+            target: FsTarget::Directory,
+            source: e,
+        }),
     }
-
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("read_dir_op", label = label).entered();
-    let iterator = std::fs::read_dir(path).map_err(|e| FsError::ReadDirError {
-        path: path.to_path_buf(),
-        label: label.to_string(),
-        source: e,
-    })?;
-    debug!(
-        "Successfully read {label} directory at '{}'",
-        path.display()
-    );
-    Ok(iterator)
 }

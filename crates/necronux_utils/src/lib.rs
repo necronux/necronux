@@ -11,3 +11,5 @@ pub mod paths;
 pub mod statics;
 pub mod string;
 pub mod zip;
+
+pub use necronux_macros::*;

@@ -4,8 +4,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{PkgError, Result};
-use std::path::PathBuf;
+use crate::error::{IntrospectGrimoireBindingStatusError as IntroGrimBindStatError, PkgError};
+use necronux_utils::trace_instrument;
+use std::{path::PathBuf, result as stdrt};
 use tracing::{debug, info, warn};
 
 #[derive(Debug)]
@@ -17,13 +18,11 @@ pub struct GrimoireBindingStatus {
 }
 
 impl GrimoireBindingStatus {
-    pub fn introspect() -> Result<Self> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::debug_span!("introspect_grimoire_binding_status").entered();
+    #[trace_instrument(level = "debug", name = "GrimoireBindingStatus::introspect")]
+    pub fn introspect() -> stdrt::Result<Self, PkgError> {
+        debug!("Introspecting grimoire binding status...");
 
-        info!("Introspecting grimoire binding status...",);
-
-        fn introspect_inner() -> Result<GrimoireBindingStatus> {
+        fn introspect_inner() -> stdrt::Result<GrimoireBindingStatus, IntroGrimBindStatError> {
             let mut status = GrimoireBindingStatus {
                 is_bound: false,
                 package_name: None,
@@ -39,7 +38,7 @@ impl GrimoireBindingStatus {
                 }
             };
 
-            let entries = match necronux_utils::fs::read_dir_if_exists(&dir, "current grimoire") {
+            let entries = match necronux_utils::fs::read_dir(&dir, "current grimoire") {
                 Ok(e) => e,
                 Err(e) => {
                     info!("{e}");
@@ -61,10 +60,7 @@ impl GrimoireBindingStatus {
                 }
                 1 => {}
                 _ => {
-                    warn!(
-                        "Multiple .zip files found in current grimoire directory: {:?}",
-                        zip_paths
-                    );
+                    warn!("Multiple .zip files found in current grimoire directory: {zip_paths:?}",);
                     return Ok(status);
                 }
             }
@@ -72,36 +68,45 @@ impl GrimoireBindingStatus {
             let zip_path = &zip_paths[0];
 
             let Some(file_name) = zip_path.file_name().and_then(|f| f.to_str()) else {
-                warn!("Zip filename is not valid UTF-8: '{zip_path:?}'");
+                warn!(
+                    zip_file_name = %zip_path.display(),
+                    "Zip filename is not valid UTF-8"
+                );
                 return Ok(status);
             };
 
             let Some(stem) = file_name.strip_suffix(".zip") else {
-                warn!("Zip file does not have a '.zip' extension: {file_name}");
+                warn!(
+                    zip_file_name = %zip_path.display(),
+                    "Zip file does not have a '.zip' extension"
+                );
                 return Ok(status);
             };
 
             let Some((name, ver)) = stem.split_once('@') else {
-                warn!("Zip filename is not in '<name>@<version>.zip' format: {file_name}");
+                warn!(
+                    zip_file_name = %zip_path.display(),
+                    "Zip filename is not in '<name>@<version>.zip' format"
+                );
                 return Ok(status);
             };
 
             let extracted_dir = dir.join(name);
             let grimoire_file = extracted_dir.join("necronux.grimoire");
 
-            if grimoire_file.exists() {
+            if necronux_utils::fs::path_exists(&grimoire_file, "grimoire file")? {
                 status.is_bound = true;
                 status.package_name = Some(name.to_string());
                 status.package_version = Some(ver.to_string());
-                status.grimoire_path = Some(grimoire_file.to_path_buf());
+                status.grimoire_path = Some(grimoire_file);
             }
-
-            debug!("Successfully introspected grimoire binding status",);
             Ok(status)
         }
 
-        introspect_inner().map_err(|e| PkgError::IntrospectGrimoireBindingStatusError {
-            source: Box::new(e),
-        })
+        let status = introspect_inner()
+            .map_err(|e| PkgError::IntrospectGrimoireBindingStatusError { source: e })?;
+
+        debug!("Successfully introspected grimoire binding status");
+        Ok(status)
     }
 }

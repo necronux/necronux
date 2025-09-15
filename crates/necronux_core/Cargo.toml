@@ -6,7 +6,7 @@
 
 [package]
 name = "necronux_core"
-description = "The Necronux Core Library."
+description = "Provides core engine functionality for Necronux."
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -27,21 +27,22 @@ workspace = true
 # REQUIRED DEPS
 ###############
 # Necronux
-necronux_internal = { path = "../necronux_internal", version = "0.4.0-dev", default-features = false }
+necronux_utils = { path = "../necronux_utils", version = "0.4.0-dev", default-features = false }
+necronux_pkg = { path = "../necronux_pkg", version = "0.4.0-dev", default-features = false }
+# Error handling
+thiserror = { workspace = true }
+# Logging
+tracing = { workspace = true }
+# Parsing
+rpkl = { workspace = true }
+serde = { workspace = true }
+# Utils
+semver = { workspace = true }
 
 [features]
 ###########
 # FEATURES
 ##########
-default = ["grimoire_schema_v0", "necronux_log", "cli_arg_log"]
-full = ["default", "trace"]
+grimoire_schema_v0 = []
 
-# Schema versioned support
-grimoire_schema_v0 = ["necronux_internal/grimoire_schema_v0"]
-
-# Logging support
-necronux_log = ["necronux_internal/necronux_log"]
-# Verbosity from cli arg support
-cli_arg_log = ["necronux_internal/cli_arg_log"]
-# Tracing support
-trace = ["necronux_internal/trace"]
+trace = []

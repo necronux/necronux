@@ -1,0 +1,43 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #A
+
+[lib]
+proc-macro = true
+
+[package]
+name = "necronux_macros"
+description = "A collection of macros for Necronux."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+################
+# REQUIRED DEPS
+###############
+# Logging
+tracing = { workspace = true }
+# Proc macro
+syn = { workspace = true }
+quote = { workspace = true }
+proc-macro2 = { workspace = true }
+
+[features]
+###########
+# FEATURES
+##########
+trace = []

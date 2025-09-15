@@ -7,7 +7,3 @@
 mod transfer;
 
 pub use transfer::*;
-
-use crate::error::IoError;
-
-pub type Result<T> = std::result::Result<T, IoError>;

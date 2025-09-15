@@ -4,20 +4,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::Result;
-use crate::error::FsError;
-use std::path::Path;
+use crate::error::{FsError, FsTarget};
+use necronux_macros::trace_instrument;
+use std::{path::Path, result as stdrt};
 use tracing::debug;
 
-pub fn write(path: &Path, label: &str, content: String) -> Result<()> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("write", label = label).entered();
+#[trace_instrument(level = "debug", skip(content), fields(label = %label, path = %path.display()))]
+pub fn write(path: &Path, label: &str, content: String) -> stdrt::Result<(), FsError> {
+    debug!("Attempting to write {label} at '{}'", path.display());
 
-    std::fs::write(path, content).map_err(|e| FsError::WriteFileError {
+    std::fs::write(path, content).map_err(|e| FsError::WriteError {
         label: label.to_string(),
         path: path.to_path_buf(),
+        target: FsTarget::File,
         source: e,
     })?;
+
     debug!("Successfully wrote {label} at '{}'", path.display());
     Ok(())
 }

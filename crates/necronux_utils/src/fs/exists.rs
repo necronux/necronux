@@ -4,24 +4,33 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::Result;
-use crate::{error::FsError, string::capitalize_first};
+use crate::error::FsError;
+use necronux_macros::trace_instrument;
+use std::{path::Path, result as stdrt};
 use tracing::debug;
 
-pub fn path_exists(path: &std::path::Path, label: &str) -> Result<bool> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("path_exists", label = label).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display()))]
+pub fn path_exists(path: &Path, label: &str) -> stdrt::Result<bool, FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        "Checking path existence..."
+    );
 
     match path.try_exists() {
         Ok(true) => {
-            debug!("{} exists at '{}'", capitalize_first(label), path.display());
+            debug!(
+                label = %label,
+                path = %path.display(),
+                "Path exists"
+            );
             Ok(true)
         }
         Ok(false) => {
             debug!(
-                "{} does not exist at '{}'",
-                capitalize_first(label),
-                path.display()
+                label = %label,
+                path = %path.display(),
+                "Path does not exist",
             );
             Ok(false)
         }
@@ -33,26 +42,44 @@ pub fn path_exists(path: &std::path::Path, label: &str) -> Result<bool> {
     }
 }
 
-pub fn file_exists(path: &std::path::Path, label: &str) -> Result<bool> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("file_exists", label = label).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display()))]
+pub fn file_exists(path: &Path, label: &str) -> stdrt::Result<bool, FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        "Checking if file exists..."
+    );
 
-    match path.is_file() {
-        true => {
-            debug!(
-                "{} exists at '{}' and is a valid file",
-                capitalize_first(label),
-                path.display()
-            );
-            Ok(true)
+    match std::fs::metadata(path) {
+        Ok(metadata) => {
+            if metadata.is_file() {
+                debug!(
+                    label = %label,
+                    path = %path.display(),
+                    "Path exists and is a valid file",
+                );
+                Ok(true)
+            } else {
+                debug!(
+                    label = %label,
+                    path = %path.display(),
+                    "Path exists but is not a valid file",
+                );
+                Ok(false)
+            }
         }
-        false => {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
             debug!(
-                "{} does not exist at '{}' or is not a valid file",
-                capitalize_first(label),
-                path.display()
+                label = %label,
+                path = %path.display(),
+                "Path does not exist",
             );
             Ok(false)
         }
+        Err(e) => Err(FsError::CheckPathExistsError {
+            label: label.to_string(),
+            path: path.to_path_buf(),
+            source: e,
+        }),
     }
 }

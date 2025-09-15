@@ -4,9 +4,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{PkgError, Result};
-use std::path::PathBuf;
-use tracing::{debug, info, warn};
+use crate::error::{IntrospectCurrentGrimoireError as IntroCurGrimError, PkgError};
+use necronux_utils::trace_instrument;
+use std::{path::PathBuf, result as stdrt};
+use tracing::{debug, warn};
 
 #[derive(Debug)]
 pub struct CurrentGrimoireInfo {
@@ -16,17 +17,15 @@ pub struct CurrentGrimoireInfo {
 }
 
 impl CurrentGrimoireInfo {
-    pub fn introspect() -> Result<Self> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::debug_span!("introspect_current_grimoire").entered();
+    #[trace_instrument(level = "debug", name = "CurrentGrimoireInfo::introspect")]
+    pub fn introspect() -> stdrt::Result<Self, PkgError> {
+        debug!("Introspecting current grimoire...");
 
-        info!("Introspecting current grimoire...",);
-
-        fn introspect_inner() -> Result<CurrentGrimoireInfo> {
+        fn introspect_inner() -> stdrt::Result<CurrentGrimoireInfo, IntroCurGrimError> {
             let dir = necronux_utils::paths::current_grimoire_path()?;
-            let entries = necronux_utils::fs::read_dir_if_exists(&dir, "current grimoire")?;
-            let mut zips = Vec::new();
+            let entries = necronux_utils::fs::read_dir(&dir, "current grimoire")?;
 
+            let mut zips = Vec::new();
             for entry in entries {
                 match entry {
                     Ok(en) => {
@@ -34,19 +33,25 @@ impl CurrentGrimoireInfo {
                         if let Some(ext) = path.extension() {
                             if ext == "zip" {
                                 zips.push(en);
+                                if zips.len() > 1 {
+                                    return Err(IntroCurGrimError::MultipleZipsError { path: dir });
+                                }
                             }
                         }
                     }
                     Err(err) => {
-                        warn!("Skipping directory entry due to error: {err}");
+                        warn!(error = %err, "Skipping directory entry due to error");
                     }
                 }
             }
 
             let zip_entry = match zips.len() {
-                0 => return Err(PkgError::NoZipFound),
-                1 => zips.into_iter().next().ok_or(PkgError::NoZipFound)?,
-                _ => return Err(PkgError::MultipleZips),
+                0 => return Err(IntroCurGrimError::NoZipFoundError { path: dir }),
+                1 => zips
+                    .into_iter()
+                    .next()
+                    .ok_or(IntroCurGrimError::NoZipFoundError { path: dir })?,
+                _ => return Err(IntroCurGrimError::MultipleZipsError { path: dir }),
             };
 
             let zip_path = zip_entry.path();
@@ -54,27 +59,26 @@ impl CurrentGrimoireInfo {
             let file_name = zip_path
                 .file_name()
                 .and_then(|f| f.to_str())
-                .ok_or_else(|| PkgError::NonUtf8FileName {
+                .ok_or_else(|| IntroCurGrimError::NonUtf8FileNameError {
                     path: zip_path.to_path_buf(),
                 })?;
 
-            let stem =
-                file_name
-                    .strip_suffix(".zip")
-                    .ok_or_else(|| PkgError::MissingZipExtension {
-                        file_name: file_name.to_string(),
-                    })?;
+            let stem = file_name.strip_suffix(".zip").ok_or_else(|| {
+                IntroCurGrimError::MissingZipExtensionError {
+                    file_name: file_name.to_string(),
+                }
+            })?;
 
-            let (package_name, version) =
-                stem.split_once('@')
-                    .ok_or_else(|| PkgError::InvalidZipFileNameFormat {
-                        file_name: file_name.to_string(),
-                    })?;
+            let (package_name, version) = stem.split_once('@').ok_or_else(|| {
+                IntroCurGrimError::InvalidZipFileNameFormatError {
+                    file_name: file_name.to_string(),
+                }
+            })?;
 
             if package_name.is_empty() || version.is_empty() {
-                Err(PkgError::InvalidZipFileNameFormat {
+                return Err(IntroCurGrimError::InvalidZipFileNameFormatError {
                     file_name: file_name.to_string(),
-                })?
+                });
             }
 
             let info = CurrentGrimoireInfo {
@@ -82,16 +86,16 @@ impl CurrentGrimoireInfo {
                 package_version: version.to_string(),
                 fetched_package_zip_path: zip_path.to_path_buf(),
             };
-
-            debug!(
-                "Successfully introspected current grimoire at '{}'",
-                zip_path.display(),
-            );
             Ok(info)
         }
 
-        introspect_inner().map_err(|e| PkgError::IntrospectCurrentGrimoireError {
-            source: Box::new(e),
-        })
+        let info = introspect_inner()
+            .map_err(|e| PkgError::IntrospectCurrentGrimoireError { source: e })?;
+
+        debug!(
+            fetched_package_zip_path = %info.fetched_package_zip_path.display(),
+            "Successfully introspected current grimoire",
+        );
+        Ok(info)
     }
 }

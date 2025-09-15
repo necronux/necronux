@@ -10,7 +10,7 @@
 
 # Necronux
 
-A robust meta-orchestrator for elegantly managing automation tools, scripts, and configurations through an extensible architecture cultivating peace of mind.
+An elegantly reliable meta-orchestration engine for composable, portable, robust, and worry-free system automation.
 
 [Website][Necronux] | [Getting Started] | [Learn] | [Documentation] | [Contributing]
 </div>
@@ -24,9 +24,10 @@ A robust meta-orchestrator for elegantly managing automation tools, scripts, and
 ## Why Necronux?
 
 - **Reliability**
+- **Reversibility**
+- **Tool‑agnostic**
 - **Peace of Mind**
 - **Productivity**
-- **Performance**
 
 ## Quick Start
 
@@ -80,7 +81,7 @@ See [GPL-3.0-or-later.txt], [Apache-2.0.txt], [CC-BY-SA-4.0.txt], and [COPYRIGHT
 ## Statuses
 [![License](https://img.shields.io/badge/license-GPLv3.0%2B-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0.html)
 [![Version](https://img.shields.io/github/v/release/necronux/necronux?color=blue&label=Latest%20Release&style=for-the-badge)](https://github.com/necronux/necronux/releases/latest)
-[![Crates.io](https://img.shields.io/crates/v/necronux.svg?style=for-the-badge)](https://crates.io/crates/necronux)
-[![Downloads](https://img.shields.io/crates/d/necronux.svg?style=for-the-badge)](https://crates.io/crates/necronux)
+[![Crates.io](https://img.shields.io/crates/v/necronux_cli.svg?style=for-the-badge)](https://crates.io/crates/necronux_cli)
+[![Downloads](https://img.shields.io/crates/d/necronux_cli.svg?style=for-the-badge)](https://crates.io/crates/necronux_cli)
 ![Last Commit](https://img.shields.io/github/last-commit/necronux/necronux?style=for-the-badge)
 ![Repo Size](https://img.shields.io/github/repo-size/necronux/necronux?style=for-the-badge)

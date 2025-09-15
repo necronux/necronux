@@ -1,0 +1,45 @@
+# ==-----------------------------------------------------------== #
+# SPDX-FileCopyrightText: © 2025 Nayan Patil <nayantsg@proton.me>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+# ==-----------------------------------------------------------== #
+
+[package]
+name = "necronux"
+description = "An elegantly reliable meta-orchestration engine for composable, portable, robust, and worry-free system automation."
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+readme = "README.md"
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+################
+# REQUIRED DEPS
+###############
+# Necronux
+necronux_internal = { path = "../necronux_internal", version = "0.4.0-dev", default-features = false }
+
+[features]
+###########
+# FEATURES
+##########
+default = ["grimoire_schema_v0", "necronux_log"]
+full = ["default", "trace"]
+
+# Schema versioned support
+grimoire_schema_v0 = ["necronux_internal/grimoire_schema_v0"]
+
+# Logging support
+necronux_log = ["necronux_internal/necronux_log"]
+# Tracing support
+trace = ["necronux_internal/trace"]

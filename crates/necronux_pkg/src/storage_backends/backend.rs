@@ -5,8 +5,8 @@
 // ==-----------------------------------------------------------== //
 
 use super::LocalBackend;
-use crate::error::Result;
-use std::path::PathBuf;
+use crate::error::{PkgError, SupportsStorageBackendCheckError};
+use std::{path::PathBuf, result as stdrt};
 
 pub struct FetchedGrimoire {
     pub package_name: String,
@@ -19,9 +19,9 @@ pub struct FetchedGrimoire {
 pub trait StorageBackend {
     fn name(&self) -> &str;
 
-    fn supports(&self, source: &str) -> Result<bool>;
+    fn supports(&self, source: &str) -> stdrt::Result<bool, SupportsStorageBackendCheckError>;
 
-    fn fetch(&self, source: &str) -> Result<FetchedGrimoire>;
+    fn fetch(&self, source: &str) -> stdrt::Result<FetchedGrimoire, PkgError>;
 }
 
 pub enum StorageBackendKind {
@@ -35,13 +35,13 @@ impl StorageBackend for StorageBackendKind {
         }
     }
 
-    fn supports(&self, source: &str) -> Result<bool> {
+    fn supports(&self, source: &str) -> stdrt::Result<bool, SupportsStorageBackendCheckError> {
         match self {
             StorageBackendKind::Local(b) => b.supports(source),
         }
     }
 
-    fn fetch(&self, source: &str) -> Result<FetchedGrimoire> {
+    fn fetch(&self, source: &str) -> stdrt::Result<FetchedGrimoire, PkgError> {
         match self {
             StorageBackendKind::Local(b) => b.fetch(source),
         }

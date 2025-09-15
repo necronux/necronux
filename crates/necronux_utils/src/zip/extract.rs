@@ -4,43 +4,59 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::Result;
-use crate::error::ZipError;
-use std::path::Path;
+use crate::error as craterr;
+use crate::error::ExtractZipError;
+use necronux_macros::trace_instrument;
+use std::{path::Path, result as stdrt};
 use tracing::{debug, warn};
-use zip::ZipArchive;
 
-pub fn extract_zip_if_exists(zip_path: &Path, zip_path_label: &str, dest_dir: &Path) -> Result<()> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("extract_zip", zip_path_label = zip_path_label).entered();
+#[trace_instrument(level = "debug", fields(zip_path_label = %zip_path_label, zip_path = %zip_path.display(), dest_dir = %dest_dir.display()))]
+pub fn extract_zip(
+    zip_path: &Path,
+    zip_path_label: &str,
+    dest_dir: &Path,
+) -> stdrt::Result<(), craterr::ZipError> {
+    debug!(
+        zip_path_label = %zip_path_label,
+        zip_path = %zip_path.display(),
+        dest_dir = %dest_dir.display(),
+        "Attempting to extract zip file...",
+    );
 
-    fn extract_zip_inner(zip_path: &Path, zip_path_label: &str, dest_dir: &Path) -> Result<()> {
-        let file = crate::fs::open_file_if_exists(zip_path, zip_path_label)?;
+    fn extract_zip_inner(
+        zip_path: &Path,
+        zip_path_label: &str,
+        dest_dir: &Path,
+    ) -> stdrt::Result<(), ExtractZipError> {
+        let file = crate::fs::open_file(zip_path, zip_path_label)?;
 
-        let mut archive = ZipArchive::new(file).map_err(|e| ZipError::ReadFileError {
+        let mut archive = zip::ZipArchive::new(file).map_err(|e| ExtractZipError::ReadError {
             path: zip_path.to_path_buf(),
             label: zip_path_label.to_string(),
             source: e,
         })?;
 
         for i in 0..archive.len() {
-            let mut file = archive.by_index(i).map_err(|e| ZipError::ReadFileError {
-                path: zip_path.to_path_buf(),
-                label: zip_path_label.to_string(),
-                source: e,
-            })?;
+            let mut file = archive
+                .by_index(i)
+                .map_err(|e| ExtractZipError::ReadError {
+                    path: zip_path.to_path_buf(),
+                    label: zip_path_label.to_string(),
+                    source: e,
+                })?;
 
             let outpath = match file.enclosed_name() {
                 Some(path) => dest_dir.join(path),
                 None => {
-                    warn!("Skipping unsafe archive entry: {}", file.name());
+                    warn!(
+                        file_name = %file.name(),
+                        "Skipping unsafe archive entry");
                     continue;
                 }
             };
 
             if file.is_dir() {
                 crate::fs::create_dir_all(&outpath, "extraction output")?;
-                debug!("File {i} extracted to '{}'", outpath.display());
             } else {
                 if let Some(parent) = outpath.parent() {
                     crate::fs::create_dir_all(parent, "extraction output parent")?;
@@ -56,31 +72,37 @@ pub fn extract_zip_if_exists(zip_path: &Path, zip_path_label: &str, dest_dir: &P
                 )?;
 
                 debug!(
-                    "File {i} extracted to '{}' ({} bytes)",
-                    outpath.display(),
-                    file.size()
+                    file_name = %i,
+                    file_size_bytes = %file.size(),
+                    extracted_path = %outpath.display(),
+                    "File successfully extracted",
                 );
             }
 
             #[cfg(unix)]
             {
                 if let Some(mode) = file.unix_mode() {
-                    crate::fs::set_permissions_if_exists(&outpath, "extraction output file", mode)?;
+                    crate::fs::set_permissions(&outpath, "extraction output file", mode)?;
                 }
             }
         }
-        debug!(
-            "Successfully extracted {zip_path_label} at '{}' to '{}'",
-            zip_path.display(),
-            dest_dir.display()
-        );
         Ok(())
     }
 
-    extract_zip_inner(zip_path, zip_path_label, dest_dir).map_err(|e| ZipError::ExtractError {
-        zip_path_label: zip_path_label.to_string(),
-        zip_path: zip_path.to_path_buf(),
-        dest_path: dest_dir.to_path_buf(),
-        source: Box::new(e),
-    })
+    extract_zip_inner(zip_path, zip_path_label, dest_dir).map_err(|e| {
+        craterr::ZipError::ExtractZipError {
+            zip_path_label: zip_path_label.to_string(),
+            zip_path: zip_path.to_path_buf(),
+            dest_path: dest_dir.to_path_buf(),
+            source: Box::new(e),
+        }
+    })?;
+
+    debug!(
+        zip_path_label = %zip_path_label,
+        zip_path = %zip_path.display(),
+        dest_dir = %dest_dir.display(),
+        "Successfully extracted zip file",
+    );
+    Ok(())
 }

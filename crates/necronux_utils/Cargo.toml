@@ -26,6 +26,8 @@ workspace = true
 ################
 # REQUIRED DEPS
 ###############
+# Necronux
+necronux_macros = { path = "../necronux_macros", version = "0.4.0-dev", default-features = false }
 # Error handling
 thiserror = { workspace = true }
 # Logging
@@ -33,9 +35,11 @@ tracing = { workspace = true }
 # File system
 directories = { workspace = true }
 zip = { workspace = true }
+# Utils
+once_cell = { workspace = true }
 
 [features]
 ###########
 # FEATURES
 ##########
-trace = []
+trace = ["necronux_macros/trace"]

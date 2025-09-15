@@ -4,43 +4,62 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::Result;
 use crate::error::FsError;
-use std::path::Path;
+use necronux_macros::trace_instrument;
+use std::{path::Path, result as stdrt};
+use tracing::debug;
 
-pub fn set_permissions_if_exists(path: &Path, label: &str, mode: u32) -> Result<()> {
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("set_permissions", label = label, mode = mode).entered();
+#[trace_instrument(level = "debug", fields(label = %label, path = %path.display(), mode = %mode))]
+pub fn set_permissions(path: &Path, label: &str, mode: u32) -> stdrt::Result<(), FsError> {
+    debug!(
+        label = %label,
+        path = %path.display(),
+        mode = %mode,
+        "Attempting to set permissions...",
+    );
 
-    if !super::path_exists(path, label)? {
-        return Err(FsError::SetPermissionsError {
-            label: label.to_string(),
-            path: path.to_path_buf(),
-            source: std::io::Error::new(
-                std::io::ErrorKind::NotFound,
-                "Path does not exist when attempting to set permissions",
-            ),
-        });
-    }
-
-    #[cfg(feature = "trace")]
-    let _span = tracing::debug_span!("set_permissions_op", label = label, mode = mode).entered();
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
 
-        std::fs::set_permissions(path, std::fs::Permissions::from_mode(mode)).map_err(|e| {
-            FsError::SetPermissionsError {
-                label: label.to_string(),
-                path: path.to_path_buf(),
-                source: e,
+        match std::fs::set_permissions(path, std::fs::Permissions::from_mode(mode)) {
+            Ok(_) => {
+                debug!(
+                    label = %label,
+                    path = %path.display(),
+                    mode = %mode,
+                    "Successfully set permissions",
+                );
             }
-        })?;
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+                return Err(FsError::SetPermissionsError {
+                    label: label.to_string(),
+                    path: path.to_path_buf(),
+                    source: std::io::Error::new(
+                        std::io::ErrorKind::NotFound,
+                        "Path does not exist when attempting to set permissions",
+                    ),
+                });
+            }
+            Err(e) => {
+                return Err(FsError::SetPermissionsError {
+                    label: label.to_string(),
+                    path: path.to_path_buf(),
+                    source: e,
+                });
+            }
+        }
+    }
 
-        tracing::debug!(
-            "Successfully set permissions (mode: {mode}) on {label} at '{}'",
-            path.display()
+    #[cfg(not(unix))]
+    {
+        debug!(
+            label = %label,
+            path = %path.display(),
+            mode = %mode,
+            "Skipping permission setting as not needed or intended on non-Unix platforms",
         );
     }
+
     Ok(())
 }

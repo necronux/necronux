@@ -4,138 +4,164 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::{StatusSubCmd, ValidateHandler, ui};
+use crate::{
+    StatusSubCmd, ValidateSubCmd,
+    theme::{self, ThemedUi},
+    utils,
+};
 use anyhow::{Context, Result};
+use necronux::utils::trace_instrument;
+use std::io::{Write, stderr, stdout};
+use tracing::info;
 
-pub struct StatusHandler {
-    full: bool,
-}
-
-impl StatusHandler {
-    pub fn new(subcmd: &StatusSubCmd) -> Self {
-        Self { full: subcmd.full }
-    }
-
-    pub fn handle(self) -> Result<()> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::debug_span!("handle_status").entered();
-
+impl StatusSubCmd {
+    #[trace_instrument(level = "info", name = "handle_status", skip(self, theme), fields(full = %self.full))]
+    pub fn handle(&self, theme: &ThemedUi) -> Result<()> {
+        info!("Handling status request...");
         let t0 = std::time::Instant::now();
 
-        Self::show_status(self.full).context("Failed to show status")?;
+        info!("Showing status...");
+        Self::show_status(self.full, theme).context("Failed to show status")?;
 
-        let elapsed = t0.elapsed();
-        let elapsed_fmt = ui::format_duration(elapsed);
-
-        println!(
-            "{} {} ({})",
-            ui::symbol::success(),
-            ui::style::success("Status checked"),
-            ui::style::elapsed_time(&elapsed_fmt),
-        );
-        Ok(())
+        {
+            let elapsed = t0.elapsed();
+            let elapsed_fmt = crate::utils::format_duration(elapsed);
+            info!(
+                elapsed_secs = elapsed.as_secs_f64(),
+                "Successfully shown status"
+            );
+            result_success_msg!(
+                theme,
+                &mut stdout(),
+                Some(json_obj!(
+                    "status_elapsed" => elapsed_fmt.clone(),
+                    "status_elapsed_secs" => elapsed.as_secs_f64(),
+                )),
+                ("Status checked", theme::style::success),
+                (" (", theme::style::regular),
+                (elapsed_fmt.to_string(), theme::style::elapsed_time),
+                (")", theme::style::regular),
+            )?;
+            Ok(())
+        }
     }
 
-    fn show_status(full: bool) -> Result<()> {
-        #[cfg(feature = "trace")]
-        let _span = tracing::debug_span!("show_status").entered();
+    #[trace_instrument(level = "info", skip(theme), fields(full = %full))]
+    fn show_status(full: bool, theme: &ThemedUi) -> Result<()> {
+        let status = necronux::pkg::GrimoireBindingStatus::introspect()?;
 
-        let status = necronux_core::pkg::GrimoireBindingStatus::introspect()?;
+        let stdout = stdout();
+        let mut stdout_handle = stdout.lock();
 
         if status.is_bound {
-            println!(
-                "{} {}",
-                ui::symbol::success(),
-                ui::style::success("Grimoire is currently bound")
-            );
+            result_success_msg!(
+                theme,
+                &mut stdout_handle,
+                None,
+                ("Grimoire is currently bound", theme::style::success),
+            )?;
 
-            println!();
+            new_line!(&mut stderr())?;
 
-            println!(
-                "❰ {} ❱",
-                ui::style::regular_category_heading("GRIMOIRE INFO")
-            );
+            result_regular_msg!(
+                theme,
+                &mut stdout_handle,
+                None,
+                ("GRIMOIRE INFO", theme::style::regular_category_heading),
+            )?;
 
             if let Some(name) = &status.package_name {
-                println!(
-                    "{} {} {}",
-                    ui::symbol::regular(),
-                    ui::style::regular("Name:").bold(),
-                    name
-                );
+                result_regular_msg!(
+                    theme,
+                    &mut stdout_handle,
+                    Some(json_obj!("grimoire_name" => name.clone())),
+                    ("Name: ", theme::style::regular_bold),
+                    (name.to_string(), theme::style::regular),
+                )?;
             }
 
             if let Some(version) = &status.package_version {
-                println!(
-                    "{} {} {}",
-                    ui::symbol::regular(),
-                    ui::style::regular("Version:").bold(),
-                    version
-                );
+                result_regular_msg!(
+                    theme,
+                    &mut stdout_handle,
+                    Some(json_obj!("grimoire_version" => version.clone())),
+                    ("Version: ", theme::style::regular_bold),
+                    (version.to_string(), theme::style::regular),
+                )?;
             }
 
             if !full {
-                println!();
+                new_line!(&mut stderr())?;
             }
         } else {
-            println!(
-                "{} {}",
-                ui::symbol::warning(),
-                ui::style::warning("No grimoire is currently bound"),
-            );
+            warning_msg!(
+                theme,
+                &mut stderr(),
+                ("No grimoire is currently bound", theme::style::warning),
+            )?;
             return Ok(());
         }
 
         if full {
-            let pb = ui::msg::task_spinner_or_msg(
-                false,
-                false,
-                ui::style::progress_task("Reading grimoire to get full status...").to_string(),
+            stdout_handle.flush()?;
+            let pb = task_msg!(
+                theme,
+                &mut stderr(),
+                wants_spinner: true,
+                has_steps: false,
+                ("Reading grimoire to get full status...", theme::style::progress_task),
             )?;
             let grimoire =
-                ValidateHandler::validate_grimoire().context("Failed to validate grimoire")?;
+                ValidateSubCmd::validate_grimoire().context("Failed to validate grimoire")?;
             if let Some(pb) = pb {
                 pb.finish_and_clear();
             }
 
-            let fallback = ui::no("license");
             let license = grimoire
                 .grimoire_metadata
                 .as_ref()
                 .and_then(|meta| meta.grimoire_license.as_deref())
-                .unwrap_or(&fallback);
-            println!(
-                "{} {} {}",
-                ui::symbol::regular(),
-                ui::style::regular("License:").bold(),
-                license
-            );
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| utils::missing_field_placeholder("license"));
+            result_regular_msg!(
+                theme,
+                &mut stdout_handle,
+                Some(json_obj!("grimoire_license" => license.clone())),
+                ("License: ", theme::style::regular_bold),
+                (license.to_string(), theme::style::regular),
+            )?;
 
-            let fallback = ui::no("schema version");
-            let std_schema_version = grimoire.std_schema_version.as_ref().unwrap_or(&fallback);
-            println!(
-                "{} {} {}",
-                ui::symbol::regular(),
-                ui::style::regular("Schema Version:").bold(),
-                std_schema_version
-            );
+            let std_schema_version = grimoire
+                .std_schema_version
+                .as_ref()
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| utils::missing_field_placeholder("schema version"));
+            result_regular_msg!(
+                theme,
+                &mut stdout_handle,
+                Some(json_obj!("grimoire_std_schema_version" => std_schema_version.clone())),
+                ("Schema Version: ", theme::style::regular_bold),
+                (std_schema_version.to_string(), theme::style::regular),
+            )?;
 
             if let Some(path) = &status.grimoire_path {
-                println!(
-                    "{} {} {}",
-                    ui::symbol::regular(),
-                    ui::style::regular("Bound Path:").bold(),
-                    path.display()
-                );
+                let path_str = path.to_string_lossy();
+                result_regular_msg!(
+                    theme,
+                    &mut stdout_handle,
+                    Some(json_obj!("bound_path" => path_str.clone())),
+                    ("Bound Path: ", theme::style::regular_bold),
+                    (path_str.to_string(), theme::style::regular),
+                )?;
             }
 
-            println!(
-                "{} {}",
-                ui::symbol::regular(),
-                ui::style::regular("Grimoire is valid").bold()
-            );
+            regular_msg!(
+                theme,
+                &mut stderr(),
+                ("Grimoire is valid", theme::style::regular_bold),
+            )?;
 
-            println!();
+            new_line!(&mut stderr())?;
         }
         Ok(())
     }

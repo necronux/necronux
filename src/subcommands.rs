@@ -6,7 +6,7 @@
 
 use clap::Subcommand;
 
-#[derive(Subcommand, Debug)]
+#[derive(Subcommand, Debug, Clone)]
 pub enum SubCmd {
     #[command(about = "Bind a grimoire from a path or URL")]
     Bind(BindSubCmd),
@@ -25,7 +25,7 @@ pub use engine::*;
 mod engine {
     use clap::Args;
 
-    #[derive(Args, Debug)]
+    #[derive(Args, Debug, Clone)]
     pub struct BindSubCmd {
         #[arg(help = "Path or URL to the grimoire package source (package zip)")]
         pub source: String,
@@ -37,19 +37,16 @@ mod engine {
         pub force: bool,
     }
 
-    #[derive(Args, Debug)]
+    #[derive(Args, Debug, Copy, Clone)]
     pub struct UnbindSubCmd {
-        #[arg(
-            long,
-            help = "Force unbinding the grimoire even if one does not exists"
-        )]
+        #[arg(long, help = "Force unbinding the grimoire even if one does not exist")]
         pub force: bool,
     }
 
-    #[derive(Args, Debug)]
+    #[derive(Args, Debug, Copy, Clone)]
     pub struct ValidateSubCmd {}
 
-    #[derive(Args, Debug)]
+    #[derive(Args, Debug, Copy, Clone)]
     pub struct StatusSubCmd {
         #[arg(long, short, help = "Show full Necronux status")]
         pub full: bool,
