@@ -112,7 +112,7 @@ rpkl = { version = "0.5.0" }
 serde = { version = "1.0.219", features = ["derive"] }
 # File system
 directories = { version = "6.0.0" }
-zip = { version = "4.2.0" }
+zip = { version = "4.6.1" }
 # Cli
 clap-verbosity-flag = { version = "3.0.4", default-features = false, features = [
   "tracing",
