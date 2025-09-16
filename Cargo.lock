@@ -1247,9 +1247,9 @@ dependencies = [
 
 [[package]]
 name = "rpkl"
-version = "0.5.2"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2126df50e5bd715fd3c96d04676d5c927c979512395db457637fc201fcb2f5a"
+checksum = "950a09788cd9a1e1a60078123fc6d9235be739ff67187bdb4cbb27564b015ddf"
 dependencies = [
  "dunce",
  "rmp-serde",
