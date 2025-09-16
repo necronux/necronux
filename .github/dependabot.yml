@@ -17,7 +17,7 @@ updates:
       - "state:needs-triage"
     groups:
       rust-updates:
-        update-types: [minor, patch]
+        update-types: [major, minor, patch]
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
@@ -29,4 +29,4 @@ updates:
       - "state:needs-triage"
     groups:
       pkl-updates:
-        update-types: [minor, patch]
+        update-types: [major, minor, patch]
