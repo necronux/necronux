@@ -5,11 +5,11 @@
 // ==-----------------------------------------------------------== //
 
 pub mod error;
-mod grimoire_data_model;
+pub mod grimoire_normalized_models;
 mod grimoire_parsers;
 pub mod grimoire_schemas;
-mod grimoire_validators;
+pub mod grimoire_unified_model;
+mod grimoire_validated_models;
 
-pub use grimoire_data_model::*;
 pub use grimoire_parsers::*;
-pub use grimoire_validators::*;
+pub use grimoire_validated_models::*;

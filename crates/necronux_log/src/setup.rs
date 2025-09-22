@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{InitializeError, LogError};
+use crate::error::{InitializeLoggingError, InitializeLoggingErrorWithContext};
 use std::result as stdrt;
 use tracing::info;
 use tracing_subscriber::{Layer, layer::SubscriberExt};
@@ -73,10 +73,10 @@ impl LogSetup {
         self
     }
 
-    pub fn init(self) -> stdrt::Result<(), LogError> {
+    pub fn init(self) -> stdrt::Result<(), InitializeLoggingErrorWithContext> {
         fn init_inner(
             stp: LogSetup,
-        ) -> stdrt::Result<tracing::level_filters::LevelFilter, InitializeError> {
+        ) -> stdrt::Result<tracing::level_filters::LevelFilter, InitializeLoggingError> {
             let global_level_filter = stp.global_level_filter;
 
             let stderr_layer = match stp.stderr_layer {
@@ -119,7 +119,7 @@ impl LogSetup {
         }
 
         let global_level_filter =
-            init_inner(self).map_err(|e| LogError::InitializeError { source: e })?;
+            init_inner(self).map_err(|e| InitializeLoggingErrorWithContext { source: e })?;
 
         info!(
             requested_log_level = %global_level_filter,

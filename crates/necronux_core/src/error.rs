@@ -7,58 +7,65 @@
 use std::path::PathBuf;
 use thiserror::Error;
 
-// Crate level errors
-
 #[derive(Debug, Error)]
-pub enum CoreError {
-    #[error("Failed to resolve grimoire parser")]
-    ResolveGrimoireParserError {
-        #[source]
-        source: ResolveGrimoireParserError,
-    },
-
-    #[error("Failed to validate parsed grimoire")]
-    ValidateGrimoireError {
-        #[source]
-        source: ValidateGrimoireError,
-    },
+#[error("Failed to parse grimoire")]
+pub struct ParseGrimoireErrorWithContext {
+    #[source]
+    pub source: ParseGrimoireError,
 }
-
-// Function level errors
-
 #[derive(Debug, Error)]
 pub enum ParseGrimoireError {
     #[error("Failed to parse pkl file at '{path}'")]
-    ParsePklError {
+    RpklError {
         path: PathBuf,
         #[source]
         source: rpkl::Error,
     },
-
     #[error(transparent)]
-    PkgError(#[from] necronux_pkg::error::PkgError),
-
+    IntrospectCurrentGrimoireError(
+        #[from] necronux_pkg::error::IntrospectCurrentGrimoireErrorWithContext,
+    ),
     #[error(transparent)]
     PathError(#[from] necronux_utils::error::PathError),
 }
 
 #[derive(Debug, Error)]
-pub enum ResolveGrimoireParserError {
-    #[error("Failed to parse necronux.grimoire file")]
-    ParseGrimoireError {
-        #[source]
-        source: ParseGrimoireError,
-    },
-
-    #[error("Unsupported or unrecognized schema version: {version}")]
-    UnsupportedGrimoireSchemaVersionError { version: String },
-
-    #[error("Expected parsed minimal metadata but not found")]
-    ParsedMinimalMetadataNotFoundError,
+#[error("Failed to normalize grimoire")]
+pub struct NormalizeGrimoireErrorWithContext {
+    #[source]
+    pub source: NormalizeGrimoireError,
+}
+#[derive(Debug, Error)]
+pub enum NormalizeGrimoireError {
+    #[error("Missing required field in grimoire: '{field_name}' is required")]
+    MissingRequiredField { field_name: String },
 }
 
 #[derive(Debug, Error)]
-pub enum ValidateGrimoireError {
-    #[error("Missing required field in grimoire. '{field_name}' is required")]
-    MissingRequiredFieldError { field_name: String },
+#[error("Failed to validate grimoire")]
+pub struct ValidateGrimoireErrorWithContext {
+    #[source]
+    pub source: ValidateGrimoireError,
+}
+#[derive(Debug, Error)]
+pub enum ValidateGrimoireError {}
+
+#[derive(Debug, Error)]
+#[error("Failed to resolve grimoire parser")]
+pub struct ResolveGrimoireParserErrorWithContext {
+    #[source]
+    pub source: ResolveGrimoireParserError,
+}
+#[derive(Debug, Error)]
+pub enum ResolveGrimoireParserError {
+    #[error("Expected parsed common metadata but not found")]
+    ParsedCommonMetadataNotFound,
+    #[error("Unsupported or unrecognized schema version: {version}")]
+    UnsupportedGrimoireSchemaVersion { version: String },
+    #[error(transparent)]
+    ParseGrimoireError(#[from] ParseGrimoireErrorWithContext),
+    #[error(transparent)]
+    NormalizeGrimoireError(#[from] NormalizeGrimoireErrorWithContext),
+    #[error(transparent)]
+    ValidateGrimoireError(#[from] ValidateGrimoireErrorWithContext),
 }

@@ -6,26 +6,37 @@
 
 use std::path::PathBuf;
 use thiserror::Error;
-use zip::result::ZipError as ZipRsError;
-
-// Crate level errors
 
 #[derive(Debug, Error)]
-pub enum ZipError {
-    #[error("Failed to extract {zip_path_label} zip file from '{zip_path}' to {dest_path}")]
-    ExtractZipError {
-        zip_path_label: String,
-        zip_path: PathBuf,
-        dest_path: PathBuf,
+#[error("Failed to extract {zip_path_label} zip file from '{zip_path}' to {dest_path}")]
+pub struct ExtractZipErrorWithContext {
+    pub zip_path_label: String,
+    pub zip_path: PathBuf,
+    pub dest_path: PathBuf,
+    #[source]
+    pub source: ExtractZipError,
+}
+#[derive(Debug, Error)]
+pub enum ExtractZipError {
+    #[error("Failed to read and extract {label} file at '{path}'")]
+    ZipError {
+        label: String,
+        path: PathBuf,
         #[source]
-        source: Box<ExtractZipError>,
+        source: zip::result::ZipError,
     },
+    #[error(transparent)]
+    FsError(#[from] FsError),
+    #[error(transparent)]
+    IoError(#[from] IoError),
+    #[error(transparent)]
+    StdIoError(#[from] std::io::Error),
 }
 
 #[derive(Debug, Error)]
 pub enum PathError {
     #[error("Failed to determine platform-specific project directory for Necronux")]
-    NecronuxProjectDirError,
+    ProjectDirResolutionFailed,
 }
 
 #[derive(Debug, Error)]
@@ -41,67 +52,81 @@ pub enum IoError {
 
 #[derive(Debug, Error)]
 pub enum FsError {
-    #[error("Failed to create {label} {target} at '{path}'")]
-    CreateError {
+    #[error("Failed to create {label} file at '{path}'")]
+    CreateFileError {
         label: String,
         path: PathBuf,
-        target: FsTarget,
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("Failed to create {label} directory at '{path}'")]
+    CreateDirError {
+        label: String,
+        path: PathBuf,
         #[source]
         source: std::io::Error,
     },
 
-    #[error("Failed to open {label} {target} at '{path}'")]
-    OpenError {
+    #[error("Failed to open {label} file at '{path}'")]
+    OpenFileError {
         label: String,
         path: PathBuf,
-        target: FsTarget,
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("Failed to open {label} directory at '{path}'")]
+    OpenDirError {
+        label: String,
+        path: PathBuf,
         #[source]
         source: std::io::Error,
     },
 
-    #[error("Failed to read {label} {target} at '{path}'")]
-    ReadError {
+    #[error("Failed to read {label} file at '{path}'")]
+    ReadFileError {
         label: String,
         path: PathBuf,
-        target: FsTarget,
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("Failed to read {label} directory at '{path}'")]
+    ReadDirError {
+        label: String,
+        path: PathBuf,
         #[source]
         source: std::io::Error,
     },
 
-    #[error("Failed to copy from {from_path_label} {target} from '{from_path}' to '{to_path}'")]
-    CopyError {
+    #[error("Failed to copy from {from_path_label} file from '{from_path}' to '{to_path}'")]
+    CopyFileError {
         from_path_label: String,
         from_path: PathBuf,
         to_path: PathBuf,
-        target: FsTarget,
         #[source]
         source: std::io::Error,
     },
 
-    #[error("Failed to write {label} {target} at '{path}'")]
-    WriteError {
+    #[error("Failed to write {label} file at '{path}'")]
+    WriteFileError {
         label: String,
         path: PathBuf,
-        target: FsTarget,
         #[source]
         source: std::io::Error,
     },
 
-    #[error("Failed to rename {old_path_label} {target} from '{old_path}' to '{new_path}'")]
-    RenameError {
+    #[error("Failed to rename {old_path_label} directory from '{old_path}' to '{new_path}'")]
+    RenameDirError {
         old_path_label: String,
         old_path: PathBuf,
         new_path: PathBuf,
-        target: FsTarget,
         #[source]
         source: std::io::Error,
     },
 
-    #[error("Failed to delete {label} {target} at '{path}'")]
-    RemoveError {
+    #[error("Failed to delete {label} directory at '{path}'")]
+    RemoveDirError {
         label: String,
         path: PathBuf,
-        target: FsTarget,
         #[source]
         source: std::io::Error,
     },
@@ -121,43 +146,4 @@ pub enum FsError {
         #[source]
         source: std::io::Error,
     },
-}
-
-// Function level errors
-
-#[derive(Debug, Error)]
-pub enum ExtractZipError {
-    #[error("Failed to read {label} file at '{path}'")]
-    ReadError {
-        label: String,
-        path: PathBuf,
-        #[source]
-        source: ZipRsError,
-    },
-
-    #[error(transparent)]
-    IoError(#[from] IoError),
-
-    #[error(transparent)]
-    FsError(#[from] FsError),
-
-    #[error(transparent)]
-    StdIoError(#[from] std::io::Error),
-}
-
-// Helpers
-
-#[derive(Debug)]
-pub enum FsTarget {
-    Directory,
-    File,
-}
-
-impl std::fmt::Display for FsTarget {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            FsTarget::Directory => write!(f, "directory"),
-            FsTarget::File => write!(f, "file"),
-        }
-    }
 }

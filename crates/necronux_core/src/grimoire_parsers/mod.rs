@@ -4,14 +4,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-mod minimal_metadata;
 mod parser;
+mod parsers;
 mod resolve;
-#[cfg(feature = "grimoire_schema_v0")]
-mod v0;
 
-pub use minimal_metadata::*;
 pub use parser::*;
+pub use parsers::*;
 pub use resolve::*;
-#[cfg(feature = "grimoire_schema_v0")]
-pub use v0::*;

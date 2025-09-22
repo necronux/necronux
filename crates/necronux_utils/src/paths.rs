@@ -13,7 +13,7 @@ static NECRONUX_PROJ_DIRS: OnceCell<ProjectDirs> = OnceCell::new();
 
 pub fn necronux_proj_dir() -> stdrt::Result<&'static ProjectDirs, PathError> {
     NECRONUX_PROJ_DIRS.get_or_try_init(|| {
-        ProjectDirs::from("", "necronux", "necronux").ok_or(PathError::NecronuxProjectDirError)
+        ProjectDirs::from("", "necronux", "necronux").ok_or(PathError::ProjectDirResolutionFailed)
     })
 }
 

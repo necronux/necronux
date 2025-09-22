@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{FsError, FsTarget};
+use crate::error::FsError;
 use necronux_macros::trace_instrument;
 use std::{path::Path, result as stdrt};
 use tracing::debug;
@@ -13,10 +13,9 @@ use tracing::debug;
 pub fn write(path: &Path, label: &str, content: String) -> stdrt::Result<(), FsError> {
     debug!("Attempting to write {label} at '{}'", path.display());
 
-    std::fs::write(path, content).map_err(|e| FsError::WriteError {
+    std::fs::write(path, content).map_err(|e| FsError::WriteFileError {
         label: label.to_string(),
         path: path.to_path_buf(),
-        target: FsTarget::File,
         source: e,
     })?;
 

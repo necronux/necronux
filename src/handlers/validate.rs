@@ -11,7 +11,11 @@ use crate::{
 };
 use anyhow::{Context, Result, anyhow};
 use necronux::{
-    core::{GrimoireValidator, TryIntoUnifiedGrimoire, UnifiedGrimoire},
+    core::{
+        TryIntoValidatedGrimoire,
+        grimoire_normalized_models::TryIntoNormalizedGrimoire,
+        grimoire_unified_model::{TryIntoUnifiedGrimoire, model::UnifiedGrimoire},
+    },
     utils::trace_instrument,
 };
 use std::io::{stderr, stdout};
@@ -46,8 +50,8 @@ impl ValidateSubCmd {
 
         let name = grimoire
             .grimoire_metadata
-            .as_ref()
-            .and_then(|meta| meta.grimoire_name.as_deref())
+            .as_option()
+            .and_then(|meta| meta.grimoire_name.as_option())
             .map(|s| s.to_string())
             .unwrap_or_else(|| utils::missing_field_placeholder("name"));
 
@@ -79,7 +83,8 @@ impl ValidateSubCmd {
     #[trace_instrument(level = "info")]
     pub fn validate_grimoire() -> Result<UnifiedGrimoire> {
         let parsed = necronux::core::resolve_grimoire_parser()?;
-        parsed.validate()?;
-        Ok(parsed.into_unified())
+        let normalized = parsed.try_into_normalized()?;
+        let validated = normalized.try_into_validated()?;
+        Ok(validated.into_unified())
     }
 }

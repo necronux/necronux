@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{FsError, FsTarget};
+use crate::error::FsError;
 use necronux_macros::trace_instrument;
 use std::{path::Path, result as stdrt};
 use tracing::debug;
@@ -34,10 +34,9 @@ pub fn remove_dir_all(path: &Path, label: &str) -> stdrt::Result<(), FsError> {
             );
             Ok(())
         }
-        Err(e) => Err(FsError::RemoveError {
+        Err(e) => Err(FsError::RemoveDirError {
             label: label.to_string(),
             path: path.to_path_buf(),
-            target: FsTarget::Directory,
             source: e,
         }),
     }

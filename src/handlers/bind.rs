@@ -5,12 +5,20 @@
 // ==-----------------------------------------------------------== //
 
 use crate::{
-    BindSubCmd, ValidateSubCmd,
+    BindSubCmd,
     theme::{self, ThemedUi},
     utils,
 };
 use anyhow::{Context, Result, anyhow};
-use necronux::{core::UnifiedGrimoire, pkg::StorageBackend, utils::trace_instrument};
+use necronux::{
+    core::{
+        TryIntoValidatedGrimoire,
+        grimoire_normalized_models::TryIntoNormalizedGrimoire,
+        grimoire_unified_model::{TryIntoUnifiedGrimoire, model::UnifiedGrimoire},
+    },
+    pkg::StorageBackend,
+    utils::trace_instrument,
+};
 use std::io::{stderr, stdout};
 use tracing::{error, info};
 
@@ -64,10 +72,10 @@ impl BindSubCmd {
 
         let name = grimoire
             .grimoire_metadata
-            .as_ref()
-            .and_then(|meta| meta.grimoire_name.as_deref())
+            .as_option()
+            .and_then(|meta| meta.grimoire_name.as_option())
             .map(|s| s.to_string())
-            .unwrap_or(utils::missing_field_placeholder("name"));
+            .unwrap_or_else(|| utils::missing_field_placeholder("name"));
 
         {
             let elapsed = t0.elapsed();
@@ -136,12 +144,16 @@ impl BindSubCmd {
             wants_spinner: true,
             ("Validating grimoire...", theme::style::progress_step),
         )?;
-        let grimoire =
-            ValidateSubCmd::validate_grimoire().context("Failed to validate grimoire")?;
+
+        let parsed = necronux::core::resolve_grimoire_parser()?;
+        let normalized = parsed.try_into_normalized()?;
+        let validated = normalized.try_into_validated()?;
+        let unified = validated.into_unified();
+
         if let Some(pb) = pb {
             pb.finish();
         }
 
-        Ok(grimoire)
+        Ok(unified)
     }
 }

@@ -5,12 +5,18 @@
 // ==-----------------------------------------------------------== //
 
 use crate::{
-    StatusSubCmd, ValidateSubCmd,
+    StatusSubCmd,
     theme::{self, ThemedUi},
     utils,
 };
 use anyhow::{Context, Result};
-use necronux::utils::trace_instrument;
+use necronux::{
+    core::{
+        TryIntoValidatedGrimoire, grimoire_normalized_models::TryIntoNormalizedGrimoire,
+        grimoire_unified_model::TryIntoUnifiedGrimoire,
+    },
+    utils::trace_instrument,
+};
 use std::io::{Write, stderr, stdout};
 use tracing::info;
 
@@ -111,16 +117,20 @@ impl StatusSubCmd {
                 has_steps: false,
                 ("Reading grimoire to get full status...", theme::style::progress_task),
             )?;
-            let grimoire =
-                ValidateSubCmd::validate_grimoire().context("Failed to validate grimoire")?;
+
+            let parsed = necronux::core::resolve_grimoire_parser()?;
+            let normalized = parsed.try_into_normalized()?;
+            let validated = normalized.try_into_validated()?;
+            let grimoire = validated.into_unified();
+
             if let Some(pb) = pb {
                 pb.finish_and_clear();
             }
 
             let license = grimoire
                 .grimoire_metadata
-                .as_ref()
-                .and_then(|meta| meta.grimoire_license.as_deref())
+                .as_option()
+                .and_then(|meta| meta.grimoire_license.as_option())
                 .map(|s| s.to_string())
                 .unwrap_or_else(|| utils::missing_field_placeholder("license"));
             result_regular_msg!(
@@ -131,17 +141,17 @@ impl StatusSubCmd {
                 (license.to_string(), theme::style::regular),
             )?;
 
-            let std_schema_version = grimoire
-                .std_schema_version
-                .as_ref()
-                .map(|s| s.to_string())
+            let schema_version = grimoire
+                .schema_version_info
+                .as_option()
+                .map(|s| s.schema_version.to_string())
                 .unwrap_or_else(|| utils::missing_field_placeholder("schema version"));
             result_regular_msg!(
                 theme,
                 &mut stdout_handle,
-                Some(json_obj!("grimoire_std_schema_version" => std_schema_version.clone())),
+                Some(json_obj!("grimoire_schema_version" => schema_version.clone())),
                 ("Schema Version: ", theme::style::regular_bold),
-                (std_schema_version.to_string(), theme::style::regular),
+                (schema_version.to_string(), theme::style::regular),
             )?;
 
             if let Some(path) = &status.grimoire_path {

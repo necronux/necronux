@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{FsError, FsTarget};
+use crate::error::FsError;
 use necronux_macros::trace_instrument;
 use std::{
     fs::{File, ReadDir},
@@ -30,19 +30,17 @@ pub fn open_file(path: &Path, label: &str) -> stdrt::Result<File, FsError> {
             );
             Ok(file)
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::OpenError {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::OpenFileError {
             label: label.to_string(),
             path: path.to_path_buf(),
-            target: FsTarget::File,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
                 "Path does not exist when attempting to open file",
             ),
         }),
-        Err(e) => Err(FsError::OpenError {
+        Err(e) => Err(FsError::OpenFileError {
             path: path.to_path_buf(),
             label: label.to_string(),
-            target: FsTarget::File,
             source: e,
         }),
     }
@@ -65,19 +63,17 @@ pub fn read_to_string(path: &Path, label: &str) -> stdrt::Result<String, FsError
             );
             Ok(contents)
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::ReadError {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::ReadFileError {
             label: label.to_string(),
             path: path.to_path_buf(),
-            target: FsTarget::File,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
                 "Path does not exist when attempting to read contents of file",
             ),
         }),
-        Err(e) => Err(FsError::ReadError {
+        Err(e) => Err(FsError::ReadFileError {
             path: path.to_path_buf(),
             label: label.to_string(),
-            target: FsTarget::File,
             source: e,
         }),
     }
@@ -100,19 +96,17 @@ pub fn read_dir(path: &Path, label: &str) -> stdrt::Result<ReadDir, FsError> {
             );
             Ok(iterator)
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::ReadError {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::ReadDirError {
             label: label.to_string(),
             path: path.to_path_buf(),
-            target: FsTarget::Directory,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
                 "Path does not exist when attempting to read contents of directory",
             ),
         }),
-        Err(e) => Err(FsError::ReadError {
+        Err(e) => Err(FsError::ReadDirError {
             path: path.to_path_buf(),
             label: label.to_string(),
-            target: FsTarget::Directory,
             source: e,
         }),
     }

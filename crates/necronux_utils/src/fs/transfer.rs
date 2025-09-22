@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use crate::error::{FsError, FsTarget};
+use crate::error::FsError;
 use necronux_macros::trace_instrument;
 use std::{path::Path, result as stdrt};
 use tracing::debug;
@@ -31,21 +31,19 @@ pub fn rename_dir(
             );
             Ok(())
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::RenameError {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::RenameDirError {
             old_path_label: old_path_label.to_string(),
             old_path: old_path.to_path_buf(),
             new_path: new_path.to_path_buf(),
-            target: FsTarget::Directory,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                "Path does not exist when attempting to rename",
+                "Path does not exist when attempting to rename directory",
             ),
         }),
-        Err(e) => Err(FsError::RenameError {
+        Err(e) => Err(FsError::RenameDirError {
             old_path_label: old_path_label.to_string(),
             old_path: old_path.to_path_buf(),
             new_path: new_path.to_path_buf(),
-            target: FsTarget::Directory,
             source: e,
         }),
     }
@@ -53,21 +51,11 @@ pub fn rename_dir(
 
 #[trace_instrument(level = "debug", fields(from_path_label = %from_path_label, from_path = %from_path.display(), to_path = %to_path.display()))]
 pub fn copy(from_path: &Path, from_path_label: &str, to_path: &Path) -> stdrt::Result<(), FsError> {
-    let (content_type, target) = if from_path_label.to_lowercase().contains("file") {
-        ("file", FsTarget::File)
-    } else if from_path_label.to_lowercase().contains("directory") {
-        ("directory", FsTarget::Directory)
-    } else {
-        // Fallback to file
-        ("file", FsTarget::File)
-    };
-
     debug!(
         from_path_label = %from_path_label,
         from_path = %from_path.display(),
         to_path = %to_path.display(),
-        content_type = %content_type,
-        "Attempting to copy {content_type}...",
+        "Attempting to copy file...",
     );
 
     match std::fs::copy(from_path, to_path) {
@@ -75,26 +63,23 @@ pub fn copy(from_path: &Path, from_path_label: &str, to_path: &Path) -> stdrt::R
             debug!(
                 from_path = %from_path.display(),
                 to_path = %to_path.display(),
-                content_type = %content_type,
-                "Successfully copied {content_type}",
+                "Successfully copied file",
             );
             Ok(())
         }
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::CopyError {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(FsError::CopyFileError {
             from_path_label: from_path_label.to_string(),
             from_path: from_path.to_path_buf(),
             to_path: to_path.to_path_buf(),
-            target,
             source: std::io::Error::new(
                 std::io::ErrorKind::NotFound,
-                "Path does not exist when attempting to copy",
+                "Path does not exist when attempting to copy file",
             ),
         }),
-        Err(e) => Err(FsError::CopyError {
+        Err(e) => Err(FsError::CopyFileError {
             from_path_label: from_path_label.to_string(),
             from_path: from_path.to_path_buf(),
             to_path: to_path.to_path_buf(),
-            target,
             source: e,
         }),
     }

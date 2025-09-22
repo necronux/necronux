@@ -26,7 +26,7 @@ impl LogSetup {
 
         CHROME_GUARD
             .set(Mutex::new(Some(guard)))
-            .map_err(|_| SetLayerError::SetChromeLayerGuardError)?;
+            .map_err(|_| SetLayerError::ChromeLayerGuardAlreadySet)?;
 
         Ok(chrome_layer)
     }
