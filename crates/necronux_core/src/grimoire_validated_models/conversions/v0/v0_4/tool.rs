@@ -6,12 +6,12 @@
 
 use crate::{
     error::ValidateGrimoireError,
-    grimoire_normalized_models::models::v0::{
+    grimoire_normalized_models::models::v0_4::{
         NormalizedProvisioningStrategy, NormalizedTool, NormalizedToolProvisioner,
         NormalizedToolProvisionerFallbacks, NormalizedToolProvisioningBinding,
         NormalizedToolProvisioningCommands,
     },
-    models::v0::{
+    models::v0_4::{
         ValidatedProvisioningStrategy, ValidatedTool, ValidatedToolProvisioner,
         ValidatedToolProvisionerFallbacks, ValidatedToolProvisioningBinding,
         ValidatedToolProvisioningCommands,

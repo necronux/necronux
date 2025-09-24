@@ -14,7 +14,8 @@ pub struct ParsedChapter {
     #[serde(flatten)]
     pub grimoire_metadata: ParsedGrimoireMetadata,
 
-    pub name: String,
+    // Option as RFB (See mod.rs)
+    pub name: Option<String>,
 
     pub description: Option<String>,
 
@@ -22,5 +23,6 @@ pub struct ParsedChapter {
 
     pub hexes: Option<HashMap<String, ParsedHex>>,
 
-    pub requires_confirmation: bool,
+    // Option as RFB (See mod.rs)
+    pub requires_confirmation: Option<bool>,
 }

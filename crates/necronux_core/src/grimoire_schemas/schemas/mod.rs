@@ -6,8 +6,12 @@
 
 pub mod common_metadata;
 #[cfg(feature = "grimoire_schema_v0")]
-pub mod v0;
+mod v0;
 
-// SLRFBs are Second Level Required Field Barriers for serde to not let first level required field
-// fallback to default when any of its second level required field is missing. These barriers
-// cover deeper levels too. Option is used before normalization to act as a SLRFB.
+#[cfg(feature = "grimoire_schema_v0")]
+pub use v0::*;
+
+// RFBs are Required Field Barriers for serde to not let serde throw its own unhelpful error
+// when a required field is missing. Instead a new helpful error is thrown for the same in
+// normalization. Instead of a new enum, Option is used when parsing to act as a RFB. This is
+// because RFBs work as intended only with Option due to how serde sees Option.

@@ -27,7 +27,7 @@ pub fn extract_zip(
             zip_path_label: zip_path_label.to_string(),
             zip_path: zip_path.to_path_buf(),
             dest_path: dest_dir.to_path_buf(),
-            source: e,
+            source: Box::new(e),
         }
     })?;
 

@@ -11,6 +11,7 @@ use crate::{
     },
     grimoire_schemas::schemas::common_metadata::{ParsedGrimoire, ParsedSchemaVersionInfo},
 };
+use semver::Version;
 use std::result as stdrt;
 
 impl TryFrom<ParsedGrimoire> for NormalizedGrimoire {
@@ -18,7 +19,12 @@ impl TryFrom<ParsedGrimoire> for NormalizedGrimoire {
 
     fn try_from(s: ParsedGrimoire) -> stdrt::Result<Self, Self::Error> {
         Ok(Self {
-            schema_version_info: s.schema_version_info.try_into()?,
+            schema_version_info: s
+                .schema_version_info
+                .ok_or_else(|| NormalizeGrimoireError::MissingTopLevelRequiredField {
+                    field_name: "schemaVersionInfo".to_string(),
+                })?
+                .try_into()?,
         })
     }
 }
@@ -28,11 +34,12 @@ impl TryFrom<ParsedSchemaVersionInfo> for NormalizedSchemaVersionInfo {
 
     fn try_from(s: ParsedSchemaVersionInfo) -> stdrt::Result<Self, Self::Error> {
         Ok(Self {
-            schema_version: s.schema_version.ok_or_else(|| {
+            schema_version: Version::parse(&s.schema_version.ok_or_else(|| {
                 NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "SchemaVersionInfo.schemaVersion".to_string(),
+                    field_name: "schemaVersion".to_string(),
+                    parent_object_name: "SchemaVersionInfo".to_string(),
                 }
-            })?,
+            })?)?,
         })
     }
 }

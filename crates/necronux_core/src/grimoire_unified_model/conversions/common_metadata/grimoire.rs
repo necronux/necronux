@@ -12,7 +12,7 @@ use crate::{
 impl From<ValidatedGrimoire> for UnifiedGrimoire {
     fn from(s: ValidatedGrimoire) -> Self {
         Self {
-            schema_version_info: SchemaField::Present(s.schema_version_info.into()),
+            schema_version_info: SchemaField::Present(s.schema_version_info),
             grimoire_metadata: SchemaField::Absent,
             core_contents: SchemaField::Absent,
         }

@@ -13,7 +13,7 @@ use crate::{
             UnifiedToolProvisioningCommands,
         },
     },
-    models::v0::{
+    models::v0_4::{
         ValidatedProvisioningStrategy, ValidatedTool, ValidatedToolProvisioner,
         ValidatedToolProvisionerFallbacks, ValidatedToolProvisioningBinding,
         ValidatedToolProvisioningCommands,

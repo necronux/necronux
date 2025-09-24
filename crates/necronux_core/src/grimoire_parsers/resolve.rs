@@ -5,13 +5,14 @@
 // ==-----------------------------------------------------------== //
 
 use super::{CommonMetadataParser, GrimoireParser};
+#[cfg(feature = "grimoire_schema_v0")]
+use crate::V0_4Parser;
 use crate::{
-    TryIntoValidatedGrimoire, V0Parser, ValidatedGrimoire,
+    TryIntoValidatedGrimoire, ValidatedGrimoire,
     error::{ResolveGrimoireParserError, ResolveGrimoireParserErrorWithContext},
     grimoire_normalized_models::TryIntoNormalizedGrimoire,
     grimoire_schemas::ParsedGrimoire,
 };
-#[cfg(feature = "grimoire_schema_v0")]
 use necronux_utils::trace_instrument;
 use std::result as stdrt;
 use tracing::debug;
@@ -34,28 +35,32 @@ fn resolve_grimoire_parser_inner() -> stdrt::Result<ParsedGrimoire, ResolveGrimo
         .try_into_normalized()?
         .try_into_validated()?;
 
-    let grimoire_schema_major = match common_metadata_validated {
-        ValidatedGrimoire::CommonMetadata(c) => c.schema_version_info.schema_version.major,
+    let (s_ver, s_major, s_minor) = match common_metadata_validated {
+        ValidatedGrimoire::CommonMetadata(c) => {
+            let ver = c.schema_version_info.schema_version;
+            (ver.clone(), ver.major, ver.minor)
+        }
         #[cfg(feature = "grimoire_schema_v0")]
-        ValidatedGrimoire::V0(_) => {
+        ValidatedGrimoire::V0_4(_) => {
             return Err(ResolveGrimoireParserError::ParsedCommonMetadataNotFound);
         }
     };
 
-    match grimoire_schema_major {
+    match (s_major, s_minor) {
         #[cfg(feature = "grimoire_schema_v0")]
-        0 => {
-            let parser = V0Parser;
+        (0, 4) => {
+            let parser = V0_4Parser;
+            let parser_name = parser.name();
             debug!(
-                parser = %parser.name(),
-                "Using {} parser for schema version 0", parser.name()
+                parser_name = %parser_name,
+                "Using {} for schema version 0.4", parser_name
             );
             Ok(parser.parse()?)
         }
 
         _ => Err(
             ResolveGrimoireParserError::UnsupportedGrimoireSchemaVersion {
-                version: grimoire_schema_major.to_string(),
+                version: s_ver.to_string(),
             },
         ),
     }

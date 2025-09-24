@@ -13,17 +13,21 @@ pub struct ParsedRitual {
     #[serde(flatten)]
     pub grimoire_metadata: ParsedGrimoireMetadata,
 
-    pub ritual_type: String,
+    // Option as RFB (See mod.rs)
+    pub ritual_type: Option<String>,
 
-    pub name: String,
+    // Option as RFB (See mod.rs)
+    pub name: Option<String>,
 
     pub description: Option<String>,
 
-    pub requires_confirmation: bool,
+    // Option as RFB (See mod.rs)
+    pub requires_confirmation: Option<bool>,
 
     pub keywords: Option<Vec<String>>,
 
-    pub steps: Vec<ParsedRitualStep>,
+    // Option as RFB (See mod.rs)
+    pub steps: Option<Vec<ParsedRitualStep>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -36,23 +40,28 @@ pub enum ParsedRitualStep {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedRitualCastStep {
-    pub cast: ParsedSpellOrHex,
+    // Option as RFB (See mod.rs)
+    pub cast: Option<ParsedSpellOrHex>,
 
-    pub requires_confirmation: bool,
+    // Option as RFB (See mod.rs)
+    pub requires_confirmation: Option<bool>,
 
-    pub auto_verify: bool,
+    // Option as RFB (See mod.rs)
+    pub auto_verify: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedRitualDispelStep {
-    pub dispel: ParsedSpell,
+    // Option as RFB (See mod.rs)
+    pub dispel: Option<ParsedSpell>,
 
-    pub requires_confirmation: bool,
+    // Option as RFB (See mod.rs)
+    pub requires_confirmation: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
-#[serde(untagged)]
+#[serde(untagged, rename_all = "camelCase")]
 pub enum ParsedSpellOrHex {
     Spell(ParsedSpell),
     Hex(ParsedHex),

@@ -4,10 +4,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::missing;
 use super::{ParsedChapter, ParsedRitual};
 use crate::grimoire_schemas::schemas::common_metadata;
-use semver::Version;
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -17,11 +15,11 @@ pub struct ParsedGrimoire {
     #[serde(flatten)]
     pub common_metadata: common_metadata::ParsedGrimoire,
 
-    #[serde(default = "missing::grimoire_metadata")]
-    pub grimoire_metadata: ParsedGrimoireMetadata,
+    // Option as RFB (See mod.rs)
+    pub grimoire_metadata: Option<ParsedGrimoireMetadata>,
 
-    #[serde(default = "missing::core_contents")]
-    pub core_contents: ParsedCoreContents,
+    // Option as RFB (See mod.rs)
+    pub core_contents: Option<ParsedCoreContents>,
     /* These are on hold
     pub sigils: Option<HashMap<String, String>>,
 
@@ -35,11 +33,11 @@ pub struct ParsedGrimoireMetadata {
     #[serde(flatten)]
     pub common_metadata: common_metadata::ParsedSchemaVersionInfo,
 
-    // Option as SLRFB (See mod.rs)
+    // Option as RFB (See mod.rs)
     pub grimoire_name: Option<String>,
 
-    // Option as SLRFB (See mod.rs)
-    pub grimoire_version: Option<Version>,
+    // Option as RFB (See mod.rs)
+    pub grimoire_version: Option<String>,
 
     pub grimoire_description: Option<String>,
 
@@ -53,7 +51,7 @@ pub struct ParsedGrimoireMetadata {
 
     pub grimoire_readme: Option<String>,
 
-    // Option as SLRFB (See mod.rs)
+    // Option as RFB (See mod.rs)
     pub grimoire_license: Option<String>,
 
     pub grimoire_license_text: Option<String>,
@@ -83,7 +81,7 @@ pub struct ParsedCoreContents {
     /* These are on hold
     pub linked_grimoires: Option<HashMap<String, ParsedLinkedGrimoire>>,
     */
-    // Option as SLRFB (See mod.rs)
+    // Option as RFB (See mod.rs)
     pub requires_confirmation: Option<bool>,
 }
 

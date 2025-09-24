@@ -37,8 +37,15 @@ pub struct NormalizeGrimoireErrorWithContext {
 }
 #[derive(Debug, Error)]
 pub enum NormalizeGrimoireError {
-    #[error("Missing required field in grimoire: '{field_name}' is required")]
-    MissingRequiredField { field_name: String },
+    #[error("Missing required field in grimoire: '{field_name}'")]
+    MissingTopLevelRequiredField { field_name: String },
+    #[error("Missing required field in grimoire: '{field_name}' (in {parent_object_name})")]
+    MissingRequiredField {
+        field_name: String,
+        parent_object_name: String,
+    },
+    #[error(transparent)]
+    SemverError(#[from] semver::Error),
 }
 
 #[derive(Debug, Error)]

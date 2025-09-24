@@ -31,10 +31,11 @@ impl TryIntoValidatedGrimoire for NormalizedGrimoire {
                     .map_err(|e| ValidateGrimoireErrorWithContext { source: e })?,
             )),
             #[cfg(feature = "grimoire_schema_v0")]
-            NormalizedGrimoire::V0(g) => {
-                Ok(ValidatedGrimoire::V0(g.try_into().map_err(|e| {
-                    ValidateGrimoireErrorWithContext { source: e }
-                })?))
+            NormalizedGrimoire::V0_4(g_boxed) => {
+                let g = *g_boxed;
+                Ok(ValidatedGrimoire::V0_4(Box::new(g.try_into().map_err(
+                    |e| ValidateGrimoireErrorWithContext { source: e },
+                )?)))
             }
         }?;
 

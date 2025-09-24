@@ -9,7 +9,7 @@ use crate::{
         SchemaField,
         model::{UnifiedCoreContents, UnifiedGrimoire, UnifiedGrimoireMetadata},
     },
-    models::v0::{ValidatedCoreContents, ValidatedGrimoire, ValidatedGrimoireMetadata},
+    models::v0_4::{ValidatedCoreContents, ValidatedGrimoire, ValidatedGrimoireMetadata},
 };
 use std::collections::HashMap;
 

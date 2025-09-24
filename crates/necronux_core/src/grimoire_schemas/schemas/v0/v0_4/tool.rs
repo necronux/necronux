@@ -9,11 +9,14 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedTool {
-    pub name: String,
+    // Option as RFB (See mod.rs)
+    pub name: Option<String>,
 
-    pub executable: String,
+    // Option as RFB (See mod.rs)
+    pub executable: Option<String>,
 
-    pub provisioning_strategy: Vec<ParsedProvisioningStrategy>,
+    // Option as RFB (See mod.rs)
+    pub provisioning_strategy: Option<Vec<ParsedProvisioningStrategy>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -26,23 +29,28 @@ pub enum ParsedProvisioningStrategy {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedToolProvisioningBinding {
-    pub tool_provisioner: ParsedToolProvisioner,
+    // Option as RFB (See mod.rs)
+    pub tool_provisioner: Option<ParsedToolProvisioner>,
 
-    pub provisioning_commands: ParsedToolProvisioningCommands,
+    // Option as RFB (See mod.rs)
+    pub provisioning_commands: Option<ParsedToolProvisioningCommands>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedToolProvisionerFallbacks {
-    pub fallbacks: Vec<ParsedToolProvisioningBinding>,
+    // Option as RFB (See mod.rs)
+    pub fallbacks: Option<Vec<ParsedToolProvisioningBinding>>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedToolProvisioner {
-    pub name: String,
+    // Option as RFB (See mod.rs)
+    pub name: Option<String>,
 
-    pub executable: String,
+    // Option as RFB (See mod.rs)
+    pub executable: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -50,13 +58,16 @@ pub struct ParsedToolProvisioner {
 pub struct ParsedToolProvisioningCommands {
     pub install_command_prefix_args: Option<String>,
 
-    pub install_command: String,
+    // Option as RFB (See mod.rs)
+    pub install_command: Option<String>,
 
     pub verify_command_prefix_args: Option<String>,
 
-    pub verify_command: String,
+    // Option as RFB (See mod.rs)
+    pub verify_command: Option<String>,
 
     pub uninstall_command_prefix_args: Option<String>,
 
-    pub uninstall_command: String,
+    // Option as RFB (See mod.rs)
+    pub uninstall_command: Option<String>,
 }

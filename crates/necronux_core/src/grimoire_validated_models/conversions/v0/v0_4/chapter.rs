@@ -5,8 +5,8 @@
 // ==-----------------------------------------------------------== //
 
 use crate::{
-    error::ValidateGrimoireError, grimoire_normalized_models::models::v0::NormalizedChapter,
-    models::v0::ValidatedChapter,
+    error::ValidateGrimoireError, grimoire_normalized_models::models::v0_4::NormalizedChapter,
+    models::v0_4::ValidatedChapter,
 };
 use std::collections::HashMap;
 

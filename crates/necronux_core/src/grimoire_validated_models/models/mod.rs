@@ -6,4 +6,7 @@
 
 pub mod common_metadata;
 #[cfg(feature = "grimoire_schema_v0")]
-pub mod v0;
+mod v0;
+
+#[cfg(feature = "grimoire_schema_v0")]
+pub use v0::*;

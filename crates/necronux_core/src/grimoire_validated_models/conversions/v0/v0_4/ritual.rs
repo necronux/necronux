@@ -6,11 +6,11 @@
 
 use crate::{
     error::ValidateGrimoireError,
-    grimoire_normalized_models::models::v0::{
+    grimoire_normalized_models::models::v0_4::{
         NormalizedRitual, NormalizedRitualCastStep, NormalizedRitualDispelStep,
         NormalizedRitualStep, NormalizedSpellOrHex,
     },
-    models::v0::{
+    models::v0_4::{
         ValidatedRitual, ValidatedRitualCastStep, ValidatedRitualDispelStep, ValidatedRitualStep,
         ValidatedSpellOrHex,
     },

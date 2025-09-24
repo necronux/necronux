@@ -5,17 +5,17 @@
 // ==-----------------------------------------------------------== //
 
 use crate::{
-    error::NormalizeGrimoireError,
-    grimoire_normalized_models::models::v0::{
+    error::ValidateGrimoireError,
+    grimoire_normalized_models::models::v0_4::{
         NormalizedHex, NormalizedInvocation, NormalizedSpell,
     },
-    grimoire_schemas::schemas::v0::{ParsedHex, ParsedInvocation, ParsedSpell},
+    models::v0_4::{ValidatedHex, ValidatedInvocation, ValidatedSpell},
 };
 
-impl TryFrom<ParsedSpell> for NormalizedSpell {
-    type Error = NormalizeGrimoireError;
+impl TryFrom<NormalizedSpell> for ValidatedSpell {
+    type Error = ValidateGrimoireError;
 
-    fn try_from(s: ParsedSpell) -> Result<Self, Self::Error> {
+    fn try_from(s: NormalizedSpell) -> Result<Self, Self::Error> {
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
             magic_type: s.magic_type,
@@ -30,10 +30,10 @@ impl TryFrom<ParsedSpell> for NormalizedSpell {
     }
 }
 
-impl TryFrom<ParsedHex> for NormalizedHex {
-    type Error = NormalizeGrimoireError;
+impl TryFrom<NormalizedHex> for ValidatedHex {
+    type Error = ValidateGrimoireError;
 
-    fn try_from(s: ParsedHex) -> Result<Self, Self::Error> {
+    fn try_from(s: NormalizedHex) -> Result<Self, Self::Error> {
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
             magic_type: s.magic_type,
@@ -47,10 +47,10 @@ impl TryFrom<ParsedHex> for NormalizedHex {
     }
 }
 
-impl TryFrom<ParsedInvocation> for NormalizedInvocation {
-    type Error = NormalizeGrimoireError;
+impl TryFrom<NormalizedInvocation> for ValidatedInvocation {
+    type Error = ValidateGrimoireError;
 
-    fn try_from(s: ParsedInvocation) -> Result<Self, Self::Error> {
+    fn try_from(s: NormalizedInvocation) -> Result<Self, Self::Error> {
         Ok(Self {
             prefix_args: s.prefix_args,
             execution_command: s.execution_command,

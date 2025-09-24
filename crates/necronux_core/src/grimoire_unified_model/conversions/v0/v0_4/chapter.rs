@@ -6,7 +6,7 @@
 
 use crate::{
     grimoire_unified_model::{SchemaField, model::UnifiedChapter},
-    models::v0::ValidatedChapter,
+    models::v0_4::ValidatedChapter,
 };
 use std::collections::HashMap;
 

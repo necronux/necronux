@@ -14,7 +14,7 @@ pub struct ExtractZipErrorWithContext {
     pub zip_path: PathBuf,
     pub dest_path: PathBuf,
     #[source]
-    pub source: ExtractZipError,
+    pub source: Box<ExtractZipError>,
 }
 #[derive(Debug, Error)]
 pub enum ExtractZipError {
@@ -29,8 +29,6 @@ pub enum ExtractZipError {
     FsError(#[from] FsError),
     #[error(transparent)]
     IoError(#[from] IoError),
-    #[error(transparent)]
-    StdIoError(#[from] std::io::Error),
 }
 
 #[derive(Debug, Error)]

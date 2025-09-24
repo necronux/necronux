@@ -29,10 +29,11 @@ impl TryIntoNormalizedGrimoire for ParsedGrimoire {
                     .map_err(|e| NormalizeGrimoireErrorWithContext { source: e })?,
             )),
             #[cfg(feature = "grimoire_schema_v0")]
-            ParsedGrimoire::V0(g) => {
-                Ok(NormalizedGrimoire::V0(g.try_into().map_err(|e| {
-                    NormalizeGrimoireErrorWithContext { source: e }
-                })?))
+            ParsedGrimoire::V0_4(g_boxed) => {
+                let g = *g_boxed;
+                Ok(NormalizedGrimoire::V0_4(Box::new(g.try_into().map_err(
+                    |e| NormalizeGrimoireErrorWithContext { source: e },
+                )?)))
             }
         }?;
 

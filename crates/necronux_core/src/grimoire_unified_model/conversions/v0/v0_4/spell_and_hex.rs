@@ -9,7 +9,7 @@ use crate::{
         SchemaField,
         model::{UnifiedHex, UnifiedInvocation, UnifiedSpell},
     },
-    models::v0::{ValidatedHex, ValidatedInvocation, ValidatedSpell},
+    models::v0_4::{ValidatedHex, ValidatedInvocation, ValidatedSpell},
 };
 
 impl From<ValidatedSpell> for UnifiedSpell {

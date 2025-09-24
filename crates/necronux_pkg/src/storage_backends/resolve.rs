@@ -26,11 +26,11 @@ pub fn resolve_storage_backend(
         }
     })?;
 
+    let backend_name = backend.name();
     debug!(
-        backend = %backend.name(),
+        backend = %backend_name,
         source = %source,
-        "Successfully resolved storage backend '{}' for the grimoire package source",
-        backend.name()
+        "Successfully resolved storage backend '{backend_name}' for the grimoire package source",
     );
     Ok(backend)
 }
@@ -41,7 +41,7 @@ fn resolve_storage_backend_inner(
     let backends = [StorageBackendKind::Local(LocalBackend {})];
 
     for backend in backends {
-        if backend.supports(source)? {
+        if backend.supports(source).map_err(Box::new)? {
             return Ok(backend);
         }
     }

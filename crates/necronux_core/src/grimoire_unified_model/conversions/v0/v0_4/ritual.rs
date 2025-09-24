@@ -12,7 +12,7 @@ use crate::{
             UnifiedSpellOrHex,
         },
     },
-    models::v0::{
+    models::v0_4::{
         ValidatedRitual, ValidatedRitualCastStep, ValidatedRitualDispelStep, ValidatedRitualStep,
         ValidatedSpellOrHex,
     },

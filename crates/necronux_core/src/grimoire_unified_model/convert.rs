@@ -21,7 +21,10 @@ impl TryIntoUnifiedGrimoire for ValidatedGrimoire {
         let unified = match self {
             ValidatedGrimoire::CommonMetadata(g) => g.into(),
             #[cfg(feature = "grimoire_schema_v0")]
-            ValidatedGrimoire::V0(g) => g.into(),
+            ValidatedGrimoire::V0_4(g_boxed) => {
+                let g = *g_boxed;
+                g.into()
+            }
         };
 
         debug!("Successfully converted validated grimoire into unified grimoire");

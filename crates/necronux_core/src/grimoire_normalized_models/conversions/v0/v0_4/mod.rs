@@ -4,10 +4,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-use super::ParsedSchemaVersionInfo;
-
-pub fn schema_version_info() -> ParsedSchemaVersionInfo {
-    ParsedSchemaVersionInfo {
-        schema_version: None,
-    }
-}
+mod chapter;
+mod grimoire;
+mod ritual;
+mod spell_and_hex;
+mod tool;
