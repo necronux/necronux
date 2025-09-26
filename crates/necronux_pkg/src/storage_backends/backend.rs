@@ -76,7 +76,7 @@ pub trait StorageBackend {
             self.fetch_inner(source)
                 .map_err(|e| FetchGrimoirePackageSourceErrorWithContext {
                     package_zip_source: source.to_string(),
-                    source: e,
+                    source: Box::new(e),
                 })?;
 
         debug!(

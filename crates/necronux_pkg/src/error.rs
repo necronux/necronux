@@ -68,7 +68,7 @@ pub enum SupportsStorageBackendCheckError {
 pub struct FetchGrimoirePackageSourceErrorWithContext {
     pub package_zip_source: String,
     #[source]
-    pub source: FetchGrimoirePackageSourceError,
+    pub source: Box<FetchGrimoirePackageSourceError>,
 }
 #[derive(Debug, Error)]
 pub enum FetchGrimoirePackageSourceError {
