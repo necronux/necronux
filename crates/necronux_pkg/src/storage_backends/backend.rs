@@ -40,7 +40,7 @@ pub trait StorageBackend {
         let (supports, support_str) = self.supports_inner(source).map_err(|e| {
             SupportsStorageBackendCheckErrorWithContext {
                 package_zip_source: source.to_string(),
-                source: e,
+                source: Box::new(e),
             }
         })?;
 

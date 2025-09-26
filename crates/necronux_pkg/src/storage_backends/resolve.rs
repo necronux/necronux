@@ -41,7 +41,7 @@ fn resolve_storage_backend_inner(
     let backends = [StorageBackendKind::Local(LocalBackend {})];
 
     for backend in backends {
-        if backend.supports(source).map_err(Box::new)? {
+        if backend.supports(source)? {
             return Ok(backend);
         }
     }

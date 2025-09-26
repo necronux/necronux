@@ -55,7 +55,7 @@ pub enum IntrospectGrimoireBindingStatusError {
 pub struct SupportsStorageBackendCheckErrorWithContext {
     pub package_zip_source: String,
     #[source]
-    pub source: SupportsStorageBackendCheckError,
+    pub source: Box<SupportsStorageBackendCheckError>,
 }
 #[derive(Debug, Error)]
 pub enum SupportsStorageBackendCheckError {
@@ -102,5 +102,5 @@ pub enum ResolveStorageBackendError {
     #[error("Unsupported grimoire package source path or URL: '{package_zip_source}'")]
     UnsupportedSource { package_zip_source: String },
     #[error(transparent)]
-    SupportsStorageBackendCheckError(#[from] Box<SupportsStorageBackendCheckErrorWithContext>),
+    SupportsStorageBackendCheckError(#[from] SupportsStorageBackendCheckErrorWithContext),
 }

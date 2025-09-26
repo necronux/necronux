@@ -32,7 +32,7 @@ impl TryFrom<NormalizedSpell> for ValidatedSpell {
                             value: mt.clone(),
                             parent_object_name: parent_object.to_string(),
                             reason: "must be either 'spell' or 'hex'".to_string(),
-                        })
+                        });
                     }
                 }
             },
@@ -74,7 +74,7 @@ impl TryFrom<NormalizedHex> for ValidatedHex {
                             value: mt.clone(),
                             parent_object_name: parent_object.to_string(),
                             reason: "must be either 'spell' or 'hex'".to_string(),
-                        })
+                        });
                     }
                 }
             },
