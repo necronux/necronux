@@ -37,7 +37,7 @@ impl TryFrom<ParsedSchemaVersionInfo> for NormalizedSchemaVersionInfo {
             schema_version: normalizers::ensure_req_field_is_not_missing(
                 s.schema_version,
                 "schemaVersion",
-                &parent_object,
+                parent_object,
             )?,
         })
     }

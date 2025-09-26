@@ -25,16 +25,16 @@ impl TryFrom<NormalizedTool> for ValidatedTool {
     fn try_from(s: NormalizedTool) -> Result<Self, Self::Error> {
         let parent_object = "Tool";
         Ok(Self {
-            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             executable: validators::ensure_str_is_not_empty(
                 s.executable,
                 "executable",
-                &parent_object,
+                parent_object,
             )?,
             provisioning_strategy: validators::ensure_vec_is_not_empty(
                 s.provisioning_strategy,
                 "provisioningStrategy",
-                &parent_object,
+                parent_object,
             )?
             .into_iter()
             .map(|p| p.try_into())
@@ -112,32 +112,32 @@ impl TryFrom<NormalizedToolProvisioningCommands> for ValidatedToolProvisioningCo
             install_command_prefix_args: validators::ensure_some_str_is_not_empty(
                 s.install_command_prefix_args,
                 "installCommandPrefixArgs",
-                &parent_object,
+                parent_object,
             )?,
             install_command: validators::ensure_str_is_not_empty(
                 s.install_command,
                 "installCommand",
-                &parent_object,
+                parent_object,
             )?,
             verify_command_prefix_args: validators::ensure_some_str_is_not_empty(
                 s.verify_command_prefix_args,
                 "verifyCommandPrefixArgs",
-                &parent_object,
+                parent_object,
             )?,
             verify_command: validators::ensure_str_is_not_empty(
                 s.verify_command,
                 "verifyCommand",
-                &parent_object,
+                parent_object,
             )?,
             uninstall_command_prefix_args: validators::ensure_some_str_is_not_empty(
                 s.uninstall_command_prefix_args,
                 "uninstallCommandPrefixArgs",
-                &parent_object,
+                parent_object,
             )?,
             uninstall_command: validators::ensure_str_is_not_empty(
                 s.uninstall_command,
                 "uninstallCommand",
-                &parent_object,
+                parent_object,
             )?,
         })
     }

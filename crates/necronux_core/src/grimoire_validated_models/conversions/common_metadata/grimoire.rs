@@ -34,7 +34,7 @@ impl TryFrom<NormalizedSchemaVersionInfo> for ValidatedSchemaVersionInfo {
                 let ver = validators::ensure_str_is_not_empty(
                     s.schema_version.clone(),
                     "schemaVersion",
-                    &parent_object,
+                    parent_object,
                 )?;
                 semver::Version::parse(&ver).map_err(|e| {
                     ValidateGrimoireError::InvalidFieldValueSemverError {

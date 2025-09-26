@@ -27,21 +27,21 @@ impl TryFrom<NormalizedRitual> for ValidatedRitual {
             ritual_type: validators::ensure_str_is_not_empty(
                 s.ritual_type,
                 "ritualType",
-                &parent_object,
+                parent_object,
             )?,
-            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             description: validators::ensure_some_str_is_not_empty(
                 s.description,
                 "description",
-                &parent_object,
+                parent_object,
             )?,
             requires_confirmation: s.requires_confirmation,
             keywords: validators::ensure_some_vec_is_not_empty(
                 s.keywords,
                 "keywords",
-                &parent_object,
+                parent_object,
             )?,
-            steps: validators::ensure_vec_is_not_empty(s.steps, "steps", &parent_object)?
+            steps: validators::ensure_vec_is_not_empty(s.steps, "steps", parent_object)?
                 .into_iter()
                 .map(|s| s.try_into())
                 .collect::<Result<Vec<_>, _>>()?,

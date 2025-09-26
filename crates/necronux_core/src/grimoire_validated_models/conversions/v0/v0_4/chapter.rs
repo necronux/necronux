@@ -17,32 +17,29 @@ impl TryFrom<NormalizedChapter> for ValidatedChapter {
         let parent_object = "Chapter";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
-            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             description: validators::ensure_some_str_is_not_empty(
                 s.description,
                 "description",
-                &parent_object,
+                parent_object,
             )?,
-            spells: validators::ensure_some_map_is_not_empty(s.spells, "spells", &parent_object)?
+            spells: validators::ensure_some_map_is_not_empty(s.spells, "spells", parent_object)?
                 .map(|s| {
                     s.into_iter()
                         .map(|(k, v)| {
-                            let key = validators::ensure_str_is_not_empty(
-                                k,
-                                "Spell Key",
-                                &parent_object,
-                            )?;
+                            let key =
+                                validators::ensure_str_is_not_empty(k, "Spell Key", parent_object)?;
                             v.try_into().map(|nv| (key, nv))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()
                 })
                 .transpose()?,
-            hexes: validators::ensure_some_map_is_not_empty(s.hexes, "hexes", &parent_object)?
+            hexes: validators::ensure_some_map_is_not_empty(s.hexes, "hexes", parent_object)?
                 .map(|h| {
                     h.into_iter()
                         .map(|(k, v)| {
                             let key =
-                                validators::ensure_str_is_not_empty(k, "Hex Key", &parent_object)?;
+                                validators::ensure_str_is_not_empty(k, "Hex Key", parent_object)?;
                             v.try_into().map(|nv| (key, nv))
                         })
                         .collect::<Result<HashMap<_, _>, _>>()

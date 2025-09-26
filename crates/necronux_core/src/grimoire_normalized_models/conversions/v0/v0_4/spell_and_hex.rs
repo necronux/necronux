@@ -23,32 +23,32 @@ impl TryFrom<ParsedSpell> for NormalizedSpell {
             magic_type: normalizers::ensure_req_field_is_not_missing(
                 s.magic_type,
                 "magicType",
-                &parent_object,
+                parent_object,
             )?,
-            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", parent_object)?,
             description: s.description,
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
             keywords: s.keywords,
             cast_invocation: normalizers::ensure_req_field_is_not_missing(
                 s.cast_invocation,
                 "castInvocation",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
             verify_invocation: normalizers::ensure_req_field_is_not_missing(
                 s.verify_invocation,
                 "verifyInvocation",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
             dispel_invocation: normalizers::ensure_req_field_is_not_missing(
                 s.dispel_invocation,
                 "dispelInvocation",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
         })
@@ -65,26 +65,26 @@ impl TryFrom<ParsedHex> for NormalizedHex {
             magic_type: normalizers::ensure_req_field_is_not_missing(
                 s.magic_type,
                 "magicType",
-                &parent_object,
+                parent_object,
             )?,
-            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", parent_object)?,
             description: s.description,
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
             keywords: s.keywords,
             cast_invocation: normalizers::ensure_req_field_is_not_missing(
                 s.cast_invocation,
                 "castInvocation",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
             verify_invocation: normalizers::ensure_req_field_is_not_missing(
                 s.verify_invocation,
                 "verifyInvocation",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
         })
@@ -101,14 +101,14 @@ impl TryFrom<ParsedInvocation> for NormalizedInvocation {
             execution_command: normalizers::ensure_req_field_is_not_missing(
                 s.execution_command,
                 "executionCommand",
-                &parent_object,
+                parent_object,
             )?,
             instrument_path: normalizers::ensure_req_field_is_not_missing(
                 s.instrument_path,
                 "instrumentPath",
-                &parent_object,
+                parent_object,
             )?,
-            tool: normalizers::ensure_req_field_is_not_missing(s.tool, "tool", &parent_object)?
+            tool: normalizers::ensure_req_field_is_not_missing(s.tool, "tool", parent_object)?
                 .into_iter()
                 .map(|t| t.try_into())
                 .collect::<Result<Vec<_>, _>>()?,

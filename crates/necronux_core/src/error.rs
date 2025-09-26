@@ -87,7 +87,7 @@ pub enum ValidateGrimoireError {
         value: String,
         parent_object_name: String,
         #[source]
-        source: spdx::error::ParseError,
+        source: Box<spdx::error::ParseError>,
     },
     #[error(
         "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name})"

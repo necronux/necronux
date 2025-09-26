@@ -36,13 +36,13 @@ impl TryFrom<NormalizedGrimoireMetadata> for ValidatedGrimoireMetadata {
             grimoire_name: validators::ensure_str_is_not_empty(
                 s.grimoire_name,
                 "grimoireName",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_version: {
                 let ver = validators::ensure_str_is_not_empty(
                     s.grimoire_version.clone(),
                     "grimoireVersion",
-                    &parent_object,
+                    parent_object,
                 )?;
                 semver::Version::parse(&ver).map_err(|e| {
                     ValidateGrimoireError::InvalidFieldValueSemverError {
@@ -56,28 +56,28 @@ impl TryFrom<NormalizedGrimoireMetadata> for ValidatedGrimoireMetadata {
             grimoire_description: validators::ensure_some_str_is_not_empty(
                 s.grimoire_description,
                 "grimoireDescription",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_authors: validators::ensure_some_vec_is_not_empty(
                 s.grimoire_authors,
                 "grimoireAuthors",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_source_code: validators::ensure_some_str_is_not_empty(
                 s.grimoire_source_code,
                 "grimoireSourceCode",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_website: validators::ensure_some_str_is_not_empty(
                 s.grimoire_website,
                 "grimoireWebsite",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_documentation: {
                 let doc = validators::ensure_some_str_is_not_empty(
                     s.grimoire_documentation,
                     "grimoireDocumentation",
-                    &parent_object,
+                    parent_object,
                 )?;
                 match doc {
                     Some(doc) if doc.ends_with('/') => {
@@ -95,13 +95,13 @@ impl TryFrom<NormalizedGrimoireMetadata> for ValidatedGrimoireMetadata {
             grimoire_readme: validators::ensure_some_str_is_not_empty(
                 s.grimoire_readme,
                 "grimoireReadme",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_license: {
                 let license_str = validators::ensure_str_is_not_empty(
                     s.grimoire_license,
                     "grimoireLicense",
-                    &parent_object,
+                    parent_object,
                 )?;
 
                 if spdx::Expression::parse(&license_str).is_err() {
@@ -119,23 +119,23 @@ impl TryFrom<NormalizedGrimoireMetadata> for ValidatedGrimoireMetadata {
             grimoire_license_text: validators::ensure_some_str_is_not_empty(
                 s.grimoire_license_text,
                 "grimoireLicenseText",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_issue_tracker: validators::ensure_some_str_is_not_empty(
                 s.grimoire_issue_tracker,
                 "grimoireIssueTracker",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_keywords: validators::ensure_some_vec_is_not_empty(
                 s.grimoire_keywords,
                 "grimoireKeywords",
-                &parent_object,
+                parent_object,
             )?,
             // Allow this field to be flexible by not validating nested fields
             grimoire_additional_metadata: validators::ensure_some_map_is_not_empty(
                 s.grimoire_additional_metadata,
                 "grimoireAdditionalMetadata",
-                &parent_object,
+                parent_object,
             )?,
         })
     }
@@ -151,37 +151,36 @@ impl TryFrom<NormalizedCoreContents> for ValidatedCoreContents {
             chapters: validators::ensure_some_map_is_not_empty(
                 s.chapters,
                 "chapters",
-                &parent_object,
+                parent_object,
             )?
             .map(|c| {
                 c.into_iter()
                     .map(|(k, v)| {
                         let key =
-                            validators::ensure_str_is_not_empty(k, "Chapter Key", &parent_object)?;
+                            validators::ensure_str_is_not_empty(k, "Chapter Key", parent_object)?;
                         v.try_into().map(|nv| (key, nv))
                     })
                     .collect::<Result<HashMap<_, _>, _>>()
             })
             .transpose()?,
-            rituals: validators::ensure_some_map_is_not_empty(
-                s.rituals,
-                "rituals",
-                &parent_object,
-            )?
-            .map(|r| {
-                r.into_iter()
-                    .map(|(k, v)| {
-                        let key =
-                            validators::ensure_str_is_not_empty(k, "Ritual Key", &parent_object)?;
-                        v.try_into().map(|nv| (key, nv))
-                    })
-                    .collect::<Result<HashMap<_, _>, _>>()
-            })
-            .transpose()?,
+            rituals: validators::ensure_some_map_is_not_empty(s.rituals, "rituals", parent_object)?
+                .map(|r| {
+                    r.into_iter()
+                        .map(|(k, v)| {
+                            let key = validators::ensure_str_is_not_empty(
+                                k,
+                                "Ritual Key",
+                                parent_object,
+                            )?;
+                            v.try_into().map(|nv| (key, nv))
+                        })
+                        .collect::<Result<HashMap<_, _>, _>>()
+                })
+                .transpose()?,
             auto_perform_rituals: validators::ensure_some_vec_is_not_empty(
                 s.auto_perform_rituals,
                 "autoPerformRituals",
-                &parent_object,
+                parent_object,
             )?,
             requires_confirmation: s.requires_confirmation,
         })

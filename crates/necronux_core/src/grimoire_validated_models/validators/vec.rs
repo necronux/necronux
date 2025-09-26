@@ -13,11 +13,11 @@ pub fn ensure_vec_is_not_empty<T>(
     parent_object_name: &str,
 ) -> stdrt::Result<Vec<T>, ValidateGrimoireError> {
     if val.is_empty() {
-        return Err(ValidateGrimoireError::EmptyFieldValue {
+        Err(ValidateGrimoireError::EmptyFieldValue {
             field_name: field_name.to_string(),
             value: "[]".to_string(),
             parent_object_name: parent_object_name.to_string(),
-        });
+        })
     } else {
         Ok(val)
     }

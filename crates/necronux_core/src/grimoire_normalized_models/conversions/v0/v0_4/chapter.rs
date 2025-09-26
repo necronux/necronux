@@ -18,7 +18,7 @@ impl TryFrom<ParsedChapter> for NormalizedChapter {
         let parent_object = "Chapter";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
-            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", parent_object)?,
             description: s.description,
             spells: s
                 .spells
@@ -39,7 +39,7 @@ impl TryFrom<ParsedChapter> for NormalizedChapter {
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
         })
     }

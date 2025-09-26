@@ -44,12 +44,12 @@ impl TryFrom<ParsedGrimoireMetadata> for NormalizedGrimoireMetadata {
             grimoire_name: normalizers::ensure_req_field_is_not_missing(
                 s.grimoire_name,
                 "grimoireName",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_version: normalizers::ensure_req_field_is_not_missing(
                 s.grimoire_version,
                 "grimoireVersion",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_description: s.grimoire_description,
             grimoire_authors: s.grimoire_authors,
@@ -60,7 +60,7 @@ impl TryFrom<ParsedGrimoireMetadata> for NormalizedGrimoireMetadata {
             grimoire_license: normalizers::ensure_req_field_is_not_missing(
                 s.grimoire_license,
                 "grimoireLicense",
-                &parent_object,
+                parent_object,
             )?,
             grimoire_license_text: s.grimoire_license_text,
             grimoire_issue_tracker: s.grimoire_issue_tracker,
@@ -97,7 +97,7 @@ impl TryFrom<ParsedCoreContents> for NormalizedCoreContents {
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
         })
     }

@@ -29,17 +29,17 @@ impl TryFrom<ParsedRitual> for NormalizedRitual {
             ritual_type: normalizers::ensure_req_field_is_not_missing(
                 s.ritual_type,
                 "ritualType",
-                &parent_object,
+                parent_object,
             )?,
-            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", parent_object)?,
             description: s.description,
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
             keywords: s.keywords,
-            steps: normalizers::ensure_req_field_is_not_missing(s.steps, "steps", &parent_object)?
+            steps: normalizers::ensure_req_field_is_not_missing(s.steps, "steps", parent_object)?
                 .into_iter()
                 .map(|s| s.try_into())
                 .collect::<Result<Vec<_>, _>>()?,
@@ -64,17 +64,17 @@ impl TryFrom<ParsedRitualCastStep> for NormalizedRitualCastStep {
     fn try_from(s: ParsedRitualCastStep) -> Result<Self, Self::Error> {
         let parent_object = "RitualCastStep";
         Ok(Self {
-            cast: normalizers::ensure_req_field_is_not_missing(s.cast, "cast", &parent_object)?
+            cast: normalizers::ensure_req_field_is_not_missing(s.cast, "cast", parent_object)?
                 .try_into()?,
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
             auto_verify: normalizers::ensure_req_field_is_not_missing(
                 s.auto_verify,
                 "autoVerify",
-                &parent_object,
+                parent_object,
             )?,
         })
     }
@@ -89,13 +89,13 @@ impl TryFrom<ParsedRitualDispelStep> for NormalizedRitualDispelStep {
             dispel: normalizers::ensure_req_field_is_not_missing(
                 s.dispel,
                 "dispel",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
             requires_confirmation: normalizers::ensure_req_field_is_not_missing(
                 s.requires_confirmation,
                 "requiresConfirmation",
-                &parent_object,
+                parent_object,
             )?,
         })
     }

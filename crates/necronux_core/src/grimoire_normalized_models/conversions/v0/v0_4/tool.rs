@@ -27,16 +27,16 @@ impl TryFrom<ParsedTool> for NormalizedTool {
     fn try_from(s: ParsedTool) -> Result<Self, Self::Error> {
         let parent_object = "Tool";
         Ok(Self {
-            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", parent_object)?,
             executable: normalizers::ensure_req_field_is_not_missing(
                 s.executable,
                 "executable",
-                &parent_object,
+                parent_object,
             )?,
             provisioning_strategy: normalizers::ensure_req_field_is_not_missing(
                 s.provisioning_strategy,
                 "provisioningStrategy",
-                &parent_object,
+                parent_object,
             )?
             .into_iter()
             .map(|p| p.try_into())
@@ -69,13 +69,13 @@ impl TryFrom<ParsedToolProvisioningBinding> for NormalizedToolProvisioningBindin
             tool_provisioner: normalizers::ensure_req_field_is_not_missing(
                 s.tool_provisioner,
                 "toolProvisioner",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
             provisioning_commands: normalizers::ensure_req_field_is_not_missing(
                 s.provisioning_commands,
                 "provisioningCommands",
-                &parent_object,
+                parent_object,
             )?
             .try_into()?,
         })
@@ -91,7 +91,7 @@ impl TryFrom<ParsedToolProvisionerFallbacks> for NormalizedToolProvisionerFallba
             fallbacks: normalizers::ensure_req_field_is_not_missing(
                 s.fallbacks,
                 "fallbacks",
-                &parent_object,
+                parent_object,
             )?
             .into_iter()
             .map(|f| f.try_into())
@@ -106,11 +106,11 @@ impl TryFrom<ParsedToolProvisioner> for NormalizedToolProvisioner {
     fn try_from(s: ParsedToolProvisioner) -> Result<Self, Self::Error> {
         let parent_object = "ToolProvisioner";
         Ok(Self {
-            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", parent_object)?,
             executable: normalizers::ensure_req_field_is_not_missing(
                 s.executable,
                 "executable",
-                &parent_object,
+                parent_object,
             )?,
         })
     }
@@ -126,19 +126,19 @@ impl TryFrom<ParsedToolProvisioningCommands> for NormalizedToolProvisioningComma
             install_command: normalizers::ensure_req_field_is_not_missing(
                 s.install_command,
                 "installCommand",
-                &parent_object,
+                parent_object,
             )?,
             verify_command_prefix_args: s.verify_command_prefix_args,
             verify_command: normalizers::ensure_req_field_is_not_missing(
                 s.verify_command,
                 "verifyCommand",
-                &parent_object,
+                parent_object,
             )?,
             uninstall_command_prefix_args: s.uninstall_command_prefix_args,
             uninstall_command: normalizers::ensure_req_field_is_not_missing(
                 s.uninstall_command,
                 "uninstallCommand",
-                &parent_object,
+                parent_object,
             )?,
         })
     }

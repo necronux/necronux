@@ -23,19 +23,19 @@ impl TryFrom<NormalizedSpell> for ValidatedSpell {
             magic_type: validators::ensure_str_is_not_empty(
                 s.magic_type,
                 "magicType",
-                &parent_object,
+                parent_object,
             )?,
-            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             description: validators::ensure_some_str_is_not_empty(
                 s.description,
                 "description",
-                &parent_object,
+                parent_object,
             )?,
             requires_confirmation: s.requires_confirmation,
             keywords: validators::ensure_some_vec_is_not_empty(
                 s.keywords,
                 "keywords",
-                &parent_object,
+                parent_object,
             )?,
             cast_invocation: s.cast_invocation.try_into()?,
             verify_invocation: s.verify_invocation.try_into()?,
@@ -54,19 +54,19 @@ impl TryFrom<NormalizedHex> for ValidatedHex {
             magic_type: validators::ensure_str_is_not_empty(
                 s.magic_type,
                 "magicType",
-                &parent_object,
+                parent_object,
             )?,
-            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             description: validators::ensure_some_str_is_not_empty(
                 s.description,
                 "description",
-                &parent_object,
+                parent_object,
             )?,
             requires_confirmation: s.requires_confirmation,
             keywords: validators::ensure_some_vec_is_not_empty(
                 s.keywords,
                 "keywords",
-                &parent_object,
+                parent_object,
             )?,
             cast_invocation: s.cast_invocation.try_into()?,
             verify_invocation: s.verify_invocation.try_into()?,
@@ -83,19 +83,19 @@ impl TryFrom<NormalizedInvocation> for ValidatedInvocation {
             prefix_args: validators::ensure_some_str_is_not_empty(
                 s.prefix_args,
                 "prefixArgs",
-                &parent_object,
+                parent_object,
             )?,
             execution_command: validators::ensure_str_is_not_empty(
                 s.execution_command,
                 "executionCommand",
-                &parent_object,
+                parent_object,
             )?,
             instrument_path: validators::ensure_str_is_not_empty(
                 s.instrument_path,
                 "instrumentPath",
-                &parent_object,
+                parent_object,
             )?,
-            tool: validators::ensure_vec_is_not_empty(s.tool, "tool", &parent_object)?
+            tool: validators::ensure_vec_is_not_empty(s.tool, "tool", parent_object)?
                 .into_iter()
                 .map(|t| t.try_into())
                 .collect::<Result<Vec<_>, _>>()?,
