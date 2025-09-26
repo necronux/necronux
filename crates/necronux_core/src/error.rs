@@ -64,7 +64,7 @@ pub enum ValidateGrimoireError {
         reason: String,
     },
     #[error(
-        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name}) - value cannot be empty"
+        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name}) - value must not be empty"
     )]
     EmptyFieldValue {
         field_name: String,
@@ -99,6 +99,8 @@ pub enum ValidateGrimoireError {
         #[source]
         source: semver::Error,
     },
+    #[error("{reason}: '{key}'")]
+    DuplicateKeyAcrossMaps { key: String, reason: String },
 }
 
 #[derive(Debug, Error)]

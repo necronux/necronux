@@ -20,11 +20,22 @@ impl TryFrom<NormalizedSpell> for ValidatedSpell {
         let parent_object = "Spell";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
-            magic_type: validators::ensure_str_is_not_empty(
-                s.magic_type,
-                "magicType",
-                parent_object,
-            )?,
+            magic_type: {
+                let mt =
+                    validators::ensure_str_is_not_empty(s.magic_type, "magicType", parent_object)?;
+
+                match mt.as_str() {
+                    "spell" | "hex" => mt,
+                    _ => {
+                        return Err(ValidateGrimoireError::InvalidFieldValue {
+                            field_name: "magicType".to_string(),
+                            value: mt.clone(),
+                            parent_object_name: parent_object.to_string(),
+                            reason: "must be either 'spell' or 'hex'".to_string(),
+                        })
+                    }
+                }
+            },
             name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             description: validators::ensure_some_str_is_not_empty(
                 s.description,
@@ -51,11 +62,22 @@ impl TryFrom<NormalizedHex> for ValidatedHex {
         let parent_object = "Hex";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
-            magic_type: validators::ensure_str_is_not_empty(
-                s.magic_type,
-                "magicType",
-                parent_object,
-            )?,
+            magic_type: {
+                let mt =
+                    validators::ensure_str_is_not_empty(s.magic_type, "magicType", parent_object)?;
+
+                match mt.as_str() {
+                    "spell" | "hex" => mt,
+                    _ => {
+                        return Err(ValidateGrimoireError::InvalidFieldValue {
+                            field_name: "magicType".to_string(),
+                            value: mt.clone(),
+                            parent_object_name: parent_object.to_string(),
+                            reason: "must be either 'spell' or 'hex'".to_string(),
+                        })
+                    }
+                }
+            },
             name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
             description: validators::ensure_some_str_is_not_empty(
                 s.description,
