@@ -6,12 +6,12 @@
 
 use crate::{
     error::NormalizeGrimoireError,
-    grimoire_normalized_models::models::v0_4::{
-        NormalizedCoreContents, NormalizedGrimoire, NormalizedGrimoireMetadata,
+    grimoire_normalized_models::{
+        models::v0_4::{NormalizedCoreContents, NormalizedGrimoire, NormalizedGrimoireMetadata},
+        normalizers,
     },
     grimoire_schemas::schemas::v0_4::{ParsedCoreContents, ParsedGrimoire, ParsedGrimoireMetadata},
 };
-use semver::Version;
 use std::{collections::HashMap, result as stdrt};
 
 impl TryFrom<ParsedGrimoire> for NormalizedGrimoire {
@@ -20,18 +20,16 @@ impl TryFrom<ParsedGrimoire> for NormalizedGrimoire {
     fn try_from(s: ParsedGrimoire) -> stdrt::Result<Self, Self::Error> {
         Ok(Self {
             common_metadata: s.common_metadata.try_into()?,
-            grimoire_metadata: s
-                .grimoire_metadata
-                .ok_or_else(|| NormalizeGrimoireError::MissingTopLevelRequiredField {
-                    field_name: "grimoireMetadata".to_string(),
-                })?
-                .try_into()?,
-            core_contents: s
-                .core_contents
-                .ok_or_else(|| NormalizeGrimoireError::MissingTopLevelRequiredField {
-                    field_name: "coreContents".to_string(),
-                })?
-                .try_into()?,
+            grimoire_metadata: normalizers::ensure_top_level_req_field_is_not_missing(
+                s.grimoire_metadata,
+                "grimoireMetadata",
+            )?
+            .try_into()?,
+            core_contents: normalizers::ensure_top_level_req_field_is_not_missing(
+                s.core_contents,
+                "coreContents",
+            )?
+            .try_into()?,
         })
     }
 }
@@ -40,32 +38,30 @@ impl TryFrom<ParsedGrimoireMetadata> for NormalizedGrimoireMetadata {
     type Error = NormalizeGrimoireError;
 
     fn try_from(s: ParsedGrimoireMetadata) -> stdrt::Result<Self, Self::Error> {
+        let parent_object = "GrimoireMetadata";
         Ok(Self {
             common_metadata: s.common_metadata.try_into()?,
-            grimoire_name: s.grimoire_name.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "grimoireName".to_string(),
-                    parent_object_name: "GrimoireMetadata".to_string(),
-                }
-            })?,
-            grimoire_version: Version::parse(&s.grimoire_version.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "grimoireVersion".to_string(),
-                    parent_object_name: "GrimoireMetadata".to_string(),
-                }
-            })?)?,
+            grimoire_name: normalizers::ensure_req_field_is_not_missing(
+                s.grimoire_name,
+                "grimoireName",
+                &parent_object,
+            )?,
+            grimoire_version: normalizers::ensure_req_field_is_not_missing(
+                s.grimoire_version,
+                "grimoireVersion",
+                &parent_object,
+            )?,
             grimoire_description: s.grimoire_description,
             grimoire_authors: s.grimoire_authors,
             grimoire_source_code: s.grimoire_source_code,
             grimoire_website: s.grimoire_website,
             grimoire_documentation: s.grimoire_documentation,
             grimoire_readme: s.grimoire_readme,
-            grimoire_license: s.grimoire_license.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "grimoireLicense".to_string(),
-                    parent_object_name: "GrimoireMetadata".to_string(),
-                }
-            })?,
+            grimoire_license: normalizers::ensure_req_field_is_not_missing(
+                s.grimoire_license,
+                "grimoireLicense",
+                &parent_object,
+            )?,
             grimoire_license_text: s.grimoire_license_text,
             grimoire_issue_tracker: s.grimoire_issue_tracker,
             grimoire_keywords: s.grimoire_keywords,
@@ -78,6 +74,7 @@ impl TryFrom<ParsedCoreContents> for NormalizedCoreContents {
     type Error = NormalizeGrimoireError;
 
     fn try_from(s: ParsedCoreContents) -> stdrt::Result<Self, Self::Error> {
+        let parent_object = "CoreContents";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
             chapters: s
@@ -97,12 +94,11 @@ impl TryFrom<ParsedCoreContents> for NormalizedCoreContents {
                 })
                 .transpose()?,
             auto_perform_rituals: s.auto_perform_rituals,
-            requires_confirmation: s.requires_confirmation.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "requiresConfirmation".to_string(),
-                    parent_object_name: "CoreContents".to_string(),
-                }
-            })?,
+            requires_confirmation: normalizers::ensure_req_field_is_not_missing(
+                s.requires_confirmation,
+                "requiresConfirmation",
+                &parent_object,
+            )?,
         })
     }
 }

@@ -8,6 +8,7 @@ mod conversions;
 mod convert;
 pub mod models;
 mod normalized;
+pub mod normalizers;
 
 pub use convert::*;
 pub use normalized::*;

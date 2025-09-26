@@ -6,7 +6,6 @@
 
 use super::{NormalizedChapter, NormalizedRitual};
 use crate::grimoire_normalized_models::models::common_metadata;
-use semver::Version;
 use std::collections::HashMap;
 
 #[derive(Debug)]
@@ -20,7 +19,7 @@ pub struct NormalizedGrimoire {
 pub struct NormalizedGrimoireMetadata {
     pub common_metadata: common_metadata::NormalizedSchemaVersionInfo,
     pub grimoire_name: String,
-    pub grimoire_version: Version,
+    pub grimoire_version: String,
     pub grimoire_description: Option<String>,
     pub grimoire_authors: Option<Vec<String>>,
     pub grimoire_source_code: Option<String>,

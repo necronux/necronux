@@ -44,8 +44,6 @@ pub enum NormalizeGrimoireError {
         field_name: String,
         parent_object_name: String,
     },
-    #[error(transparent)]
-    SemverError(#[from] semver::Error),
 }
 
 #[derive(Debug, Error)]
@@ -55,7 +53,53 @@ pub struct ValidateGrimoireErrorWithContext {
     pub source: ValidateGrimoireError,
 }
 #[derive(Debug, Error)]
-pub enum ValidateGrimoireError {}
+pub enum ValidateGrimoireError {
+    #[error(
+        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name}) - {reason}"
+    )]
+    InvalidFieldValue {
+        field_name: String,
+        value: String,
+        parent_object_name: String,
+        reason: String,
+    },
+    #[error(
+        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name}) - value cannot be empty"
+    )]
+    EmptyFieldValue {
+        field_name: String,
+        value: String,
+        parent_object_name: String,
+    },
+    #[error(
+        "Missing required field in grimoire: '{field_name}' (in {parent_object_name}) - {reason}"
+    )]
+    MissingRequiredField {
+        field_name: String,
+        parent_object_name: String,
+        reason: String,
+    },
+    #[error(
+        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name})"
+    )]
+    InvalidFieldValueSpdxError {
+        field_name: String,
+        value: String,
+        parent_object_name: String,
+        #[source]
+        source: spdx::error::ParseError,
+    },
+    #[error(
+        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name})"
+    )]
+    InvalidFieldValueSemverError {
+        field_name: String,
+        value: String,
+        parent_object_name: String,
+        #[source]
+        source: semver::Error,
+    },
+}
 
 #[derive(Debug, Error)]
 #[error("Failed to resolve grimoire parser")]

@@ -4,12 +4,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // ==-----------------------------------------------------------== //
 
-#[derive(Debug)]
-pub struct NormalizedGrimoire {
-    pub schema_version_info: NormalizedSchemaVersionInfo,
-}
+mod map;
+mod string;
+mod vec;
 
-#[derive(Debug)]
-pub struct NormalizedSchemaVersionInfo {
-    pub schema_version: String,
-}
+pub use map::*;
+pub use string::*;
+pub use vec::*;

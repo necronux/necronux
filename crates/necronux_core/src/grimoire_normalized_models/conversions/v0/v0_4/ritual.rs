@@ -6,9 +6,12 @@
 
 use crate::{
     error::NormalizeGrimoireError,
-    grimoire_normalized_models::models::v0_4::{
-        NormalizedRitual, NormalizedRitualCastStep, NormalizedRitualDispelStep,
-        NormalizedRitualStep, NormalizedSpellOrHex,
+    grimoire_normalized_models::{
+        models::v0_4::{
+            NormalizedRitual, NormalizedRitualCastStep, NormalizedRitualDispelStep,
+            NormalizedRitualStep, NormalizedSpellOrHex,
+        },
+        normalizers,
     },
     grimoire_schemas::schemas::v0_4::{
         ParsedRitual, ParsedRitualCastStep, ParsedRitualDispelStep, ParsedRitualStep,
@@ -20,34 +23,23 @@ impl TryFrom<ParsedRitual> for NormalizedRitual {
     type Error = NormalizeGrimoireError;
 
     fn try_from(s: ParsedRitual) -> Result<Self, Self::Error> {
+        let parent_object = "Ritual";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
-            ritual_type: s.ritual_type.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "ritualType".to_string(),
-                    parent_object_name: "Ritual".to_string(),
-                }
-            })?,
-            name: s
-                .name
-                .ok_or_else(|| NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "name".to_string(),
-                    parent_object_name: "Ritual".to_string(),
-                })?,
+            ritual_type: normalizers::ensure_req_field_is_not_missing(
+                s.ritual_type,
+                "ritualType",
+                &parent_object,
+            )?,
+            name: normalizers::ensure_req_field_is_not_missing(s.name, "name", &parent_object)?,
             description: s.description,
-            requires_confirmation: s.requires_confirmation.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "requiresConfirmation".to_string(),
-                    parent_object_name: "Ritual".to_string(),
-                }
-            })?,
+            requires_confirmation: normalizers::ensure_req_field_is_not_missing(
+                s.requires_confirmation,
+                "requiresConfirmation",
+                &parent_object,
+            )?,
             keywords: s.keywords,
-            steps: s
-                .steps
-                .ok_or_else(|| NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "steps".to_string(),
-                    parent_object_name: "Ritual".to_string(),
-                })?
+            steps: normalizers::ensure_req_field_is_not_missing(s.steps, "steps", &parent_object)?
                 .into_iter()
                 .map(|s| s.try_into())
                 .collect::<Result<Vec<_>, _>>()?,
@@ -70,26 +62,20 @@ impl TryFrom<ParsedRitualCastStep> for NormalizedRitualCastStep {
     type Error = NormalizeGrimoireError;
 
     fn try_from(s: ParsedRitualCastStep) -> Result<Self, Self::Error> {
+        let parent_object = "RitualCastStep";
         Ok(Self {
-            cast: s
-                .cast
-                .ok_or_else(|| NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "cast".to_string(),
-                    parent_object_name: "RitualCastStep".to_string(),
-                })?
+            cast: normalizers::ensure_req_field_is_not_missing(s.cast, "cast", &parent_object)?
                 .try_into()?,
-            requires_confirmation: s.requires_confirmation.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "requiresConfirmation".to_string(),
-                    parent_object_name: "RitualCastStep".to_string(),
-                }
-            })?,
-            auto_verify: s.auto_verify.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "autoVerify".to_string(),
-                    parent_object_name: "RitualCastStep".to_string(),
-                }
-            })?,
+            requires_confirmation: normalizers::ensure_req_field_is_not_missing(
+                s.requires_confirmation,
+                "requiresConfirmation",
+                &parent_object,
+            )?,
+            auto_verify: normalizers::ensure_req_field_is_not_missing(
+                s.auto_verify,
+                "autoVerify",
+                &parent_object,
+            )?,
         })
     }
 }
@@ -98,20 +84,19 @@ impl TryFrom<ParsedRitualDispelStep> for NormalizedRitualDispelStep {
     type Error = NormalizeGrimoireError;
 
     fn try_from(s: ParsedRitualDispelStep) -> Result<Self, Self::Error> {
+        let parent_object = "RitualDispelStep";
         Ok(Self {
-            dispel: s
-                .dispel
-                .ok_or_else(|| NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "dispel".to_string(),
-                    parent_object_name: "DispelCastStep".to_string(),
-                })?
-                .try_into()?,
-            requires_confirmation: s.requires_confirmation.ok_or_else(|| {
-                NormalizeGrimoireError::MissingRequiredField {
-                    field_name: "requiresConfirmation".to_string(),
-                    parent_object_name: "RitualDispelStep".to_string(),
-                }
-            })?,
+            dispel: normalizers::ensure_req_field_is_not_missing(
+                s.dispel,
+                "dispel",
+                &parent_object,
+            )?
+            .try_into()?,
+            requires_confirmation: normalizers::ensure_req_field_is_not_missing(
+                s.requires_confirmation,
+                "requiresConfirmation",
+                &parent_object,
+            )?,
         })
     }
 }

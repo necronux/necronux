@@ -10,6 +10,7 @@ use crate::{
         NormalizedGrimoire, NormalizedSchemaVersionInfo,
     },
     models::common_metadata::{ValidatedGrimoire, ValidatedSchemaVersionInfo},
+    validators,
 };
 use std::result as stdrt;
 
@@ -27,8 +28,23 @@ impl TryFrom<NormalizedSchemaVersionInfo> for ValidatedSchemaVersionInfo {
     type Error = ValidateGrimoireError;
 
     fn try_from(s: NormalizedSchemaVersionInfo) -> stdrt::Result<Self, Self::Error> {
+        let parent_object = "SchemaVersionInfo";
         Ok(Self {
-            schema_version: s.schema_version,
+            schema_version: {
+                let ver = validators::ensure_str_is_not_empty(
+                    s.schema_version.clone(),
+                    "schemaVersion",
+                    &parent_object,
+                )?;
+                semver::Version::parse(&ver).map_err(|e| {
+                    ValidateGrimoireError::InvalidFieldValueSemverError {
+                        field_name: "schemaVersion".to_string(),
+                        value: s.schema_version.clone(),
+                        parent_object_name: parent_object.to_string(),
+                        source: e,
+                    }
+                })?
+            },
         })
     }
 }

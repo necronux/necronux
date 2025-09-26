@@ -38,6 +38,7 @@ rpkl = { workspace = true }
 serde = { workspace = true }
 # Utils
 semver = { workspace = true }
+spdx = { workspace = true }
 
 [features]
 ###########

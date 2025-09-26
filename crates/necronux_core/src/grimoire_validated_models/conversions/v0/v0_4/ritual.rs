@@ -14,21 +14,34 @@ use crate::{
         ValidatedRitual, ValidatedRitualCastStep, ValidatedRitualDispelStep, ValidatedRitualStep,
         ValidatedSpellOrHex,
     },
+    validators,
 };
 
 impl TryFrom<NormalizedRitual> for ValidatedRitual {
     type Error = ValidateGrimoireError;
 
     fn try_from(s: NormalizedRitual) -> Result<Self, Self::Error> {
+        let parent_object = "Ritual";
         Ok(Self {
             grimoire_metadata: s.grimoire_metadata.try_into()?,
-            ritual_type: s.ritual_type,
-            name: s.name,
-            description: s.description,
+            ritual_type: validators::ensure_str_is_not_empty(
+                s.ritual_type,
+                "ritualType",
+                &parent_object,
+            )?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            description: validators::ensure_some_str_is_not_empty(
+                s.description,
+                "description",
+                &parent_object,
+            )?,
             requires_confirmation: s.requires_confirmation,
-            keywords: s.keywords,
-            steps: s
-                .steps
+            keywords: validators::ensure_some_vec_is_not_empty(
+                s.keywords,
+                "keywords",
+                &parent_object,
+            )?,
+            steps: validators::ensure_vec_is_not_empty(s.steps, "steps", &parent_object)?
                 .into_iter()
                 .map(|s| s.try_into())
                 .collect::<Result<Vec<_>, _>>()?,

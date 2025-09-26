@@ -16,20 +16,29 @@ use crate::{
         ValidatedToolProvisionerFallbacks, ValidatedToolProvisioningBinding,
         ValidatedToolProvisioningCommands,
     },
+    validators,
 };
 
 impl TryFrom<NormalizedTool> for ValidatedTool {
     type Error = ValidateGrimoireError;
 
     fn try_from(s: NormalizedTool) -> Result<Self, Self::Error> {
+        let parent_object = "Tool";
         Ok(Self {
-            name: s.name,
-            executable: s.executable,
-            provisioning_strategy: s
-                .provisioning_strategy
-                .into_iter()
-                .map(|p| p.try_into())
-                .collect::<Result<Vec<_>, _>>()?,
+            name: validators::ensure_str_is_not_empty(s.name, "name", &parent_object)?,
+            executable: validators::ensure_str_is_not_empty(
+                s.executable,
+                "executable",
+                &parent_object,
+            )?,
+            provisioning_strategy: validators::ensure_vec_is_not_empty(
+                s.provisioning_strategy,
+                "provisioningStrategy",
+                &parent_object,
+            )?
+            .into_iter()
+            .map(|p| p.try_into())
+            .collect::<Result<Vec<_>, _>>()?,
         })
     }
 }
@@ -64,12 +73,16 @@ impl TryFrom<NormalizedToolProvisionerFallbacks> for ValidatedToolProvisionerFal
     type Error = ValidateGrimoireError;
 
     fn try_from(s: NormalizedToolProvisionerFallbacks) -> Result<Self, Self::Error> {
+        let parent_object = "ToolProvisionerFallbacks";
         Ok(Self {
-            fallbacks: s
-                .fallbacks
-                .into_iter()
-                .map(|f| f.try_into())
-                .collect::<Result<Vec<_>, _>>()?,
+            fallbacks: validators::ensure_vec_is_not_empty(
+                s.fallbacks,
+                "fallbacks",
+                parent_object,
+            )?
+            .into_iter()
+            .map(|f| f.try_into())
+            .collect::<Result<Vec<_>, _>>()?,
         })
     }
 }
@@ -78,9 +91,14 @@ impl TryFrom<NormalizedToolProvisioner> for ValidatedToolProvisioner {
     type Error = ValidateGrimoireError;
 
     fn try_from(s: NormalizedToolProvisioner) -> Result<Self, Self::Error> {
+        let parent_object = "ToolProvisioner";
         Ok(Self {
-            name: s.name,
-            executable: s.executable,
+            name: validators::ensure_str_is_not_empty(s.name, "name", parent_object)?,
+            executable: validators::ensure_str_is_not_empty(
+                s.executable,
+                "executable",
+                parent_object,
+            )?,
         })
     }
 }
@@ -89,13 +107,38 @@ impl TryFrom<NormalizedToolProvisioningCommands> for ValidatedToolProvisioningCo
     type Error = ValidateGrimoireError;
 
     fn try_from(s: NormalizedToolProvisioningCommands) -> Result<Self, Self::Error> {
+        let parent_object = "ToolProvisioningCommands";
         Ok(Self {
-            install_command_prefix_args: s.install_command_prefix_args,
-            install_command: s.install_command,
-            verify_command_prefix_args: s.verify_command_prefix_args,
-            verify_command: s.verify_command,
-            uninstall_command_prefix_args: s.uninstall_command_prefix_args,
-            uninstall_command: s.uninstall_command,
+            install_command_prefix_args: validators::ensure_some_str_is_not_empty(
+                s.install_command_prefix_args,
+                "installCommandPrefixArgs",
+                &parent_object,
+            )?,
+            install_command: validators::ensure_str_is_not_empty(
+                s.install_command,
+                "installCommand",
+                &parent_object,
+            )?,
+            verify_command_prefix_args: validators::ensure_some_str_is_not_empty(
+                s.verify_command_prefix_args,
+                "verifyCommandPrefixArgs",
+                &parent_object,
+            )?,
+            verify_command: validators::ensure_str_is_not_empty(
+                s.verify_command,
+                "verifyCommand",
+                &parent_object,
+            )?,
+            uninstall_command_prefix_args: validators::ensure_some_str_is_not_empty(
+                s.uninstall_command_prefix_args,
+                "uninstallCommandPrefixArgs",
+                &parent_object,
+            )?,
+            uninstall_command: validators::ensure_str_is_not_empty(
+                s.uninstall_command,
+                "uninstallCommand",
+                &parent_object,
+            )?,
         })
     }
 }

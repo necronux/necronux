@@ -119,6 +119,7 @@ clap-verbosity-flag = { version = "3.0.4", default-features = false, features = 
 ] }
 # Utils
 semver = { version = "1.0.27", features = ["serde"] }
+spdx = { version = "0.12.0" }
 once_cell = { version = "1.21.3" }
 # Proc Macro
 syn = { version = "2.0.106", features = ["full"] }

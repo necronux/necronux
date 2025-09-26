@@ -8,6 +8,7 @@ mod conversions;
 mod convert;
 pub mod models;
 mod validated;
+pub mod validators;
 
 pub use convert::*;
 pub use validated::*;
