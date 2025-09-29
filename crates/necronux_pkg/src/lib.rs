@@ -5,8 +5,8 @@
 // ==-----------------------------------------------------------== //
 
 pub mod error;
-mod introspect;
+mod introspection;
 mod storage_backends;
 
-pub use introspect::*;
+pub use introspection::*;
 pub use storage_backends::*;
