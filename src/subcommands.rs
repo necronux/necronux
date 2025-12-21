@@ -25,10 +25,16 @@ pub enum SubCmd {
     Cast(CastSubCmd),
 
     #[command(about = "Verify")]
-    Verify(VerifySubCmd),
+    Affirm(AffirmSubCmd),
 
     #[command(about = "Dispel")]
     Dispel(DispelSubCmd),
+
+    #[command(about = "Lay")]
+    Lay(LaySubCmd),
+
+    #[command(about = "Discern")]
+    Discern(DiscernSubCmd),
 
     #[command(about = "Perform")]
     Perform(PerformSubCmd),
@@ -66,30 +72,42 @@ pub struct StatusSubCmd {
 
 #[derive(Args, Debug, Clone)]
 pub struct CastSubCmd {
-    #[arg(help = "Name of the spell or hex to cast")]
-    pub name: String,
+    #[arg(help = "Id of the spell to cast")]
+    pub spell_id: String,
 }
 
 #[derive(Args, Debug, Clone)]
-pub struct VerifySubCmd {
-    #[arg(help = "Name of the spell or hex to verify")]
-    pub name: String,
+pub struct AffirmSubCmd {
+    #[arg(help = "Id of the spell to affirm")]
+    pub spell_id: String,
 }
 
 #[derive(Args, Debug, Clone)]
 pub struct DispelSubCmd {
-    #[arg(help = "Name of the spell to dispel")]
-    pub name: String,
+    #[arg(help = "Id of the spell to dispel")]
+    pub spell_id: String,
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct LaySubCmd {
+    #[arg(help = "Id of the hex to lay")]
+    pub hex_id: String,
+}
+
+#[derive(Args, Debug, Clone)]
+pub struct DiscernSubCmd {
+    #[arg(help = "Id of the hex to discern")]
+    pub hex_id: String,
 }
 
 #[derive(Args, Debug, Clone)]
 pub struct PerformSubCmd {
-    #[arg(help = "Name of the ritual to perform")]
-    pub name: String,
+    #[arg(help = "Id of the ritual to perform")]
+    pub ritual_id: String,
 }
 
 #[derive(Args, Debug, Clone)]
 pub struct InfoSubCmd {
-    #[arg(help = "Name of the spell or hex or ritual to show information about")]
-    pub name: String,
+    #[arg(help = "Id of the spell or hex or ritual to show information about")]
+    pub id: String,
 }

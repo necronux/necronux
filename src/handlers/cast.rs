@@ -9,7 +9,13 @@ use crate::{
     theme::{self, ThemedUi},
 };
 use anyhow::{Context, Result};
-use necronux::utils::trace_instrument;
+use necronux::{
+    core::{
+        TryIntoValidatedGrimoire, grimoire_normalized_models::TryIntoNormalizedGrimoire,
+        grimoire_unified_model::TryIntoUnifiedGrimoire,
+    },
+    utils::trace_instrument,
+};
 use std::io::{stderr, stdout};
 use tracing::info;
 
@@ -26,7 +32,7 @@ impl CastSubCmd {
             has_steps: false,
             ("Casting...", theme::style::progress_task)
         )?;
-        Self::cast().context("Failed to cast")?;
+        Self::cast(&self.spell_id).context("Failed to cast")?;
         if let Some(pb) = pb {
             pb.finish();
         }
@@ -52,7 +58,13 @@ impl CastSubCmd {
     }
 
     #[trace_instrument(level = "info")]
-    fn cast() -> Result<()> {
+    fn cast(id: &str) -> Result<()> {
+        let parsed = necronux::core::resolve_grimoire_parser()?;
+        let normalized = parsed.try_into_normalized()?;
+        let validated = normalized.try_into_validated()?;
+        let grimoire = validated.into_unified();
+
+        grimoire.cast_spell(id);
         Ok(())
     }
 }

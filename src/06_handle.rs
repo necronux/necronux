@@ -32,8 +32,10 @@ impl SubCmd {
             SubCmd::Validate(s) => s.handle(theme),
             SubCmd::Status(s) => s.handle(theme),
             SubCmd::Cast(s) => s.handle(theme),
-            SubCmd::Verify(s) => s.handle(theme),
+            SubCmd::Affirm(s) => s.handle(theme),
             SubCmd::Dispel(s) => s.handle(theme),
+            SubCmd::Lay(s) => s.handle(theme),
+            SubCmd::Discern(s) => s.handle(theme),
             SubCmd::Perform(s) => s.handle(theme),
             SubCmd::Info(s) => s.handle(theme),
         }

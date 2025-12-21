@@ -60,7 +60,7 @@ impl ValidateSubCmd {
             let elapsed_fmt = crate::utils::format_duration(elapsed);
             info!(
                 elapsed_secs = elapsed.as_secs_f64(),
-                "Successfully validated grimoire '{}'", name
+                "Successfully validated grimoire '{name}'"
             );
             result_success_msg!(
                 theme,

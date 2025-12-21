@@ -15,7 +15,7 @@ pub struct ParseGrimoireErrorWithContext {
 }
 #[derive(Debug, Error)]
 pub enum ParseGrimoireError {
-    #[error("Failed to parse pkl file at '{path}'")]
+    #[error("Failed to parse pkl file at `{path}`")]
     RpklError {
         path: PathBuf,
         #[source]
@@ -37,9 +37,9 @@ pub struct NormalizeGrimoireErrorWithContext {
 }
 #[derive(Debug, Error)]
 pub enum NormalizeGrimoireError {
-    #[error("Missing required field in grimoire: '{field_name}'")]
+    #[error("Missing required field in grimoire: `{field_name}`")]
     MissingTopLevelRequiredField { field_name: String },
-    #[error("Missing required field in grimoire: '{field_name}' (in {parent_object_name})")]
+    #[error("Missing required field in grimoire: `{field_name}` (in {parent_object_name})")]
     MissingRequiredField {
         field_name: String,
         parent_object_name: String,
@@ -55,7 +55,7 @@ pub struct ValidateGrimoireErrorWithContext {
 #[derive(Debug, Error)]
 pub enum ValidateGrimoireError {
     #[error(
-        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name}) - {reason}"
+        "Invalid field value in grimoire: `{field_name}` = `{value}` (in {parent_object_name}) - {reason}"
     )]
     InvalidFieldValue {
         field_name: String,
@@ -63,34 +63,13 @@ pub enum ValidateGrimoireError {
         parent_object_name: String,
         reason: String,
     },
+    ///
+    ///
+    ///
+    ///
+
     #[error(
-        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name}) - value must not be empty"
-    )]
-    EmptyFieldValue {
-        field_name: String,
-        value: String,
-        parent_object_name: String,
-    },
-    #[error(
-        "Missing required field in grimoire: '{field_name}' (in {parent_object_name}) - {reason}"
-    )]
-    MissingRequiredField {
-        field_name: String,
-        parent_object_name: String,
-        reason: String,
-    },
-    #[error(
-        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name})"
-    )]
-    InvalidFieldValueSpdxError {
-        field_name: String,
-        value: String,
-        parent_object_name: String,
-        #[source]
-        source: Box<spdx::error::ParseError>,
-    },
-    #[error(
-        "Invalid field value in grimoire: '{field_name}' = '{value}' (in {parent_object_name})"
+        "Invalid field value in grimoire: `{field_name}` = `{value}` (in {parent_object_name})"
     )]
     InvalidFieldValueSemverError {
         field_name: String,
@@ -98,6 +77,14 @@ pub enum ValidateGrimoireError {
         parent_object_name: String,
         #[source]
         source: semver::Error,
+    },
+    #[error(
+        "Missing required field in grimoire: `{field_name}` (in {parent_object_name}) - {reason}"
+    )]
+    MissingRequiredField {
+        field_name: String,
+        parent_object_name: String,
+        reason: String,
     },
     #[error("{reason}: '{key}'")]
     DuplicateKeyAcrossMaps { key: String, reason: String },
@@ -113,7 +100,7 @@ pub struct ResolveGrimoireParserErrorWithContext {
 pub enum ResolveGrimoireParserError {
     #[error("Expected parsed common metadata but not found")]
     ParsedCommonMetadataNotFound,
-    #[error("Unsupported or unrecognized schema version: {version}")]
+    #[error("Unsupported or unrecognized schema version: `{version}`")]
     UnsupportedGrimoireSchemaVersion { version: String },
     #[error(transparent)]
     ParseGrimoireError(#[from] ParseGrimoireErrorWithContext),
@@ -121,4 +108,21 @@ pub enum ResolveGrimoireParserError {
     NormalizeGrimoireError(#[from] NormalizeGrimoireErrorWithContext),
     #[error(transparent)]
     ValidateGrimoireError(#[from] ValidateGrimoireErrorWithContext),
+}
+
+#[derive(Debug, Error)]
+#[error("Failed to cast spell")]
+pub struct CastSpellErrorWithContext {
+    #[source]
+    pub source: CastSpellError,
+}
+#[derive(Debug, Error)]
+pub enum CastSpellError {
+    #[error(
+        "Field `{field_name}` is not available in grimoire schema version `{version}` \
+         Please upgrade your grimoire to a newer schema version to cast a spell."
+    )]
+    UnsupportedGrimoireSchemaVersion { version: String, field_name: String },
+    #[error("Spell `{id}` not found in this grimoire.")]
+    SpellNotFound { id: String },
 }
