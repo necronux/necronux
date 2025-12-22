@@ -96,23 +96,23 @@ incremental = false
 # DEPS (WORKSPACE)
 ##################
 # Error handling
-thiserror = { version = "2.0.16" }
-anyhow = { version = "1.0.99" }
+thiserror = { version = "2.0.17" }
+anyhow = { version = "1.0.100" }
 # Logging
-tracing = { version = "0.1.41", features = [
+tracing = { version = "0.1.44", features = [
   "max_level_trace",
   "release_max_level_info",
 ] }
 tracing-log = { version = "0.2.0" }
-tracing-subscriber = { version = "0.3.20", features = ["json"] }
-tracing-fancytree = { version = "0.1.0" }
+tracing-subscriber = { version = "0.3.22", features = ["json"] }
+tracing-fancytree = { version = "0.1.1" }
 tracing-chrome = { version = "0.7.2" }
 # Serde and parsing
-rpkl = { version = "0.6.0" }
-serde = { version = "1.0.219", features = ["derive"] }
+rpkl = { version = "0.7.0" }
+serde = { version = "1.0.228", features = ["derive"] }
 # File system
 directories = { version = "6.0.0" }
-zip = { version = "5.1.1" }
+zip = { version = "7.0.0" }
 # Cli
 clap-verbosity-flag = { version = "3.0.4", default-features = false, features = [
   "tracing",
@@ -121,9 +121,9 @@ clap-verbosity-flag = { version = "3.0.4", default-features = false, features = 
 semver = { version = "1.0.27", features = ["serde"] }
 once_cell = { version = "1.21.3" }
 # Proc Macro
-syn = { version = "2.0.106", features = ["full"] }
-quote = { version = "1.0.40" }
-proc-macro2 = { version = "1.0.101" }
+syn = { version = "2.0.111", features = ["full"] }
+quote = { version = "1.0.42" }
+proc-macro2 = { version = "1.0.103" }
 
 [dependencies]
 ######################
